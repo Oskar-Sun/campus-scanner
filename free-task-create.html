@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自由作业 — 创建批改任务</title>
+<style>
+  :root{
+    --color-primary-50:#effafa;--color-primary-100:#def8f9;--color-primary-200:#b2f1f2;--color-primary-300:#7de3e6;
+    --color-primary-500:#50d8dc;--color-primary-700:#00a6ab;--color-primary-950:#007a7e;
+    --color-gray-50:#f8f8fc;--color-gray-100:#d2d3de;--color-gray-200:#bcbdc0;--color-gray-300:#a2a3a6;
+    --color-gray-400:#88898c;--color-gray-500:#6e6f71;--color-gray-600:#545557;--color-gray-700:#3a3b3d;--color-gray-900:#212123;
+    --color-base-01:#000000;--color-base-02:#ffffff;
+    --color-success-100:#bef8fa;--color-success-700:#00a6ab;
+    --color-error-100:#ffece8;--color-error-700:#f53f3f;
+    --color-warning-100:#fff7e8;--color-warning-700:#ff7d00;
+    --color-info-100:#e4f0fb;--color-info-700:#2675c4;
+    --color-accent-3-50:#f3f1ff;--color-accent-3-600:#8b6ff2;--color-accent-3-800:#5936b1;
+    --color-overlay-alpha-2-04:rgba(19,19,21,.04);--color-overlay-alpha-2-05:rgba(19,19,21,.05);
+    --color-overlay-alpha-2-06:rgba(19,19,21,.06);--color-overlay-alpha-2-08:rgba(19,19,21,.08);
+    --color-overlay-alpha-2-10:rgba(19,19,21,.10);--color-overlay-alpha-2-20:rgba(19,19,21,.20);
+    --color-overlay-alpha-2-30:rgba(19,19,21,.30);--color-overlay-alpha-2-40:rgba(19,19,21,.40);
+    --color-overlay-alpha-1-10:rgba(255,255,255,.10);--color-overlay-alpha-1-15:rgba(255,255,255,.15);
+    --color-overlay-alpha-1-35:rgba(255,255,255,.35);--color-overlay-alpha-1-60:rgba(255,255,255,.60);
+    --color-overlay-alpha-1-75:rgba(255,255,255,.75);
+    --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:28px;--radius-full:9999px;
+    --shadow-sm:0 1px 2px var(--color-overlay-alpha-2-04);
+    --shadow:0 1px 3px var(--color-overlay-alpha-2-06);
+    --shadow-md:0 4px 12px var(--color-overlay-alpha-2-06);
+    --shadow-lg:0 12px 32px var(--color-overlay-alpha-2-08);
+    --font-display:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --transition:180ms cubic-bezier(0.4,0,0.2,1);
+    --text-primary:var(--color-gray-900);--text-secondary:var(--color-gray-500);
+    --text-muted:var(--color-gray-400);--border:var(--color-gray-100);
+    --accent:var(--color-primary-700);--accent-dark:var(--color-primary-950);--accent-light:var(--color-primary-50);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--color-gray-50);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .app-window{width:1120px;max-width:100%;background:var(--color-base-02);border-radius:var(--radius-xl);box-shadow:0 0 0 1px var(--color-overlay-alpha-2-05),0 24px 64px var(--color-overlay-alpha-2-10);overflow:hidden;display:flex;flex-direction:column;}
+
+  .title-bar{height:32px;background:var(--color-primary-950);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;}
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;}
+  .title-bar__dot--close{background:var(--color-error-700);}.title-bar__dot--min{background:var(--color-warning-700);}.title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .header__back{display:flex;align-items:center;gap:5px;color:var(--color-overlay-alpha-1-75);font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);transition:color var(--transition);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:15px;height:15px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:13px;}
+  .header__page-title{color:var(--color-base-02);font-size:15px;font-weight:600;flex:1;}
+
+  .steps-bar{display:flex;align-items:center;gap:0;padding:16px 32px;background:var(--color-base-02);border-bottom:1px solid var(--border);flex-shrink:0;}
+  .step-item{display:flex;align-items:center;gap:0;flex:1;}
+  .step-item__num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:var(--color-gray-100);color:var(--color-gray-400);}
+  .step-item--active .step-item__num{background:var(--color-primary-700);color:var(--color-base-02);}
+  .step-item--done .step-item__num{background:var(--color-success-700);color:var(--color-base-02);}
+  .step-item__label{margin-left:8px;font-size:13px;font-weight:600;color:var(--color-gray-400);}
+  .step-item--active .step-item__label{color:var(--text-primary);}
+  .step-item--done .step-item__label{color:var(--text-primary);}
+  .step-item__line{flex:1;height:1px;background:var(--color-gray-100);margin:0 12px;}
+  .step-item--done .step-item__line{background:var(--color-success-700);}
+  .step-item:last-child .step-item__line{display:none;}
+
+  .main-content{flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group__label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);}
+  .form-input{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;font-family:var(--font-body);color:var(--text-primary);outline:none;transition:border-color var(--transition);}
+  .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+  .form-input::placeholder{color:var(--color-gray-300);}
+
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{padding:8px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);font-family:var(--font-body);border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-primary);user-select:none;}
+  .chip:hover{border-color:var(--color-primary-300);background:var(--color-primary-50);}
+  .chip--active{border-color:var(--accent);background:var(--accent-light);color:var(--color-primary-950);font-weight:600;}
+
+  .footer{background:var(--color-base-02);border-top:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .footer__hint{font-size:11px;color:var(--text-muted);}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;font-size:14px;font-weight:600;font-family:var(--font-body);border-radius:var(--radius-full);cursor:pointer;transition:all var(--transition);border:none;text-decoration:none;}
+  .btn-secondary{background:var(--color-base-02);color:var(--text-secondary);border:1.5px solid var(--border);}
+  .btn-secondary:hover{border-color:var(--color-gray-200);background:var(--color-gray-50);}
+  .btn-primary{background:var(--accent);color:var(--color-base-02);position:relative;overflow:hidden;}
+  .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--color-overlay-alpha-1-15) 0%,transparent 60%);pointer-events:none;}
+  .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;pointer-events:none;}
+
+  .info-card{background:var(--color-info-100);border:1px solid var(--color-info-100);border-radius:var(--radius-lg);padding:14px 18px;font-size:12px;color:var(--color-info-700);line-height:1.6;display:flex;align-items:flex-start;gap:8px;}
+  .info-card svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+
+  .multi-toggle{font-size:10px;font-weight:400;color:var(--color-gray-400);cursor:pointer;padding:2px 8px;border-radius:var(--radius-full);border:1px solid var(--color-gray-100);transition:all var(--transition);user-select:none;white-space:nowrap;}
+  .multi-toggle:hover{color:var(--accent);border-color:var(--accent);}
+  .multi-toggle--active{color:var(--color-base-02);background:var(--accent);border-color:var(--accent);font-weight:600;}
+  .multi-toggle--active:hover{color:var(--color-base-02);background:var(--accent-dark);}
+
+  /* === History records (subtle — collapsed by default, filtered by subject+grade) === */
+  .history-section{margin-top:4px;}
+  .history-section__toggle{
+    display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+    border-radius:var(--radius-full);cursor:pointer;user-select:none;
+    font-size:11px;color:var(--text-muted);transition:all var(--transition);
+    border:1px solid transparent;
+  }
+  .history-section__toggle:hover{color:var(--accent);border-color:var(--border);background:var(--color-base-02);}
+  .history-section__toggle svg{width:13px;height:13px;flex-shrink:0;}
+  .history-section__chevron{transition:transform var(--transition);}
+  .history-section--expanded .history-section__chevron{transform:rotate(180deg);}
+  .history-section__body{display:none;margin-top:4px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+  .history-section--expanded .history-section__body{display:block;}
+  .history-item{
+    display:flex;align-items:center;gap:8px;padding:8px 12px;
+    border-top:1px solid var(--color-gray-50);cursor:pointer;
+    transition:background var(--transition);font-size:12px;
+  }
+  .history-item:first-child{border-top:none;}
+  .history-item:hover{background:var(--color-primary-50);}
+  .history-item--selected{background:var(--accent-light);border-left:3px solid var(--accent);}
+  .history-item__info{flex:1;min-width:0;}
+  .history-item__name{font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .history-item__meta{font-size:10px;color:var(--text-muted);margin-top:1px;display:flex;align-items:center;gap:6px;}
+  .history-item__meta .dot{width:3px;height:3px;border-radius:50%;background:var(--color-gray-300);}
+  .history-item__badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:var(--radius-full);flex-shrink:0;}
+  .history-item__badge--done{background:var(--color-success-100);color:var(--color-success-700);}
+  .history-item__action{
+    font-size:10px;font-weight:600;padding:4px 10px;border-radius:var(--radius-full);
+    border:1px solid var(--accent);background:var(--color-base-02);color:var(--accent);
+    cursor:pointer;transition:all var(--transition);white-space:nowrap;flex-shrink:0;
+    font-family:var(--font-body);
+  }
+  .history-item__action:hover{background:var(--accent);color:var(--color-base-02);}
+  .history-empty{padding:12px;font-size:11px;color:var(--text-muted);text-align:center;}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--color-gray-900);color:var(--color-base-02);padding:8px 24px;border-radius:var(--radius-full);font-size:12px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-8px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="index.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> 首页
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">自由作业 · 创建批改任务</span>
+  </header>
+
+  <!-- Steps -->
+  <div class="steps-bar">
+    <div class="step-item step-item--active">
+      <span class="step-item__num">1</span><span class="step-item__label">创建任务</span>
+      <div class="step-item__line"></div>
+    </div>
+    <div class="step-item">
+      <span class="step-item__num">2</span><span class="step-item__label">扫描答案卷</span>
+      <div class="step-item__line"></div>
+    </div>
+    <div class="step-item">
+      <span class="step-item__num">3</span><span class="step-item__label">核对答案</span>
+      <div class="step-item__line"></div>
+    </div>
+    <div class="step-item">
+      <span class="step-item__num">4</span><span class="step-item__label">扫描学生作业</span>
+      <div class="step-item__line"></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="info-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>自由作业无需提前制卡录题。学生用普通纸张书写，系统通过 AI 自动识别手写内容并批改。首期支持 <strong>英语单词听写</strong> 场景。</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-group__label">任务名称</label>
+      <input class="form-input" id="taskName" placeholder="例如：3月15日英语听写、Unit 3 单词听写" value="Unit 3 单词听写">
+    </div>
+
+    <div class="form-group">
+      <label class="form-group__label">科目</label>
+      <div class="chip-row" id="subjectChips">
+        <span class="chip chip--active" data-value="english" onclick="selectChip(this,'subject')">📖 英语</span>
+        <span class="chip" data-value="math" onclick="selectChip(this,'subject')" style="pointer-events:none;opacity:0.4;" title="即将支持">∑ 数学 · 即将支持</span>
+        <span class="chip" data-value="chinese" onclick="selectChip(this,'subject')" style="pointer-events:none;opacity:0.4;" title="即将支持">文 语文 · 即将支持</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-group__label">题型</label>
+      <div class="chip-row">
+        <span class="chip chip--active" data-value="word-dictation" onclick="selectChip(this,'type')">🔤 单词听写</span>
+        <span class="chip" style="pointer-events:none;opacity:0.4;" title="即将支持">📝 句子默写 · 即将支持</span>
+        <span class="chip" style="pointer-events:none;opacity:0.4;" title="即将支持">🧮 口算题 · 即将支持</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-group__label">年级</label>
+      <div class="chip-row" id="gradeChips">
+        <span class="chip" data-value="grade-10" onclick="selectChip(this,'grade')">高一</span>
+        <span class="chip chip--active" data-value="grade-11" onclick="selectChip(this,'grade')">高二</span>
+        <span class="chip" data-value="grade-12" onclick="selectChip(this,'grade')">高三</span>
+      </div>
+    </div>
+
+    <div class="form-group" id="classGroup">
+      <label class="form-group__label" style="display:flex;align-items:center;gap:8px;">
+        选择班级
+        <span class="multi-toggle" id="multiToggle" onclick="toggleMultiMode()" title="开启后可同时选择多个班级">🔗 多班级扫描</span>
+      </label>
+      <div class="chip-row" id="classChips">
+        <span class="chip chip--active" data-value="class-3" onclick="toggleClassChip(this)">3班</span>
+        <span class="chip" data-value="class-4" onclick="toggleClassChip(this)">4班</span>
+        <span class="chip" data-value="class-5" onclick="toggleClassChip(this)">5班</span>
+      </div>
+    </div>
+
+    <!-- Historical scan records (subtle, collapsed by default) -->
+    <div class="history-section" id="historySection">
+      <div class="history-section__toggle" onclick="toggleHistory()" id="historyToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="historyToggleText">历史记录</span>
+        <svg class="history-section__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="history-section__body" id="historyBody"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer__hint" id="footerHint">请填写任务名称并选择班级</span>
+    <button class="btn btn-primary" id="nextBtn" onclick="goNext()">
+      下一步：扫描答案卷 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  let state = { taskName:'Unit 3 单词听写', subject:'english', type:'word-dictation', grade:'grade-11', classes:['class-3'] };
+  let multiMode = false;
+
+  function toggleMultiMode() {
+    multiMode = !multiMode;
+    const toggle = document.getElementById('multiToggle');
+    if (multiMode) {
+      toggle.classList.add('multi-toggle--active');
+      toggle.textContent = '🔗 多班级扫描（已开启）';
+      toggle.title = '点击恢复单选';
+    } else {
+      toggle.classList.remove('multi-toggle--active');
+      toggle.textContent = '🔗 多班级扫描';
+      toggle.title = '开启后可同时选择多个班级';
+      // Revert to single: keep only the last selected class
+      if (state.classes.length > 1) {
+        state.classes = [state.classes[state.classes.length - 1]];
+        document.querySelectorAll('#classChips .chip').forEach(c => {
+          c.classList.toggle('chip--active', state.classes.includes(c.dataset.value));
+        });
+      }
+    }
+    updateFooter();
+  }
+
+  function selectChip(el, group) {
+    if (el.style.pointerEvents === 'none') return;
+    const parent = el.parentElement;
+    parent.querySelectorAll('.chip').forEach(c => {
+      if (c.style.pointerEvents !== 'none') c.classList.remove('chip--active');
+    });
+    el.classList.add('chip--active');
+    state[group] = el.dataset.value;
+    updateFooter();
+  }
+
+  function toggleClassChip(el) {
+    const val = el.dataset.value;
+    if (!multiMode) {
+      // Single-select: deselect all others, select only this one
+      state.classes = [val];
+      document.querySelectorAll('#classChips .chip').forEach(c => {
+        c.classList.toggle('chip--active', c.dataset.value === val);
+      });
+    } else {
+      // Multi-select: toggle individual chip
+      const idx = state.classes.indexOf(val);
+      if (idx >= 0) { state.classes.splice(idx,1); el.classList.remove('chip--active'); }
+      else { state.classes.push(val); el.classList.add('chip--active'); }
+    }
+    updateFooter();
+  }
+
+  function updateFooter() {
+    const valid = state.taskName.trim() && state.classes.length > 0;
+    document.getElementById('nextBtn').disabled = !valid;
+    const isHistory = selectedHistoryId !== null;
+    document.getElementById('footerHint').textContent = valid
+      ? `${isHistory ? '沿用历史任务 · ' : ''}已选：${state.taskName} ｜ 高二 · ${state.classes.map(c=>c.replace('class-','')+'班').join('、')} ｜ 单词听写`
+      : (isHistory ? '请选择要扫描的班级' : '请填写任务名称并选择班级');
+  }
+
+  function goNext() {
+    if (!state.taskName.trim() || state.classes.length === 0) return;
+    const continueMode = new URLSearchParams(window.location.search).get('mode') === 'continue';
+    if (continueMode || selectedHistoryId !== null) {
+      // Skip answer input — go directly to scan (answers already recorded)
+      window.location.href = `scan-progress.html?mode=free&first=1&taskName=${encodeURIComponent(state.taskName)}&classes=${state.classes.join(',')}`;
+    } else {
+      const params = new URLSearchParams({name:state.taskName,subject:state.subject,type:state.type,grade:state.grade,classes:state.classes.join(',')});
+      window.location.href = 'free-answer-input.html?' + params.toString();
+    }
+  }
+
+  function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);}
+
+  // ===== History Records (filtered by subject + grade) =====
+  const GRADE_LABELS = {'grade-10':'高一','grade-11':'高二','grade-12':'高三'};
+  const historyRecords = [
+    { id:1, taskName:'Unit 2 单词听写', date:'2025-12-03', classes:['3班','4班'], subject:'english', type:'word-dictation', grade:'grade-11' },
+    { id:2, taskName:'Unit 1 单词听写', date:'2025-11-28', classes:['2班'], subject:'english', type:'word-dictation', grade:'grade-11' },
+    { id:3, taskName:'期中单词复习', date:'2025-11-20', classes:['1班','3班','5班'], subject:'english', type:'word-dictation', grade:'grade-11' },
+    { id:4, taskName:'高一单词摸底', date:'2025-10-15', classes:['1班','2班'], subject:'english', type:'word-dictation', grade:'grade-10' },
+    { id:5, taskName:'高三词汇冲刺', date:'2025-09-22', classes:['4班','5班'], subject:'english', type:'word-dictation', grade:'grade-12' },
+  ];
+  let selectedHistoryId = null;
+
+  function getFilteredHistory() {
+    return historyRecords.filter(r => r.subject === state.subject && r.grade === state.grade);
+  }
+
+  function toggleHistory() {
+    const section = document.getElementById('historySection');
+    const isExpanded = section.classList.contains('history-section--expanded');
+    if (isExpanded) {
+      section.classList.remove('history-section--expanded');
+    } else {
+      section.classList.add('history-section--expanded');
+      renderHistory();
+    }
+  }
+
+  function selectHistoryRecordById(id) {
+    const record = historyRecords.find(r => r.id === id);
+    if (record) selectHistoryRecord(record);
+  }
+
+  function selectHistoryRecord(record) {
+    if (selectedHistoryId === record.id) {
+      resetToNewTask();
+      return;
+    }
+    selectedHistoryId = record.id;
+    state.taskName = record.taskName;
+    state.subject = record.subject;
+    state.type = record.type;
+    state.grade = record.grade;
+    state.classes = [];
+
+    const nameInput = document.getElementById('taskName');
+    nameInput.value = record.taskName;
+    nameInput.readOnly = true;
+    nameInput.style.background = 'var(--color-gray-50)';
+    nameInput.style.cursor = 'not-allowed';
+
+    document.getElementById('subjectChips').innerHTML = '<span class="auto-selected-badge" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--color-primary-50);border:1px solid var(--color-primary-200);border-radius:20px;font-size:12px;color:var(--color-primary-950);font-weight:500;"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-primary-700);"></span>科目：<strong>英语</strong>（沿用历史任务）</span>';
+
+    const typeRow = document.getElementById('subjectChips').parentElement.nextElementSibling.querySelector('.chip-row');
+    typeRow.innerHTML = '<span class="auto-selected-badge" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--color-primary-50);border:1px solid var(--color-primary-200);border-radius:20px;font-size:12px;color:var(--color-primary-950);font-weight:500;"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-primary-700);"></span>题型：<strong>单词听写</strong>（沿用历史任务）</span>';
+
+    const gradeRow = document.getElementById('gradeChips');
+    gradeRow.innerHTML = '<span class="auto-selected-badge" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--color-primary-50);border:1px solid var(--color-primary-200);border-radius:20px;font-size:12px;color:var(--color-primary-950);font-weight:500;"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-primary-700);"></span>年级：<strong>'+GRADE_LABELS[record.grade]+'</strong>（沿用历史任务）</span>';
+
+    document.querySelectorAll('#classChips .chip').forEach(c => c.classList.remove('chip--active'));
+
+    document.querySelector('.header__page-title').textContent = '自由作业 · 沿用历史任务';
+    document.getElementById('nextBtn').textContent = '开始扫描（沿用答案）';
+    document.querySelector('.info-card span').innerHTML = '沿用历史任务「<strong>'+record.taskName+'</strong>」（'+record.date+'）的答案与设置。选择新班级即可开始扫描。';
+
+    renderHistory();
+    updateFooter();
+    showToast('已选择：' + record.taskName + ' — 选择班级后即可扫描');
+  }
+
+  function resetToNewTask() {
+    selectedHistoryId = null;
+    state.taskName = 'Unit 3 单词听写';
+    state.subject = 'english';
+    state.type = 'word-dictation';
+    state.grade = 'grade-11';
+    state.classes = ['class-3'];
+
+    const nameInput = document.getElementById('taskName');
+    nameInput.value = state.taskName;
+    nameInput.readOnly = false;
+    nameInput.style.background = '';
+    nameInput.style.cursor = '';
+
+    document.getElementById('subjectChips').innerHTML = '<span class="chip chip--active" data-value="english" onclick="selectChip(this,\'subject\')">📖 英语</span><span class="chip" data-value="math" onclick="selectChip(this,\'subject\')" style="pointer-events:none;opacity:0.4;" title="即将支持">∑ 数学 · 即将支持</span><span class="chip" data-value="chinese" onclick="selectChip(this,\'subject\')" style="pointer-events:none;opacity:0.4;" title="即将支持">文 语文 · 即将支持</span>';
+
+    const typeRow = document.getElementById('subjectChips').parentElement.nextElementSibling.querySelector('.chip-row');
+    typeRow.innerHTML = '<span class="chip chip--active" data-value="word-dictation" onclick="selectChip(this,\'type\')">🔤 单词听写</span><span class="chip" style="pointer-events:none;opacity:0.4;" title="即将支持">📝 句子默写 · 即将支持</span><span class="chip" style="pointer-events:none;opacity:0.4;" title="即将支持">🧮 口算题 · 即将支持</span>';
+
+    document.getElementById('gradeChips').innerHTML = '<span class="chip" data-value="grade-10" onclick="selectChip(this,\'grade\')">高一</span><span class="chip chip--active" data-value="grade-11" onclick="selectChip(this,\'grade\')">高二</span><span class="chip" data-value="grade-12" onclick="selectChip(this,\'grade\')">高三</span>';
+
+    document.querySelectorAll('#classChips .chip').forEach(c => {
+      c.classList.toggle('chip--active', c.dataset.value === 'class-3');
+    });
+
+    document.querySelector('.header__page-title').textContent = '自由作业 · 创建批改任务';
+    document.getElementById('nextBtn').textContent = '下一步：扫描答案卷';
+    document.querySelector('.info-card span').innerHTML = '自由作业无需提前制卡录题。学生用普通纸张书写，系统通过 AI 自动识别手写内容并批改。首期支持 <strong>英语单词听写</strong> 场景。';
+
+    // Collapse history section on reset
+    document.getElementById('historySection').classList.remove('history-section--expanded');
+    renderHistory();
+    updateFooter();
+  }
+
+  function renderHistory() {
+    const filtered = getFilteredHistory();
+    const gradeLabel = GRADE_LABELS[state.grade] || '';
+    const toggleText = document.getElementById('historyToggleText');
+    toggleText.textContent = filtered.length > 0
+      ? `历史记录 · ${gradeLabel} · 英语（${filtered.length} 条）`
+      : `历史记录 · ${gradeLabel} · 英语（无匹配）`;
+
+    const body = document.getElementById('historyBody');
+    if (filtered.length === 0) {
+      body.innerHTML = '<div class="history-empty">当前年级科目下暂无历史扫描记录</div>';
+      return;
+    }
+    body.innerHTML = filtered.map(r => {
+      const isSelected = selectedHistoryId === r.id;
+      return `
+        <div class="history-item ${isSelected ? 'history-item--selected' : ''}" onclick="selectHistoryRecordById(${r.id})">
+          <div class="history-item__info">
+            <div class="history-item__name">${r.taskName}</div>
+            <div class="history-item__meta">
+              <span>${r.date}</span>
+              <span class="dot"></span>
+              <span>${r.classes.join('、')}</span>
+            </div>
+          </div>
+          <span class="history-item__badge history-item__badge--done">已完成</span>
+          ${isSelected ? '<span style="font-size:10px;color:var(--accent);flex-shrink:0;">已沿用</span>' : `<button class="history-item__action" onclick="event.stopPropagation();selectHistoryRecordById(${r.id})">沿用</button>`}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Re-render history toggle text when subject or grade changes
+  const _origSelectChip = selectChip;
+  selectChip = function(el, group) {
+    _origSelectChip(el, group);
+    if ((group === 'subject' || group === 'grade') && !selectedHistoryId) {
+      renderHistory();
+    }
+  };
+
+  // Handle "新班级扫描" continue mode — lock everything except class
+  const continueParams = new URLSearchParams(window.location.search);
+  if (continueParams.get('mode') === 'continue') {
+    const contTaskName = continueParams.get('taskName');
+    if (contTaskName) {
+      state.taskName = contTaskName;
+      state.classes = []; // reset class selection for new batch
+      // Lock task name
+      const nameInput = document.getElementById('taskName');
+      nameInput.value = contTaskName;
+      nameInput.readOnly = true;
+      nameInput.style.background = 'var(--color-gray-50)';
+      nameInput.style.cursor = 'not-allowed';
+
+      // Lock subject — hide all chips, show locked badge
+      document.getElementById('subjectChips').innerHTML = '<span class="auto-selected-badge" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--color-primary-50);border:1px solid var(--color-primary-200);border-radius:20px;font-size:12px;color:var(--color-primary-950);font-weight:500;"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-primary-700);"></span>科目：<strong>英语</strong>（已有任务）</span>';
+
+      // Lock type — show locked badge
+      const typeRow = document.querySelector('#subjectChips').parentElement.nextElementSibling.querySelector('.chip-row');
+      typeRow.innerHTML = '<span class="auto-selected-badge" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--color-primary-50);border:1px solid var(--color-primary-200);border-radius:20px;font-size:12px;color:var(--color-primary-950);font-weight:500;"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-primary-700);"></span>题型：<strong>单词听写</strong>（已有任务）</span>';
+
+      // Lock grade — show locked badge
+      const gradeRow = document.getElementById('gradeChips');
+      gradeRow.innerHTML = '<span class="auto-selected-badge" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--color-primary-50);border:1px solid var(--color-primary-200);border-radius:20px;font-size:12px;color:var(--color-primary-950);font-weight:500;"><span style="width:6px;height:6px;border-radius:50%;background:var(--color-primary-700);"></span>年级：<strong>高二</strong>（已有任务）</span>';
+
+      // Update header + hint
+      document.querySelector('.header__page-title').textContent = '自由作业 · 新班级扫描';
+      document.getElementById('nextBtn').textContent = '开始扫描（答案已录入）';
+      document.querySelector('.info-card span').innerHTML = '已有任务「<strong>'+contTaskName+'</strong>」的答案已录入。仅需选择新班级即可开始扫描。';
+      updateFooter();
+      // Hide history when already continuing a specific task
+      document.getElementById('historySection').style.display = 'none';
+    }
+  }
+
+  updateFooter();
+  renderHistory();
+</script>
+</body>
+</html>

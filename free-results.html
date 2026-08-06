@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自由作业 — 批改结果</title>
+<style>
+  :root{
+    --color-primary-50:#effafa;--color-primary-100:#def8f9;--color-primary-700:#00a6ab;--color-primary-950:#007a7e;
+    --color-gray-50:#f8f8fc;--color-gray-100:#d2d3de;--color-gray-200:#bcbdc0;--color-gray-300:#a2a3a6;
+    --color-gray-400:#88898c;--color-gray-500:#6e6f71;--color-gray-600:#545557;--color-gray-700:#3a3b3d;--color-gray-900:#212123;
+    --color-base-01:#000000;--color-base-02:#ffffff;
+    --color-success-700:#00a6ab;--color-error-100:#ffece8;--color-error-700:#f53f3f;--color-error-900:#cb2634;
+    --color-warning-100:#fff7e8;--color-warning-700:#ff7d00;
+    --color-info-100:#e4f0fb;--color-info-700:#2675c4;
+    --color-accent-1-50:#d2f0e1;--color-accent-1-600:#5ad0a3;--color-accent-1-800:#049d75;
+    --color-accent-3-50:#f3f1ff;--color-accent-3-600:#8b6ff2;
+    --color-overlay-alpha-2-04:rgba(19,19,21,.04);--color-overlay-alpha-2-05:rgba(19,19,21,.05);
+    --color-overlay-alpha-2-06:rgba(19,19,21,.06);--color-overlay-alpha-2-08:rgba(19,19,21,.08);
+    --color-overlay-alpha-2-10:rgba(19,19,21,.10);--color-overlay-alpha-2-20:rgba(19,19,21,.20);
+    --color-overlay-alpha-1-10:rgba(255,255,255,.10);--color-overlay-alpha-1-15:rgba(255,255,255,.15);
+    --color-overlay-alpha-1-35:rgba(255,255,255,.35);--color-overlay-alpha-1-60:rgba(255,255,255,.60);
+    --color-overlay-alpha-1-75:rgba(255,255,255,.75);
+    --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:28px;--radius-full:9999px;
+    --shadow-sm:0 1px 2px var(--color-overlay-alpha-2-04);
+    --shadow-md:0 4px 12px var(--color-overlay-alpha-2-06);
+    --shadow-lg:0 12px 32px var(--color-overlay-alpha-2-08);
+    --font-display:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --transition:180ms cubic-bezier(0.4,0,0.2,1);
+    --text-primary:var(--color-gray-900);--text-secondary:var(--color-gray-500);
+    --text-muted:var(--color-gray-400);--border:var(--color-gray-100);
+    --accent:var(--color-primary-700);--accent-dark:var(--color-primary-950);--accent-light:var(--color-primary-50);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--color-gray-50);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px;}
+  .app-window{width:1340px;max-width:100%;background:var(--color-base-02);border-radius:var(--radius-xl);box-shadow:0 0 0 1px var(--color-overlay-alpha-2-05),0 24px 64px var(--color-overlay-alpha-2-10);overflow:hidden;display:flex;flex-direction:column;max-height:95vh;}
+
+  .title-bar{height:32px;background:var(--color-primary-950);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;}
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;}
+  .title-bar__dot--close{background:var(--color-error-700);}.title-bar__dot--min{background:var(--color-warning-700);}.title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .header__back{display:flex;align-items:center;gap:5px;color:var(--color-overlay-alpha-1-75);font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:15px;height:15px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:13px;}
+  .header__page-title{color:var(--color-base-02);font-size:15px;font-weight:600;flex:1;}
+
+  .summary-bar{display:flex;align-items:center;gap:20px;padding:10px 24px;background:var(--color-base-02);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+  .summary-stat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);}
+  .summary-divider{width:1px;height:18px;background:var(--border);}
+
+  .content{flex:1;overflow-y:auto;padding:12px 24px;}
+
+  /* Student row */
+  .s-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-gray-50);}
+  .s-row:hover{background:var(--color-gray-50);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:var(--radius-md);}
+  .s-row__check{width:20px;height:20px;border-radius:50%;border:2px solid var(--color-gray-200);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);margin-top:2px;}
+  .s-row--sel .s-row__check{border-color:var(--accent);background:var(--accent);}
+  .s-row--sel .s-row__check::after{content:'';width:4px;height:8px;border-right:2px solid var(--color-base-02);border-bottom:2px solid var(--color-base-02);transform:rotate(45deg) translate(-1px,-1px);}
+  .s-row__info{flex:1;min-width:0;}
+  .s-row__top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .s-row__name{font-size:15px;font-weight:700;color:var(--text-primary);}
+  .s-row__score{font-size:18px;font-weight:800;}
+  .s-row__bar{flex:1;height:8px;background:var(--color-gray-50);border-radius:4px;overflow:hidden;}
+  .s-row__bar-fill{height:100%;border-radius:4px;transition:width 400ms ease-out;}
+  .s-row__pct{font-size:13px;font-weight:700;min-width:42px;text-align:right;}
+  .s-row__words{display:flex;flex-wrap:wrap;gap:4px;padding-left:2px;}
+  .word-tag{display:flex;align-items:center;gap:2px;padding:3px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:500;}
+  .word-tag--ok{background:var(--color-accent-1-50);color:var(--color-accent-1-800);}
+  .word-tag--bad{background:var(--color-error-100);color:var(--color-error-900);}
+
+  .error-panel{margin-top:16px;padding:14px 18px;background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-lg);}
+  .error-panel__title{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;}
+  .error-panel__words{display:flex;flex-wrap:wrap;gap:8px;}
+
+  .footer{background:var(--color-base-02);border-top:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .footer__left{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--text-secondary);}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;font-size:14px;font-weight:600;font-family:var(--font-body);border-radius:var(--radius-full);cursor:pointer;transition:all var(--transition);border:none;}
+  .btn-primary{background:var(--accent);color:var(--color-base-02);}
+  .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--color-gray-900);color:var(--color-base-02);padding:8px 24px;border-radius:var(--radius-full);font-size:12px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-8px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="free-answer-input.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> 返回
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">自由作业 · 批改结果 — <span id="headerTaskName">--</span></span>
+  </header>
+
+  <div class="summary-bar">
+    <div class="summary-stat">📋 已批改 <strong id="sumTotal" style="color:var(--accent);font-size:16px;">0</strong> 份</div>
+    <div class="summary-divider"></div>
+    <div class="summary-stat">📊 平均正确率 <strong id="sumAvg" style="font-size:16px;">0%</strong></div>
+    <div class="summary-divider"></div>
+    <div class="summary-stat">⚠ 高频错词 <strong id="sumTopWrong" style="color:var(--color-error-700);">—</strong></div>
+  </div>
+
+  <div class="content" id="contentArea"></div>
+
+  <div class="footer">
+    <div class="footer__left">
+      <span>任务：<strong id="footerTaskName">--</strong></span>
+      <span>|</span>
+      <span>已选 <strong id="footerSelCount" style="color:var(--accent);">0</strong> 份</span>
+      <span>|</span>
+      <span style="color:var(--accent);cursor:pointer;" id="footerSelectAll" onclick="toggleSelectAll()">全选</span>
+    </div>
+    <button class="btn btn-primary" id="printBtn" disabled onclick="printResults()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      打印所选学生
+    </button>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const taskName = params.get('name') || 'Unit 3 单词听写';
+  const answerWords = (params.get('answers') || 'apple,beautiful,classroom,dictionary,elephant,family,garden,hospital,important,journey,kitchen,library,mountain,notebook,orange,picture,question,restaurant,student,teacher').split(',');
+
+  document.getElementById('headerTaskName').textContent = taskName;
+  document.getElementById('footerTaskName').textContent = taskName;
+
+  const studentNames = ['林浩','陈思远','张雨桐','王俊杰','赵明哲','刘晓薇','杨昊天','黄诗涵','周子轩','吴嘉豪',
+    '郑雅文','孙铭宇','钱小萌','李泽楷','徐若琳','许晨阳','郭宇航','马欣然','罗文博','梁静怡',
+    '宋子豪','唐雨婷','韩明轩','冯佳琪','董浩然'];
+
+  let students = [];
+
+  answerWords.forEach((word,wi) => {
+    studentNames.forEach((name, si) => {
+      if (!students[si]) students[si] = { name, answers:[], selected:true };
+      const r = Math.random();
+      const correct = r < 0.75;
+      const written = correct ? word : generateWrongSpelling(word);
+      students[si].answers.push({ index:wi+1, word, written, correct });
+      students[si].score = (students[si].score || 0) + (correct ? 1 : 0);
+      students[si].total = answerWords.length;
+    });
+  });
+
+  function generateWrongSpelling(w) {
+    const v = [w.slice(0,-1)+'e',w.replace('a','e'),w.replace('i','e'),w.replace('c','k'),w.slice(0,-2)+'ing',w+'s',w.replace('ea','ee'),w.replace('ou','u'),w.replace('tion','sion')];
+    return v[Math.floor(Math.random()*v.length)];
+  }
+
+  const wordErrors = {};
+  answerWords.forEach((w,i) => { wordErrors[w] = {word:w, count:0, index:i+1}; });
+  students.forEach(s => { s.answers.forEach(a => { if(!a.correct) wordErrors[a.word].count++; }); });
+
+  function renderAll() {
+    const avgScore = Math.round(students.reduce((sum,s)=>sum+s.score,0) / students.length / answerWords.length * 100);
+    const topWrong = Object.values(wordErrors).sort((a,b)=>b.count-a.count).slice(0,3);
+
+    document.getElementById('sumTotal').textContent = students.length;
+    document.getElementById('sumAvg').textContent = avgScore+'%';
+    document.getElementById('sumTopWrong').textContent = topWrong.map(w=>w.word+'('+w.count+')').join('、');
+
+    document.getElementById('contentArea').innerHTML =
+      students.map((s,si) => {
+        const pct = Math.round(s.score/s.total*100);
+        const c = pct>=90?'var(--color-accent-1-600)':(pct>=70?'var(--color-warning-700)':'var(--color-error-700)');
+        const tags = s.answers.map(a => a.correct
+          ? `<span class="word-tag word-tag--ok">✓${a.index}.${a.written}</span>`
+          : `<span class="word-tag word-tag--bad">✗${a.index}.<s>${a.written}</s>→${a.word}</span>`
+        ).join('');
+        return `<div class="s-row ${s.selected?'s-row--sel':''}" id="row-${si}">
+          <div class="s-row__check" onclick="toggleSel(${si})"></div>
+          <div class="s-row__info">
+            <div class="s-row__top">
+              <span class="s-row__name">${s.name}</span>
+              <span class="s-row__score" style="color:${c};">${s.score}/${s.total}</span>
+              <div class="s-row__bar"><div class="s-row__bar-fill" style="width:${pct}%;background:${c};"></div></div>
+              <span class="s-row__pct" style="color:${c};">${pct}%</span>
+            </div>
+            <div class="s-row__words">${tags}</div>
+          </div>
+        </div>`;
+      }).join('')
+      + `<div class="error-panel">
+          <div class="error-panel__title">📊 班级错词排行</div>
+          <div class="error-panel__words">
+            ${Object.values(wordErrors).sort((a,b)=>b.count-a.count).map(w =>
+              `<span class="word-tag ${w.count>0?'word-tag--bad':'word-tag--ok'}">
+                ${w.index}. ${w.word} <strong>${w.count}人错</strong>
+              </span>`
+            ).join('')}
+          </div>
+        </div>`;
+
+    const sel = students.filter(s=>s.selected).length;
+    document.getElementById('footerSelCount').textContent = sel;
+    document.getElementById('printBtn').disabled = sel===0;
+    document.getElementById('footerSelectAll').textContent = students.every(s=>s.selected)?'取消全选':'全选';
+  }
+
+  function toggleSel(idx){students[idx].selected=!students[idx].selected;renderAll();}
+  function toggleSelectAll(){const all=students.every(s=>s.selected);students.forEach(s=>s.selected=!all);renderAll();}
+  function printResults(){const sel=students.filter(s=>s.selected);if(!sel.length)return;window.location.href='print-settings.html';}
+  function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);}
+
+  renderAll();
+</script>
+</body>
+</html>

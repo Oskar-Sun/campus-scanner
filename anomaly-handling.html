@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 异常处理</title>
+<style>
+  :root {
+    /* === Primary (品牌/交互) === */
+    --color-primary-50: #effafa;
+    --color-primary-100: #def8f9;
+    --color-primary-200: #b2f1f2;
+    --color-primary-300: #7de3e6;
+    --color-primary-500: #50d8dc;
+    --color-primary-700: #00a6ab;
+    --color-primary-950: #007a7e;
+
+    /* === Gray (中性) === */
+    --color-gray-50: #f8f8fc;
+    --color-gray-100: #d2d3de;
+    --color-gray-200: #bcbdc0;
+    --color-gray-300: #a2a3a6;
+    --color-gray-400: #88898c;
+    --color-gray-500: #6e6f71;
+    --color-gray-600: #545557;
+    --color-gray-700: #3a3b3d;
+    --color-gray-900: #212123;
+
+    /* === Base === */
+    --color-base-01: #000000;
+    --color-base-02: #ffffff;
+
+    /* === Semantic - Success (结果反馈) === */
+    --color-success-100: #bef8fa;
+    --color-success-300: #66dade;
+    --color-success-500: #11c5ca;
+    --color-success-700: #00a6ab;
+    --color-success-900: #008a8f;
+
+    /* === Semantic - Error === */
+    --color-error-100: #ffece8;
+    --color-error-300: #fdcdc5;
+    --color-error-500: #fbaca3;
+    --color-error-700: #f53f3f;
+    --color-error-900: #cb2634;
+
+    /* === Semantic - Warning === */
+    --color-warning-100: #fff7e8;
+    --color-warning-300: #ffe4ba;
+    --color-warning-500: #ffcf8b;
+    --color-warning-700: #ff7d00;
+    --color-warning-900: #d25f00;
+
+    /* === Semantic - Info === */
+    --color-info-100: #e4f0fb;
+    --color-info-300: #97c4f1;
+    --color-info-500: #3089e3;
+    --color-info-700: #2675c4;
+    --color-info-900: #185695;
+
+    /* === Accent 1 (绿 - 分类/图表) === */
+    --color-accent-1-50: #d2f0e1;
+    --color-accent-1-400: #a7eaca;
+    --color-accent-1-600: #5ad0a3;
+    --color-accent-1-800: #049d75;
+
+    /* === Accent 2 (粉 - 分类/图表) === */
+    --color-accent-2-50: #fff1f7;
+    --color-accent-2-400: #fbcde4;
+    --color-accent-2-600: #ff86c8;
+    --color-accent-2-800: #d14692;
+
+    /* === Accent 3 (紫 - 分类/图表) === */
+    --color-accent-3-50: #f3f1ff;
+    --color-accent-3-400: #cfc6ff;
+    --color-accent-3-600: #8b6ff2;
+    --color-accent-3-800: #5936b1;
+
+    /* === Accent 4 (黄 - 分类/图表) === */
+    --color-accent-4-50: #fff9e7;
+    --color-accent-4-400: #ffeeb6;
+    --color-accent-4-600: #f9b932;
+    --color-accent-4-800: #c27b00;
+
+    /* === Overlay Alpha-2 (黑底半透明) === */
+    --color-overlay-alpha-2-5: rgba(19,19,21,0.05);
+    --color-overlay-alpha-2-10: rgba(19,19,21,0.10);
+    --color-overlay-alpha-2-20: rgba(19,19,21,0.20);
+    --color-overlay-alpha-2-45: rgba(19,19,21,0.45);
+    --color-overlay-alpha-2-55: rgba(19,19,21,0.55);
+    --color-overlay-alpha-2-60: rgba(19,19,21,0.60);
+
+    /* === Overlay Alpha-1 (白底半透明) === */
+    --color-overlay-alpha-1-10: rgba(255,255,255,0.10);
+    --color-overlay-alpha-1-35: rgba(255,255,255,0.35);
+    --color-overlay-alpha-1-60: rgba(255,255,255,0.60);
+    --color-overlay-alpha-1-78: rgba(255,255,255,0.78);
+
+    /* === Legacy Aliases (向后兼容) === */
+    --bg-primary: var(--color-gray-50);
+    --bg-header: var(--color-primary-950);
+    --text-primary: var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
+    --text-muted: var(--color-gray-400);
+    --border: var(--color-gray-100);
+    --accent: var(--color-primary-700);
+    --accent-dark: var(--color-primary-950);
+    --accent-light: var(--color-primary-50);
+    --success: var(--color-success-700);
+    --danger: var(--color-error-700);
+    --warning: var(--color-warning-700);
+    --danger-bg: var(--color-error-100);
+    --orange: var(--color-warning-700);
+    --purple: var(--color-accent-3-600);
+
+    /* === Border Radius === */
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    /* === Shadows === */
+    --shadow-sm: 0 1px 2px var(--color-overlay-alpha-2-5);
+    --shadow: 0 1px 3px var(--color-overlay-alpha-2-10);
+    --shadow-md: 0 4px 12px var(--color-overlay-alpha-2-10);
+    --shadow-lg: 0 12px 32px var(--color-overlay-alpha-2-10);
+
+    /* === Typography === */
+    --font-display: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+
+    /* === Transitions === */
+    --transition: 160ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:var(--font-body);background:var(--color-gray-50);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  }
+  .app-window{
+    width:1560px;max-width:100%;background:var(--color-base-02);
+    border-radius:var(--radius-xl);box-shadow:0 0 0 1px var(--color-overlay-alpha-2-5),0 24px 64px var(--color-overlay-alpha-2-10);
+    overflow:hidden;display:flex;flex-direction:column;max-height:96vh;
+  }
+
+  .title-bar{
+    height:32px;background:var(--color-primary-950);
+    display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;
+  }
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;opacity:0.85;}
+  .title-bar__dot--close{background:var(--color-error-700);}
+  .title-bar__dot--min{background:var(--color-warning-700);}
+  .title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{
+    background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);
+    padding:0 24px;height:50px;display:flex;align-items:center;gap:12px;flex-shrink:0;
+  }
+  .header__back{display:flex;align-items:center;gap:5px;color:var(--color-overlay-alpha-1-78);font-size:12px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:14px;height:14px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:12px;}
+  .header__page-title{color:var(--color-base-02);font-size:14px;font-weight:600;flex:1;}
+
+  .main-content{display:flex;flex:1;overflow:hidden;}
+
+  /* === Left Sidebar — Expandable category list === */
+  .sidebar{width:260px;border-right:1px solid var(--border);background:var(--color-base-02);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+  .sidebar__header{padding:14px 14px 8px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);}
+  .sidebar__category{margin-bottom:2px;}
+  .sidebar__category-header{
+    display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;
+    transition:all var(--transition);font-size:12px;font-weight:600;
+    border-left:3px solid transparent;user-select:none;
+  }
+  .sidebar__category-header:hover{background:var(--color-gray-50);}
+  .sidebar__category--active>.sidebar__category-header{background:var(--accent-light);border-left-color:var(--accent);}
+  .sidebar__category__icon{width:26px;height:26px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;}
+  .sidebar__category__icon--scan{background:var(--color-error-100);color:var(--color-error-700);}
+  .sidebar__category__icon--qrcode{background:var(--color-warning-100);color:var(--color-warning-700);}
+  .sidebar__category__icon--exam{background:var(--color-accent-4-50);color:var(--color-accent-4-600);}
+  .sidebar__category__icon--dup{background:var(--color-accent-3-50);color:var(--color-accent-3-600);}
+  .sidebar__category__count{margin-left:auto;font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--radius-md);}
+  .sidebar__category__count--scan{background:var(--color-error-100);color:var(--color-error-900);}
+  .sidebar__category__count--qrcode{background:var(--color-warning-100);color:var(--color-warning-900);}
+  .sidebar__category__count--exam{background:var(--color-accent-4-50);color:var(--color-accent-4-800);}
+  .sidebar__category__count--dup{background:var(--color-accent-3-50);color:var(--color-accent-3-800);}
+  .sidebar__category__chevron{
+    width:14px;height:14px;opacity:0.4;transition:transform var(--transition);
+  }
+  .sidebar__category--expanded .sidebar__category__chevron{transform:rotate(90deg);}
+
+  .sidebar__items{display:none;}
+  .sidebar__category--expanded .sidebar__items{display:block;}
+  .sidebar__item{
+    display:flex;align-items:center;gap:6px;padding:6px 14px 6px 36px;cursor:pointer;
+    transition:all var(--transition);font-size:11px;color:var(--text-secondary);
+    border-left:3px solid transparent;user-select:none;
+  }
+  .sidebar__item:hover{background:var(--color-gray-50);color:var(--text-primary);}
+  .sidebar__item--active{background:var(--accent-light);border-left-color:var(--accent);color:var(--color-primary-700);font-weight:600;}
+  .sidebar__item__dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sidebar__item__dot--scan{background:var(--color-error-300);}
+  .sidebar__item__dot--qrcode{background:var(--color-warning-300);}
+  .sidebar__item__dot--exam{background:var(--color-accent-4-400);}
+  .sidebar__item__dot--dup{background:var(--color-accent-3-400);}
+
+  /* === Work Area === */
+  .work-area{flex:1;display:flex;overflow:hidden;}
+
+  /* === Image Panel === */
+  .image-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:10px;background:var(--color-gray-50);position:relative;overflow:hidden;}
+  .image-panel--zoom{justify-content:flex-start;align-items:flex-start;padding:0;overflow:auto;}
+  .image-panel__placeholder{
+    width:480px;height:560px;background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-lg);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:var(--text-muted);font-size:12px;gap:8px;box-shadow:var(--shadow);
+  }
+  .image-panel__placeholder svg{width:64px;height:64px;opacity:0.18;}
+  .image-panel__placeholder--large{width:100%;height:100%;min-height:400px;border-radius:0;border:none;}
+
+  /* === Duplicate: large single image with swipe dots === */
+  .dup-viewer{width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+  .dup-viewer__label{
+    font-size:14px;font-weight:700;color:var(--text-primary);
+    display:flex;align-items:center;gap:8px;
+  }
+  .dup-viewer__label .student-tag{
+    padding:4px 14px;border-radius:var(--radius-full);background:var(--accent-light);color:var(--color-primary-700);
+  }
+  .dup-viewer__image-wrap{
+    width:540px;height:580px;background:var(--color-base-02);border:3px solid var(--border);
+    border-radius:var(--radius-lg);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;gap:6px;
+    position:relative;box-shadow:var(--shadow-md);transition:all var(--transition);
+  }
+  .dup-viewer__image-wrap svg{width:64px;height:64px;opacity:0.18;}
+  .dup-viewer__time-tag{
+    position:absolute;top:12px;right:14px;padding:3px 10px;border-radius:var(--radius-full);
+    font-size:10px;font-weight:600;background:var(--color-overlay-alpha-2-55);color:var(--color-base-02);
+  }
+  .dup-viewer__selected-badge{
+    position:absolute;top:12px;left:14px;padding:3px 10px;border-radius:var(--radius-full);
+    font-size:10px;font-weight:600;
+  }
+  .dup-viewer__selected-badge--active{background:var(--accent);color:var(--color-base-02);}
+  .dup-viewer__selected-badge--inactive{background:var(--color-gray-100);color:var(--text-muted);}
+  .dup-viewer__dots{display:flex;gap:8px;align-items:center;}
+  .dup-viewer__dot{
+    width:10px;height:10px;border-radius:50%;background:var(--color-gray-200);
+    cursor:pointer;transition:all var(--transition);
+  }
+  .dup-viewer__dot--active{background:var(--accent);width:12px;height:12px;box-shadow:0 0 0 3px var(--color-overlay-alpha-2-20);}
+  .dup-viewer__swipe-hint{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px;}
+
+  /* === Work bar (top bar between header and main content) === */
+  .work-bar{
+    background:var(--color-base-02);border-bottom:1px solid var(--border);
+    padding:6px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;
+  }
+  .work-bar__info{font-size:11px;color:var(--text-secondary);}
+  .work-bar__info strong{color:var(--accent);}
+  .work-bar__preview-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 14px;border-radius:var(--radius-full);
+    font-size:11px;font-weight:600;cursor:pointer;
+    transition:all var(--transition);font-family:var(--font-body);
+    text-decoration:none;white-space:nowrap;
+    border:1.5px solid var(--color-primary-200);
+    background:var(--color-primary-50);color:var(--color-primary-700);
+    margin-left:12px;
+  }
+  .work-bar__preview-btn:hover{
+    background:var(--color-primary-100);border-color:var(--color-primary-500);
+    color:var(--color-primary-950);
+  }
+  .work-nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+  .work-nav__btn{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--border);
+    background:var(--color-base-02);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all var(--transition);color:var(--text-secondary);
+  }
+  .work-nav__btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+  .work-nav__btn:disabled{opacity:0.3;cursor:not-allowed;}
+  .work-nav__info{font-size:11px;color:var(--text-secondary);min-width:50px;text-align:center;}
+
+  .image-panel__group-label{
+    font-size:13px;font-weight:600;color:var(--text-primary);
+    background:var(--color-base-02);padding:6px 16px;border-radius:var(--radius-full);border:1px solid var(--border);
+  }
+  .image-info-overlay{
+    position:absolute;top:10px;left:10px;background:var(--color-overlay-alpha-2-60);color:var(--color-base-02);
+    padding:4px 10px;border-radius:var(--radius-full);font-size:10px;
+  }
+
+  /* === Right Action Panel === */
+  .action-panel{width:350px;background:var(--color-base-02);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+  .action-panel__header{padding:12px 16px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid var(--color-gray-50);}
+  .action-panel__body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
+  .action-panel__body::-webkit-scrollbar{width:4px;}
+  .action-panel__body::-webkit-scrollbar-thumb{background:var(--color-gray-100);border-radius:2px;}
+
+  .action-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--transition);font-family:var(--font-body);text-align:left;border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-primary);}
+  .action-btn:hover{background:var(--color-gray-50);border-color:var(--color-gray-200);}
+  .action-btn svg{width:16px;height:16px;flex-shrink:0;opacity:0.6;}
+  .action-btn--danger{color:var(--color-error-900);border-color:var(--color-error-300);}
+  .action-btn--danger:hover{background:var(--color-error-100);border-color:var(--color-error-500);}
+  .action-btn--primary{background:linear-gradient(135deg,var(--color-primary-700) 0%,var(--color-primary-950) 100%);color:var(--color-base-02);border:none;font-weight:600;}
+  .action-btn--primary:hover{background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 100%);}
+
+  .action-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;}
+  .rotate-row{display:flex;gap:8px;}
+  .rotate-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:var(--radius);font-size:11px;font-weight:500;cursor:pointer;transition:all var(--transition);font-family:var(--font-body);border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-primary);}
+  .rotate-btn:hover{background:var(--color-gray-50);border-color:var(--accent);}
+  .rotate-btn svg{width:15px;height:15px;opacity:0.6;}
+  .assignment-radio{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius);border:1.5px solid var(--border);cursor:pointer;transition:all var(--transition);font-size:12px;}
+  .assignment-radio:hover{border-color:var(--accent);background:var(--accent-light);}
+  .assignment-radio--selected{border-color:var(--accent);background:var(--accent-light);font-weight:600;}
+  .assignment-radio__dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--color-gray-100);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .assignment-radio--selected .assignment-radio__dot{border-color:var(--accent);}
+  .assignment-radio--selected .assignment-radio__dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);}
+  .student-search{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--color-gray-50);border:1px solid var(--border);border-radius:var(--radius-full);}
+  .student-search svg{width:13px;height:13px;color:var(--text-muted);flex-shrink:0;}
+  .student-search input{border:none;outline:none;background:transparent;font-size:12px;color:var(--text-primary);font-family:var(--font-body);flex:1;}
+  .student-filter-row{display:flex;gap:4px;}
+  .student-filter-chip{flex:1;padding:5px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:500;cursor:pointer;text-align:center;transition:all var(--transition);font-family:var(--font-body);border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-secondary);}
+  .student-filter-chip:hover{border-color:var(--accent);}
+  .student-filter-chip--active{background:var(--accent-light);border-color:var(--accent);color:var(--color-primary-700);font-weight:600;}
+  .student-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
+  .student-list__item{display:flex;align-items:center;padding:7px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);font-size:12px;gap:8px;}
+  .student-list__item:hover{background:var(--color-gray-50);}
+  .student-list__item--selected{background:var(--accent-light);color:var(--color-primary-700);font-weight:600;}
+  .student-list__item--has-scan{color:var(--text-muted);}
+  .student-list__item--has-scan::after{content:'已关联';margin-left:auto;font-size:9px;color:var(--color-success-700);font-weight:500;}
+
+  .footer{background:var(--color-base-02);border-top:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .footer__info{font-size:11px;color:var(--text-secondary);}
+  .footer__info strong{color:var(--accent);}
+  .btn-sm{padding:6px 14px;font-size:11px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;border:none;font-family:var(--font-body);transition:all var(--transition);}
+  .btn-sm--primary{background:var(--accent);color:var(--color-base-02);}
+  .btn-sm--primary:hover{background:var(--accent-dark);}
+  .btn-sm--ghost{background:transparent;color:var(--text-secondary);}
+  .btn-sm--ghost:hover{background:var(--color-gray-50);}
+  .btn-sm--danger{background:var(--color-error-700);color:var(--color-base-02);}
+  .btn-sm--danger:hover{background:var(--color-error-900);}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--color-gray-900) 0%,var(--color-gray-700) 100%);color:var(--color-base-02);padding:9px 18px;border-radius:22px;font-size:12px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+
+  /* === Side / page switcher (unified — subtle, rarely needed, distinct from group nav) === */
+  .side-switcher{
+    position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:8px;
+    background:var(--color-overlay-alpha-2-55);backdrop-filter:blur(6px);
+    padding:5px 14px;border-radius:var(--radius-full);z-index:5;
+  }
+  .side-switcher__btn{
+    width:22px;height:22px;border-radius:50%;border:none;
+    background:var(--color-overlay-alpha-1-25);color:var(--color-base-02);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-size:10px;transition:all var(--transition);line-height:1;
+  }
+  .side-switcher__btn:hover{background:var(--color-overlay-alpha-1-50);}
+  .side-switcher__btn:disabled{opacity:0.2;cursor:not-allowed;}
+  .side-switcher__label{
+    color:var(--color-base-02);font-size:11px;font-weight:500;
+    white-space:nowrap;user-select:none;min-width:76px;text-align:center;
+  }
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-6px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="scan-progress.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">异常处理</span>
+  </header>
+
+  <!-- Work bar: current item info + view original paper + student/group nav at top-right -->
+  <div class="work-bar" id="workBar">
+    <span class="work-bar__info">当前处理：<strong id="barType">--</strong> ｜ 第 <strong id="barCurrent">0</strong> / <strong id="barTotal">0</strong> 条</span>
+    <a class="work-bar__preview-btn" id="barPreviewBtn" href="student-preview.html" title="查看原卷并修改成绩">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      查看原卷与成绩
+    </a>
+    <div class="work-nav">
+      <button class="work-nav__btn" id="barPrevBtn" onclick="navigate(-1)">◂</button>
+      <span class="work-nav__info" id="barNavInfo">0 / 0</span>
+      <button class="work-nav__btn" id="barNextBtn" onclick="navigate(1)">▸</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Left Sidebar: expandable categories with item lists -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar__header">异常分类</div>
+    </div>
+
+    <div class="work-area" id="workArea">
+      <div class="image-panel" id="imagePanel"></div>
+      <div class="action-panel" id="actionPanel">
+        <div class="action-panel__header">操作面板</div>
+        <div class="action-panel__body" id="actionBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer__info">
+      当前处理：<strong id="footerType">--</strong> ｜
+      第 <strong id="footerCurrent">0</strong> / <strong id="footerTotal">0</strong> 条
+    </div>
+    <div>
+      <!-- Footer buttons removed — user navigates via sidebar list -->
+    </div>
+  </div>
+</div>
+
+<script>
+  const batchAssignments = ['数学周练卷（五）', '英语单元测试'];
+
+  const classStudents = [
+    {name:'张三',pinyin:'zhangsan'},{name:'李四',pinyin:'lisi'},{name:'王五',pinyin:'wangwu'},
+    {name:'赵六',pinyin:'zhaoliu'},{name:'钱七',pinyin:'qianqi'},{name:'孙八',pinyin:'sunba'},
+    {name:'周九',pinyin:'zhoujiu'},{name:'吴十',pinyin:'wushi'},{name:'郑十一',pinyin:'zhengshiyi'},
+    {name:'王小明',pinyin:'wangxiaoming'},{name:'李小华',pinyin:'lixiaohua'},{name:'张大伟',pinyin:'zhangdawei'},
+    {name:'刘洋',pinyin:'liuyang'},{name:'陈芳',pinyin:'chenfang'},{name:'杨柳',pinyin:'yangliu'},
+    {name:'黄同学',pinyin:'huangtongxue'},{name:'林同学',pinyin:'lintongxue'},{name:'何同学',pinyin:'hetongxue'},
+    {name:'郭同学',pinyin:'guotongxue'},{name:'马同学',pinyin:'matongxue'},{name:'罗同学',pinyin:'luotongxue'},
+    {name:'梁同学',pinyin:'liangtongxue'},{name:'宋同学',pinyin:'songtongxue'},{name:'唐同学',pinyin:'tangtongxue'},
+    {name:'韩同学',pinyin:'hantongxue'},{name:'冯同学',pinyin:'fengtongxue'},{name:'董同学',pinyin:'dongtongxue'},
+    {name:'程同学',pinyin:'chengtongxue'},{name:'曹同学',pinyin:'caotongxue'},{name:'袁同学',pinyin:'yuantongxue'},
+    {name:'邓同学',pinyin:'dengtongxue'},{name:'许同学',pinyin:'xutongxue'},{name:'傅同学',pinyin:'futongxue'},
+    {name:'沈同学',pinyin:'shentongxue'},{name:'曾同学',pinyin:'zengtongxue'},{name:'彭同学',pinyin:'pengtongxue'},
+    {name:'吕同学',pinyin:'lvtongxue'},{name:'苏同学',pinyin:'sutongxue'},{name:'蒋同学',pinyin:'jiangtongxue'},
+    {name:'蔡同学',pinyin:'caitongxue'},{name:'贾同学',pinyin:'jiatongxue'},{name:'丁同学',pinyin:'dingtongxue'},
+    {name:'魏同学',pinyin:'weitongxue'},{name:'薛同学',pinyin:'xuetongxue'},{name:'叶同学',pinyin:'yetongxue'},
+    {name:'阎同学',pinyin:'yantongxue'},{name:'余同学',pinyin:'yutongxue'},{name:'潘同学',pinyin:'pantongxue'},
+    {name:'杜同学',pinyin:'dutongxue'},{name:'戴同学',pinyin:'daitongxue'},
+  ];
+
+  const associatedNames = new Set(['张三','李四','王五','赵六','钱七','吴十','郑十一','王小明','张大伟','刘洋','陈芳','杨柳']);
+
+  const anomalyData = {
+    scan: {
+      label:'扫描异常', icon:'📷', iconClass:'scan', countClass:'scan', dotClass:'scan',
+      items:[
+        {id:'s1',group:'第一组',desc:'图像模糊', images:[{label:'正面'},{label:'反面'}]},
+        {id:'s2',group:'第二组',desc:'纸张折角', images:[{label:'扫描图'}]},
+        {id:'s3',group:'第三组',desc:'图像倾斜', images:[{label:'正面'},{label:'反面'}]},
+      ]
+    },
+    qrcode: {
+      label:'二维码异常', icon:'📱', iconClass:'qrcode', countClass:'qrcode', dotClass:'qrcode',
+      items:[
+        {id:'q1',group:'第一组',desc:'未检测到二维码', images:[{label:'正面'},{label:'反面'}]},
+        {id:'q2',group:'第二组',desc:'二维码污损', images:[{label:'扫描图'}]},
+      ]
+    },
+    examNo: {
+      label:'考号关联异常', icon:'🆔', iconClass:'exam', countClass:'exam', dotClass:'exam',
+      items:[
+        {id:'e1',group:'第一组',desc:'考号未识别', images:[{label:'正面'},{label:'反面'}]},
+        {id:'e2',group:'第二组',desc:'考号模糊', images:[{label:'正面'}]},
+        {id:'e3',group:'第三组',desc:'无考号区域', images:[{label:'第1页'},{label:'第2页'},{label:'第3页'}]},
+        {id:'e4',group:'第四组',desc:'考号被遮挡', images:[{label:'正面'},{label:'反面'}]},
+      ]
+    },
+    duplicate: {
+      label:'重复扫描', icon:'🔄', iconClass:'dup', countClass:'dup', dotClass:'dup',
+      items:[
+        {id:'d1',group:'第一组',desc:'重复',studentName:'孙八',prevTime:'2025/12/05 09:12',currTime:'2025/12/05 09:14', images:[{label:'正面'},{label:'反面'}]},
+        {id:'d2',group:'第二组',desc:'重复',studentName:'周九',prevTime:'2025/12/04 14:30',currTime:'2025/12/05 10:01', images:[{label:'扫描图'}]},
+      ]
+    }
+  };
+
+  let currentType = 'scan';
+  let currentIdx = 0;
+  let selectedAssignment = batchAssignments[0];
+  let selectedStudent = null;
+  let studentFilter = 'unassociated';
+  let studentSearch = '';
+  let dupImageIdx = 0; // 0=本次(current), 1=历史(previous)
+  let dupRelateMode = false; // whether "关联学生" mode is active in duplicate view
+  let currentSideIdx = 0; // unified side/page image index (all anomaly types)
+
+  function currentItems() { return anomalyData[currentType].items; }
+  function currentItem() { return currentItems()[currentIdx]; }
+
+  // ===== Render Sidebar (expandable list) =====
+  function renderSidebar() {
+    const sb = document.getElementById('sidebar');
+    let html = '<div class="sidebar__header">异常分类</div>';
+    for (const [key, data] of Object.entries(anomalyData)) {
+      const isActive = key === currentType;
+      html += `<div class="sidebar__category ${isActive?'sidebar__category--active sidebar__category--expanded':''}" data-type="${key}">`;
+      html += `<div class="sidebar__category-header" onclick="toggleCategory('${key}')">
+        <div class="sidebar__category__icon sidebar__category__icon--${data.iconClass}">${data.icon}</div>
+        <span>${data.label}</span>
+        <span class="sidebar__category__count sidebar__category__count--${data.countClass}">${data.items.length}</span>
+        <svg class="sidebar__category__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`;
+
+      // Item list
+      html += `<div class="sidebar__items">`;
+      data.items.forEach((item, i) => {
+        const activeItem = isActive && i === currentIdx;
+        const label = item.studentName || item.group;
+        html += `<div class="sidebar__item ${activeItem?'sidebar__item--active':''}" onclick="selectItem('${key}',${i})">
+          <span class="sidebar__item__dot sidebar__item__dot--${data.dotClass}"></span>
+          ${label}
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+    sb.innerHTML = html;
+  }
+
+  function toggleCategory(key) {
+    const el = document.querySelector(`.sidebar__category[data-type="${key}"]`);
+    const isExpanded = el.classList.contains('sidebar__category--expanded');
+    // Close all, open clicked
+    document.querySelectorAll('.sidebar__category').forEach(c => c.classList.remove('sidebar__category--expanded'));
+    if (!isExpanded) el.classList.add('sidebar__category--expanded');
+  }
+
+  function selectItem(type, idx) {
+    currentType = type;
+    currentIdx = idx;
+    selectedStudent = null;
+    studentSearch = '';
+    dupImageIdx = 0;
+    dupRelateMode = false;
+    currentSideIdx = 0;
+    // Ensure category is expanded and active
+    document.querySelectorAll('.sidebar__category').forEach(c => {
+      c.classList.remove('sidebar__category--active');
+      if (c.dataset.type === type) c.classList.add('sidebar__category--active','sidebar__category--expanded');
+    });
+    renderAll();
+  }
+
+  // ===== Render Image Panel =====
+  function renderImagePanel() {
+    const panel = document.getElementById('imagePanel');
+    const item = currentItem();
+
+    if (currentType === 'duplicate') {
+      // Dots switch between scan versions (本次/历史) — they serve as the image switcher for this type
+      const dupItem = item;
+      const dupVersions = [
+        { label:'本次扫描', time:dupItem.currTime, isCurrent:true },
+        { label:'历史扫描', time:dupItem.prevTime, isCurrent:false },
+      ];
+      const cur = dupVersions[dupImageIdx];
+      panel.className = 'image-panel';
+      panel.innerHTML = `
+        <div class="dup-viewer">
+          <div class="dup-viewer__label">
+            <span class="student-tag">${dupItem.studentName}</span> 重复扫描 — 共 2 张图片
+          </div>
+          <div class="dup-viewer__image-wrap">
+            <span class="dup-viewer__selected-badge ${cur.isCurrent?'dup-viewer__selected-badge--active':'dup-viewer__selected-badge--inactive'}">${cur.isCurrent?'✓ 默认选中':'历史版本'}</span>
+            <span class="dup-viewer__time-tag">${cur.time}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>${cur.label} — 扫描原图</span>
+            <span style="font-size:10px;color:var(--text-muted);">${dupItem.studentName} 的试卷</span>
+          </div>
+          <div class="dup-viewer__dots">
+            <div class="dup-viewer__dot ${dupImageIdx===0?'dup-viewer__dot--active':''}" onclick="switchDupImage(0)" title="本次扫描"></div>
+            <div class="dup-viewer__dot ${dupImageIdx===1?'dup-viewer__dot--active':''}" onclick="switchDupImage(1)" title="历史扫描"></div>
+          </div>
+          <div class="dup-viewer__swipe-hint">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            点击圆点切换图片 · 当前显示：<strong>${cur.label}</strong>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      `;
+    } else if (currentType === 'examNo') {
+      const images = item.images || [{label:'扫描图'}];
+      const curImg = images[currentSideIdx] || images[0];
+      panel.className = 'image-panel image-panel--zoom';
+      panel.innerHTML = `
+        <div class="image-info-overlay">🔍 定位至考号区域（左上角）</div>
+        <div class="image-panel__placeholder image-panel__placeholder--large" style="margin:0;border-radius:0;width:100%;height:100%;transform:scale(1.8);transform-origin:top left;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>${item.group} — 扫描原图（放大至考号区域）</span>
+          <span style="font-size:10px;color:var(--text-muted);">当前：${curImg.label}</span>
+        </div>
+        ${renderSideSwitcher(images)}
+      `;
+    } else if (currentType === 'scan') {
+      const images = item.images || [{label:'扫描图'}];
+      const curImg = images[currentSideIdx] || images[0];
+      panel.className = 'image-panel';
+      panel.innerHTML = `
+        <div class="image-panel__placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>扫描原图预览</span>
+          <span style="font-size:10px;color:var(--text-muted);">${curImg.label}</span>
+        </div>
+        ${renderSideSwitcher(images)}
+      `;
+    } else {
+      // qrcode
+      const images = item.images || [{label:'扫描图'}];
+      const curImg = images[currentSideIdx] || images[0];
+      panel.className = 'image-panel';
+      panel.innerHTML = `
+        <div class="image-panel__placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>扫描原图预览</span>
+          <span style="font-size:10px;color:var(--color-error-700);">未检测到二维码</span>
+        </div>
+        ${renderSideSwitcher(images)}
+      `;
+    }
+  }
+
+  function switchDupImage(idx) { dupImageIdx = idx; renderAll(); }
+  function switchSide(idx) { currentSideIdx = idx; renderImagePanel(); }
+
+  /** Unified side/page switcher — only rendered when an item has 2+ images.
+   *  Positioned as a subtle floating pill at the bottom of the image area,
+   *  visually distinct from the group/student navigation below. */
+  function renderSideSwitcher(images) {
+    if (!images || images.length <= 1) return '';
+    const total = images.length;
+    const cur = images[currentSideIdx] || images[0];
+    return `
+      <div class="side-switcher">
+        <button class="side-switcher__btn" ${currentSideIdx===0?'disabled':''} onclick="switchSide(${currentSideIdx-1})">◀</button>
+        <span class="side-switcher__label">${cur.label} · ${currentSideIdx+1}/${total}</span>
+        <button class="side-switcher__btn" ${currentSideIdx>=total-1?'disabled':''} onclick="switchSide(${currentSideIdx+1})">▶</button>
+      </div>
+    `;
+  }
+
+  // ===== Render Action Panel =====
+  function renderActionPanel() {
+    const body = document.getElementById('actionBody');
+    const item = currentItem();
+
+    switch (currentType) {
+      case 'scan':
+        body.innerHTML = `
+          <div class="action-label">当前：${item.group}</div>
+          <div class="rotate-row">
+            <button class="rotate-btn" onclick="showToast('已向左旋转90°')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> 向左旋转</button>
+            <button class="rotate-btn" onclick="showToast('已向右旋转90°')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg> 向右旋转</button>
+          </div>
+          <button class="action-btn action-btn--danger" onclick="deleteCurrent()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            删除此图片
+          </button>
+        `;
+        break;
+
+      case 'qrcode':
+        body.innerHTML = `
+          <div class="action-label">当前：${item.group}</div>
+          <div class="rotate-row">
+            <button class="rotate-btn" onclick="showToast('已向左旋转90°')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> 向左90°</button>
+            <button class="rotate-btn" onclick="showToast('已向右旋转90°')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg> 向右90°</button>
+          </div>
+          <div class="action-label">确认作业归属</div>
+          <p style="font-size:10px;color:var(--text-muted);">未检测到二维码，请确认该试卷属于哪份作业：</p>
+          ${batchAssignments.map(a => `
+            <div class="assignment-radio ${selectedAssignment===a?'assignment-radio--selected':''}" onclick="selectAssignment('${a}')">
+              <span class="assignment-radio__dot"></span>${a}
+            </div>`).join('')}
+          <button class="action-btn" onclick="showToast('已将该图片转移至其他作业')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            转移给其他作业
+          </button>
+          <button class="action-btn action-btn--primary" onclick="confirmCurrent()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            确认为本批作业
+          </button>
+        `;
+        break;
+
+      case 'examNo':
+        body.innerHTML = `
+          <div class="action-label">当前：${item.group}</div>
+          <div class="student-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="搜索姓名或拼音…" id="studentSearchInput" oninput="onStudentSearch(this.value)">
+          </div>
+          <div class="student-filter-row">
+            <div class="student-filter-chip ${studentFilter==='unassociated'?'student-filter-chip--active':''}" onclick="setStudentFilter('unassociated')">未关联学生</div>
+            <div class="student-filter-chip ${studentFilter==='all'?'student-filter-chip--active':''}" onclick="setStudentFilter('all')">全部学生</div>
+          </div>
+          <div class="student-list" id="studentList"></div>
+          <button class="action-btn action-btn--primary" id="examConfirmBtn" disabled onclick="confirmExamNo()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            确认关联
+          </button>
+        `;
+        renderStudentList();
+        break;
+
+      case 'duplicate':
+        renderDuplicateAction(item);
+        break;
+    }
+  }
+
+  function renderStudentList() {
+    const list = document.getElementById('studentList');
+    if (!list) return;
+    const search = studentSearch.toLowerCase();
+    let students = classStudents;
+    if (studentFilter==='unassociated') students = students.filter(s => !associatedNames.has(s.name));
+    if (search) students = students.filter(s => s.name.includes(search) || s.pinyin.includes(search));
+    list.innerHTML = students.map(s => {
+      const hasScan = associatedNames.has(s.name);
+      return `<div class="student-list__item ${selectedStudent===s.name?'student-list__item--selected':''} ${hasScan?'student-list__item--has-scan':''}" onclick="selectStudent('${s.name}')">${s.name}</div>`;
+    }).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:12px;text-align:center;">无匹配学生</div>';
+    const btn = document.getElementById('examConfirmBtn');
+    if (btn) btn.disabled = !selectedStudent;
+  }
+
+  // ===== Duplicate: render action panel =====
+  function renderDuplicateAction(item) {
+    const body = document.getElementById('actionBody');
+    if (dupRelateMode) {
+      // Show student association UI (same as examNo)
+      body.innerHTML = `
+        <div class="action-label">关联学生 — ${item.studentName} 的重复图片</div>
+        <p style="font-size:10px;color:var(--text-muted);">当前图片可能属于其他学生（考号涂错），请选择正确的学生：</p>
+        <div class="student-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="搜索姓名或拼音…" id="studentSearchInput" oninput="onStudentSearch(this.value)">
+        </div>
+        <div class="student-filter-row">
+          <div class="student-filter-chip ${studentFilter==='unassociated'?'student-filter-chip--active':''}" onclick="setStudentFilter('unassociated')">未关联学生</div>
+          <div class="student-filter-chip ${studentFilter==='all'?'student-filter-chip--active':''}" onclick="setStudentFilter('all')">全部学生</div>
+        </div>
+        <div class="student-list" id="studentList"></div>
+        <button class="action-btn" onclick="dupRelateMode=false;selectedStudent=null;renderAll();">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          取消关联
+        </button>
+        <button class="action-btn action-btn--primary" id="dupRelateConfirmBtn" disabled onclick="confirmDupRelate()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          确认关联至所选学生
+        </button>
+      `;
+      renderStudentList();
+      return;
+    }
+
+    // Normal duplicate view
+    const curImg = dupImageIdx === 0;
+    const isSelected = curImg; // the currently displayed image is selected
+    body.innerHTML = `
+      <div class="action-label">学生：${item.studentName}</div>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.6;">
+        当前显示：<strong style="color:${curImg?'var(--accent)':'var(--text-secondary)'};">${curImg?'本次扫描（默认选中）':'历史扫描'}</strong><br>
+        可通过图片下方的圆点或键盘 ← → 切换查看。
+      </p>
+
+      <!-- 关联学生：把当前图片关联到正确的学生（处理考号涂错） -->
+      <button class="action-btn" onclick="dupRelateMode=true;selectedStudent=null;studentFilter='unassociated';studentSearch='';renderAll();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        关联学生
+      </button>
+
+      ${!isSelected ? `
+        <!-- 替换：用当前显示的图片替换系统默认选中的图片 -->
+        <button class="action-btn action-btn--primary" onclick="replaceWithCurrentImage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          替换为当前图像
+        </button>
+      ` : ''}
+    `;
+  }
+
+  function confirmDupRelate() {
+    if (!selectedStudent) { showToast('请先选择一个学生'); return; }
+    const item = currentItem();
+    showToast(`已将「${item.studentName}」的重复图片关联至：${selectedStudent}`);
+    associatedNames.add(selectedStudent);
+    selectedStudent = null;
+    dupRelateMode = false;
+    // Remove this duplicate item and auto-advance
+    const items = currentItems();
+    items.splice(currentIdx, 1);
+    if (currentIdx >= items.length) currentIdx = Math.max(0, items.length - 1);
+    if (items.length === 0) showToast('该类型异常已全部处理完毕');
+    renderAll();
+  }
+
+  function replaceWithCurrentImage() {
+    const item = currentItem();
+    // Swap: the current non-selected image becomes the selected one
+    showToast(`已替换：现在使用图片替换了默认选中的图像（${item.studentName}）`);
+    // Remove this duplicate — the correct image is now in use
+    const items = currentItems();
+    items.splice(currentIdx, 1);
+    if (currentIdx >= items.length) currentIdx = Math.max(0, items.length - 1);
+    if (items.length === 0) showToast('该类型异常已全部处理完毕');
+    renderAll();
+  }
+
+  function onStudentSearch(val) { studentSearch=val; renderStudentList(); }
+  function setStudentFilter(f) { studentFilter=f; selectedStudent=null; renderStudentList(); if(document.getElementById('examConfirmBtn')) document.getElementById('examConfirmBtn').disabled=true; }
+  function selectStudent(name) { if(associatedNames.has(name)){showToast('该学生已有关联图片');return;} selectedStudent=name; renderStudentList(); }
+  function selectAssignment(a) { selectedAssignment=a; renderActionPanel(); }
+
+  // ===== Navigation =====
+  function switchType(type) { currentType=type; currentIdx=0; selectedStudent=null; studentFilter='unassociated'; studentSearch=''; dupImageIdx=0; dupRelateMode=false; renderAll(); }
+  function navigate(dir) { const items=currentItems(); const ni=currentIdx+dir; if(ni<0||ni>=items.length)return; currentIdx=ni; selectedStudent=null; studentSearch=''; dupImageIdx=0; dupRelateMode=false; currentSideIdx=0; renderAll(); }
+  function renderAll() { renderSidebar(); renderImagePanel(); renderActionPanel(); updateFooter(); }
+  function updateFooter() {
+    const items=currentItems();
+    const total=items.length;
+    const item = items.length > 0 ? items[currentIdx] : null;
+    // Footer
+    document.getElementById('footerType').textContent=anomalyData[currentType].label;
+    document.getElementById('footerCurrent').textContent=currentIdx+1;
+    document.getElementById('footerTotal').textContent=total;
+    // Work bar (top-right nav)
+    document.getElementById('barType').textContent=anomalyData[currentType].label;
+    document.getElementById('barCurrent').textContent=currentIdx+1;
+    document.getElementById('barTotal').textContent=total;
+    document.getElementById('barNavInfo').textContent=`${currentIdx+1} / ${total}`;
+    document.getElementById('barPrevBtn').disabled=currentIdx===0;
+    document.getElementById('barNextBtn').disabled=currentIdx>=total-1;
+    // Update preview button — link to student-preview with student name if available
+    const previewBtn = document.getElementById('barPreviewBtn');
+    if (previewBtn && item) {
+      const studentName = item.studentName || '';
+      previewBtn.href = studentName
+        ? `student-preview.html?name=${encodeURIComponent(studentName)}`
+        : 'student-preview.html';
+    }
+  }
+
+  // ===== Actions =====
+  function deleteCurrent() { const items=currentItems(); items.splice(currentIdx,1); if(currentIdx>=items.length)currentIdx=Math.max(0,items.length-1); if(items.length===0)showToast('该类型异常已全部处理完毕'); renderAll(); }
+  function confirmCurrent() { const items=currentItems(); items.splice(currentIdx,1); if(currentIdx>=items.length)currentIdx=Math.max(0,items.length-1); if(items.length===0)showToast('该类型异常已全部处理完毕'); renderAll(); }
+  function confirmExamNo() { if(!selectedStudent)return; const items=currentItems(); associatedNames.add(selectedStudent); showToast(`已将「${items[currentIdx].group}」关联至：${selectedStudent}`); selectedStudent=null; items.splice(currentIdx,1); if(currentIdx>=items.length)currentIdx=Math.max(0,items.length-1); if(items.length===0)showToast('该类型异常已全部处理完毕'); renderAll(); }
+  function confirmAndNext() { if(currentType==='examNo') confirmExamNo(); else confirmCurrent(); }
+  function skipAllCurrent() { const items=currentItems(); const c=items.length; items.length=0; currentIdx=0; showToast(`已跳过 ${c} 条「${anomalyData[currentType].label}」`); renderAll(); }
+
+  function showToast(msg) { const e=document.querySelector('.toast'); if(e)e.remove(); const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400); }
+
+  // ===== URL param support (deep-link from scan-progress) =====
+  function applyUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type');
+    const student = params.get('student');
+    if (type && anomalyData[type]) {
+      currentType = type;
+      currentIdx = 0;
+      if (student) {
+        const items = anomalyData[type].items;
+        const idx = items.findIndex(item =>
+          (item.studentName && item.studentName === student) ||
+          (item.group && item.group.includes(student))
+        );
+        if (idx >= 0) currentIdx = idx;
+      }
+    }
+  }
+  applyUrlParams();
+
+  document.addEventListener('keydown',function(e){ if(e.key==='ArrowLeft'){if(currentType==='duplicate'){switchDupImage(Math.max(0,dupImageIdx-1));}else{navigate(-1);}} if(e.key==='ArrowRight'){if(currentType==='duplicate'){switchDupImage(Math.min(1,dupImageIdx+1));}else{navigate(1);}} if(e.key==='Escape')window.location.href='scan-progress.html'; });
+
+  renderAll();
+</script>
+</body>
+</html>

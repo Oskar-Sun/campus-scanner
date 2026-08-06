@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 打印参数设置</title>
+<style>
+  :root {
+    /* === Primary (品牌/交互) === */
+    --color-primary-50: #effafa;
+    --color-primary-100: #def8f9;
+    --color-primary-200: #b2f1f2;
+    --color-primary-300: #7de3e6;
+    --color-primary-500: #50d8dc;
+    --color-primary-700: #00a6ab;
+    --color-primary-950: #007a7e;
+
+    /* === Gray (中性) === */
+    --color-gray-50: #f8f8fc;
+    --color-gray-100: #d2d3de;
+    --color-gray-200: #bcbdc0;
+    --color-gray-300: #a2a3a6;
+    --color-gray-400: #88898c;
+    --color-gray-500: #6e6f71;
+    --color-gray-600: #545557;
+    --color-gray-700: #3a3b3d;
+    --color-gray-900: #212123;
+
+    /* === Base === */
+    --color-base-01: #000000;
+    --color-base-02: #ffffff;
+
+    /* === Semantic - Success (结果反馈) === */
+    --color-success-100: #bef8fa;
+    --color-success-300: #66dade;
+    --color-success-500: #11c5ca;
+    --color-success-700: #00a6ab;
+    --color-success-900: #008a8f;
+
+    /* === Semantic - Error === */
+    --color-error-100: #ffece8;
+    --color-error-300: #fdcdc5;
+    --color-error-500: #fbaca3;
+    --color-error-700: #f53f3f;
+    --color-error-900: #cb2634;
+
+    /* === Semantic - Warning === */
+    --color-warning-100: #fff7e8;
+    --color-warning-300: #ffe4ba;
+    --color-warning-500: #ffcf8b;
+    --color-warning-700: #ff7d00;
+    --color-warning-900: #d25f00;
+
+    /* === Semantic - Info === */
+    --color-info-100: #e4f0fb;
+    --color-info-300: #97c4f1;
+    --color-info-500: #3089e3;
+    --color-info-700: #2675c4;
+    --color-info-900: #185695;
+
+    /* === Accent 1 (绿 - 分类/图表) === */
+    --color-accent-1-50: #d2f0e1;
+    --color-accent-1-400: #a7eaca;
+    --color-accent-1-600: #5ad0a3;
+    --color-accent-1-800: #049d75;
+
+    /* === Accent 2 (粉 - 分类/图表) === */
+    --color-accent-2-50: #fff1f7;
+    --color-accent-2-400: #fbcde4;
+    --color-accent-2-600: #ff86c8;
+    --color-accent-2-800: #d14692;
+
+    /* === Accent 3 (紫 - 分类/图表) === */
+    --color-accent-3-50: #f3f1ff;
+    --color-accent-3-400: #cfc6ff;
+    --color-accent-3-600: #8b6ff2;
+    --color-accent-3-800: #5936b1;
+
+    /* === Accent 4 (黄 - 分类/图表) === */
+    --color-accent-4-50: #fff9e7;
+    --color-accent-4-400: #ffeeb6;
+    --color-accent-4-600: #f9b932;
+    --color-accent-4-800: #c27b00;
+
+    /* === Overlay Alpha-2 (黑底半透明) === */
+    --color-overlay-alpha-2-5: rgba(19,19,21,0.05);
+    --color-overlay-alpha-2-10: rgba(19,19,21,0.10);
+    --color-overlay-alpha-2-12: rgba(19,19,21,0.12);
+    --color-overlay-alpha-2-15: rgba(19,19,21,0.15);
+    --color-overlay-alpha-2-20: rgba(19,19,21,0.20);
+    --color-overlay-alpha-2-28: rgba(19,19,21,0.28);
+    --color-overlay-alpha-2-45: rgba(19,19,21,0.45);
+
+    /* === Overlay Alpha-1 (白底半透明) === */
+    --color-overlay-alpha-1-10: rgba(255,255,255,0.10);
+    --color-overlay-alpha-1-35: rgba(255,255,255,0.35);
+    --color-overlay-alpha-1-60: rgba(255,255,255,0.60);
+    --color-overlay-alpha-1-78: rgba(255,255,255,0.78);
+
+    /* === Legacy Aliases (向后兼容) === */
+    --bg-primary: var(--color-gray-50);
+    --bg-header: var(--color-primary-950);
+    --text-primary: var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
+    --text-muted: var(--color-gray-400);
+    --border: var(--color-gray-100);
+    --accent: var(--color-primary-700);
+    --accent-dark: var(--color-primary-950);
+    --accent-light: var(--color-primary-50);
+    --danger: var(--color-error-700);
+    --success: var(--color-success-700);
+    --warning: var(--color-warning-700);
+    --danger-bg: var(--color-error-100);
+    --orange: var(--color-warning-700);
+    --purple: var(--color-accent-3-600);
+
+    /* === Border Radius === */
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    /* === Shadows === */
+    --shadow-sm: 0 1px 2px var(--color-overlay-alpha-2-5);
+    --shadow: 0 1px 3px var(--color-overlay-alpha-2-10);
+    --shadow-md: 0 4px 12px var(--color-overlay-alpha-2-10);
+    --shadow-lg: 0 16px 40px var(--color-overlay-alpha-2-10);
+
+    /* === Typography === */
+    --font-display: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+
+    /* === Transitions === */
+    --transition: 160ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:var(--font-body);
+    background:var(--color-gray-50);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  }
+  .app-window{
+    width:1160px;max-width:100%;
+    background:var(--color-base-02);
+    border-radius:var(--radius-xl);
+    box-shadow:0 0 0 1px var(--color-overlay-alpha-2-5),0 24px 64px var(--color-overlay-alpha-2-10);
+    overflow:hidden;display:flex;flex-direction:column;max-height:97vh;
+  }
+  .title-bar{
+    height:32px;background:var(--color-primary-950);
+    display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;
+  }
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;opacity:0.85;}
+  .title-bar__dot--close{background:var(--color-error-700);}
+  .title-bar__dot--min{background:var(--color-warning-700);}
+  .title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{
+    background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);
+    padding:0 24px;height:48px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+  }
+  .header__back{display:flex;align-items:center;gap:4px;color:var(--color-overlay-alpha-1-78);font-size:12px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:13px;height:13px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:11px;}
+  .header__page-title{color:var(--color-base-02);font-size:13px;font-weight:600;flex:1;}
+
+  .main-content{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-wrap:wrap;gap:14px;align-content:flex-start;}
+  .main-content::-webkit-scrollbar{width:4px;}
+  .main-content::-webkit-scrollbar-thumb{background:var(--color-gray-100);border-radius:2px;}
+
+  /* Settings group card */
+  .settings-group{
+    background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:12px 16px;min-width:220px;flex:1;
+  }
+  .settings-group--wide{flex:2;min-width:340px;}
+  .settings-group__title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .settings-group__title::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+
+  .setting-row{display:flex;align-items:center;justify-content:space-between;padding:3px 0;gap:8px;}
+  .setting-row__label{font-size:12px;color:var(--text-primary);}
+  .setting-row__label small{display:block;font-size:9px;color:var(--text-muted);font-weight:400;line-height:1.4;}
+
+  .toggle{position:relative;width:36px;height:20px;flex-shrink:0;cursor:pointer;}
+  .toggle input{display:none;}
+  .toggle__slider{position:absolute;inset:0;background:var(--color-gray-100);border-radius:var(--radius-full);transition:all var(--transition);}
+  .toggle__slider::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--color-base-02);border-radius:50%;transition:all var(--transition);box-shadow:0 1px 2px var(--color-overlay-alpha-2-15);}
+  .toggle input:checked+.toggle__slider{background:var(--accent);}
+  .toggle input:checked+.toggle__slider::after{transform:translateX(16px);}
+
+  .radio-row{display:flex;gap:5px;flex-wrap:wrap;}
+  .radio-chip{
+    padding:4px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:500;cursor:pointer;
+    transition:all var(--transition);font-family:var(--font-body);
+    border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-secondary);
+  }
+  .radio-chip:hover{border-color:var(--accent);}
+  .radio-chip--active{border-color:var(--accent);background:var(--accent-light);color:var(--color-primary-700);font-weight:600;}
+
+  .setting-select{
+    padding:5px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+    font-size:11px;font-family:var(--font-body);outline:none;color:var(--text-primary);
+    background:var(--color-base-02);min-width:100px;
+  }
+  .setting-select:focus{border-color:var(--accent);}
+  .setting-input{
+    padding:5px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+    font-size:11px;font-family:var(--font-body);outline:none;color:var(--text-primary);width:130px;
+  }
+  .setting-input:focus{border-color:var(--accent);}
+
+  .driver-btn{
+    padding:4px 10px;border-radius:var(--radius-full);font-size:10px;font-weight:500;cursor:pointer;
+    transition:all var(--transition);font-family:var(--font-body);white-space:nowrap;
+    border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-secondary);
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .driver-btn:hover{background:var(--color-gray-50);border-color:var(--color-gray-200);}
+  .driver-btn svg{width:12px;height:12px;}
+
+  /* Question type groups */
+  .q-type-group{margin-bottom:8px;}
+  .q-type-group__label{font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:4px;}
+  .question-grid{display:flex;flex-wrap:wrap;gap:4px;}
+  .q-check{
+    width:26px;height:26px;border-radius:var(--radius-sm);border:1.5px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+    cursor:pointer;transition:all var(--transition);
+    background:var(--accent);color:var(--color-base-02);
+  }
+  .q-check:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+  .q-check--off{
+    background:var(--color-gray-50);color:var(--color-gray-400);border-color:var(--color-gray-100);
+  }
+  .q-check--off:hover{background:var(--color-gray-100);border-color:var(--color-gray-200);color:var(--color-gray-500);}
+
+  .footer{background:var(--color-base-02);border-top:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .footer__info{font-size:10px;color:var(--text-secondary);}
+  .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;font-size:12px;font-weight:600;font-family:var(--font-body);border-radius:var(--radius);cursor:pointer;transition:all var(--transition);border:none;}
+  .btn-secondary{background:var(--color-base-02);color:var(--text-secondary);border:1.5px solid var(--border);}
+  .btn-secondary:hover{border-color:var(--color-gray-200);background:var(--color-gray-50);}
+  .btn-primary{background:linear-gradient(135deg,var(--color-primary-700) 0%,var(--color-primary-950) 100%);color:var(--color-base-02);box-shadow:0 2px 8px var(--color-overlay-alpha-2-20);}
+  .btn-primary:hover{background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 100%);}
+  .btn-outline{background:var(--color-base-02);color:var(--accent);border:1.5px solid var(--accent);}
+  .btn-outline:hover{background:var(--accent-light);}
+
+  /* Preview Modal */
+  .modal-overlay{position:fixed;inset:0;z-index:200;background:var(--color-overlay-alpha-2-45);display:none;align-items:center;justify-content:center;}
+  .modal-overlay--visible{display:flex;}
+  .modal{background:var(--color-base-02);border-radius:var(--radius-xl);width:90vw;max-width:1000px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:modalIn 180ms ease-out;overflow:hidden;}
+  @keyframes modalIn{from{opacity:0;transform:scale(0.97) translateY(6px);}to{opacity:1;transform:scale(1) translateY(0);}}
+  .modal__header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);}
+  .modal__title{font-size:14px;font-weight:600;}
+  .modal__close{width:28px;height:28px;border-radius:50%;border:none;background:var(--color-gray-50);cursor:pointer;font-size:14px;color:var(--text-secondary);}
+  .modal__close:hover{background:var(--color-gray-100);}
+  .modal__body{flex:1;overflow:auto;padding:16px;background:var(--color-gray-50);display:flex;justify-content:center;}
+  .modal__footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+
+  .preview-nav{display:flex;align-items:center;gap:6px;}
+  .preview-nav-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:var(--color-base-02);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);color:var(--text-secondary);}
+  .preview-nav-btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+  .preview-nav-btn:disabled{opacity:0.3;cursor:not-allowed;}
+  .preview-zoom{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-muted);}
+  .preview-zoom button{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:var(--color-base-02);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .preview-zoom button:hover{background:var(--accent-light);border-color:var(--accent);}
+
+  /* Paper styles (in modal) */
+  .paper{
+    background:var(--color-base-02);box-shadow:0 4px 24px var(--color-overlay-alpha-2-12);border-radius:2px;
+    padding:18mm 15mm 20mm;font-size:11px;color:var(--color-gray-900);flex-shrink:0;
+    position:relative;transform-origin:top center;
+  }
+  .paper__header{text-align:center;padding-bottom:10px;border-bottom:2px solid var(--color-gray-900);margin-bottom:12px;}
+  .paper__title{font-size:15px;font-weight:700;}
+  .paper__info{font-size:9px;color:var(--color-gray-500);display:flex;justify-content:space-between;margin-top:3px;}
+  .paper__date{text-align:right;font-size:9px;color:var(--color-gray-500);margin-bottom:10px;}
+  .paper__footer{position:absolute;bottom:10mm;left:0;right:0;text-align:center;font-size:8px;color:var(--color-gray-400);}
+
+  .prev-stu{border:1px solid var(--color-gray-100);border-radius:4px;padding:8px 12px;margin-bottom:8px;position:relative;}
+  .prev-stu__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:700;font-size:11px;}
+  .prev-stu__score{font-size:13px;}
+  .prev-answers{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;}
+  .prev-ans{display:inline-flex;align-items:center;gap:2px;font-size:9px;padding:1px 5px;border-radius:3px;background:var(--color-gray-50);border:1px solid var(--color-gray-100);}
+  .prev-ans__a{font-weight:700;}
+  .prev-ans__a--ok{color:var(--color-success-700);}
+  .prev-ans__a--err{color:var(--color-error-700);}
+  .prev-ans__correct{font-size:8px;color:var(--color-success-700);font-weight:700;margin-left:2px;}
+  .prev-ans__reason{font-size:8px;color:var(--color-warning-700);margin-left:2px;}
+  .prev-subj{display:flex;flex-direction:column;gap:1px;margin-top:4px;padding-top:4px;border-top:1px dashed var(--color-gray-100);}
+  .prev-subj__row{display:flex;justify-content:space-between;font-size:9px;}
+  .prev-mark{position:absolute;top:8px;right:12px;font-size:20px;font-weight:900;}
+  .prev-mark--ok{color:var(--color-success-100);}
+  .prev-mark--ng{color:var(--color-error-100);}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--color-gray-900) 0%,var(--color-gray-700) 100%);color:var(--color-base-02);padding:8px 16px;border-radius:var(--radius-full);font-size:11px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-6px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="scan-progress.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">打印参数设置</span>
+  </header>
+
+  <div class="main-content">
+    <!-- 1-3. Printer + Paper + Tray (combined) -->
+    <div class="settings-group settings-group--wide">
+      <div class="settings-group__title">打印机设置</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;">
+          <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">选择打印机</div>
+          <select class="setting-select" id="printerSelect" onchange="onPrinterChange()" style="width:100%;">
+            <option value="epson">EPSON L3150 Series</option>
+            <option value="canon">Canon LiDE 400</option>
+            <option value="hp">HP LaserJet Pro M404</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:100px;">
+          <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">纸张类型</div>
+          <select class="setting-select" id="paperType" style="width:100%;" onchange="updatePreview()"></select>
+        </div>
+        <div style="flex:1;min-width:100px;">
+          <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px;">纸盒来源</div>
+          <select class="setting-select" id="paperTray" style="width:100%;" onchange="updatePreview()"></select>
+        </div>
+        <button class="driver-btn" onclick="openDriverSettings()" style="margin-bottom:1px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          驱动设置
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Print Mode -->
+    <div class="settings-group">
+      <div class="settings-group__title">打印方式 <span style="color:var(--danger);font-size:9px;">*必填</span></div>
+      <div class="radio-row" id="printModeRow">
+        <span class="radio-chip radio-chip--active" data-val="overlay" onclick="selectChip(this,'printModeRow');">在原卷上打印</span>
+        <span class="radio-chip" data-val="blank" onclick="selectChip(this,'printModeRow');">在空白纸上打印</span>
+      </div>
+    </div>
+
+    <!-- 5. Score & Marking -->
+    <div class="settings-group">
+      <div class="settings-group__title">分数与批改符号</div>
+      <div class="setting-row">
+        <span class="setting-row__label">显示总分</span>
+        <label class="toggle"><input type="checkbox" id="optTotalScore" checked><span class="toggle__slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <span class="setting-row__label">显示每题分数</span>
+        <label class="toggle"><input type="checkbox" id="optPerQScore" checked><span class="toggle__slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <span class="setting-row__label">显示对号（✓）</span>
+        <label class="toggle"><input type="checkbox" id="optCheckMark" checked><span class="toggle__slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <span class="setting-row__label">显示错号</span>
+        <label class="toggle"><input type="checkbox" id="optCrossMark" checked onchange="toggleCrossStyle()"><span class="toggle__slider"></span></label>
+      </div>
+      <div class="setting-row" id="crossStyleRow">
+        <span class="setting-row__label">错号样式</span>
+        <div class="radio-row" id="crossStyleGroup">
+          <span class="radio-chip radio-chip--active" data-val="X" onclick="selectChip(this,'crossStyleGroup');">✗ 叉号</span>
+          <span class="radio-chip" data-val="O" onclick="selectChip(this,'crossStyleGroup');">○ 圆圈</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Orientation -->
+    <div class="settings-group">
+      <div class="settings-group__title">试卷放置方向</div>
+      <div class="radio-row" id="orientRow">
+        <span class="radio-chip radio-chip--active" data-val="original" onclick="selectChip(this,'orientRow');">按原始扫描方向</span>
+        <span class="radio-chip" data-val="adjusted" onclick="selectChip(this,'orientRow');">已全部手动调整标题朝上</span>
+      </div>
+    </div>
+
+    <!-- 7-9. Date + Answers + Reasons (combined) -->
+    <div class="settings-group">
+      <div class="settings-group__title">日期、答案与错因</div>
+      <div class="setting-row">
+        <span class="setting-row__label">批改日期</span>
+        <input type="text" class="setting-input" id="printDate" placeholder="如 2025年12月5日" style="width:140px;">
+      </div>
+      <div class="setting-row">
+        <span class="setting-row__label">打印客观题正确答案</span>
+        <label class="toggle"><input type="checkbox" id="optShowAnswer" checked><span class="toggle__slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <span class="setting-row__label">打印智能批改错因</span>
+        <label class="toggle"><input type="checkbox" id="optShowReason"><span class="toggle__slider"></span></label>
+      </div>
+    </div>
+
+    <!-- 10. Question Selection (grouped by type) -->
+    <div class="settings-group settings-group--wide">
+      <div class="settings-group__title">打印题号选择</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <div class="q-type-group">
+          <div class="q-type-group__label">单选题 1-7</div>
+          <div class="question-grid" id="qgSingle"></div>
+        </div>
+        <div class="q-type-group">
+          <div class="q-type-group__label">多选题 8-10</div>
+          <div class="question-grid" id="qgMulti"></div>
+        </div>
+        <div class="q-type-group">
+          <div class="q-type-group__label">主观题 11-15</div>
+          <div class="question-grid" id="qgSubj"></div>
+        </div>
+      </div>
+      <div style="margin-top:6px;display:flex;gap:8px;">
+        <span style="font-size:10px;color:var(--accent);cursor:pointer;" onclick="selectAllQs()">全选</span>
+        <span style="font-size:10px;color:var(--text-muted);cursor:pointer;" onclick="deselectAllQs()">取消全选</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer__info">已选 <strong style="color:var(--accent);" id="footerSelCount">0</strong> 名学生</div>
+    <div class="footer__actions" style="display:flex;gap:8px;">
+      <button class="btn btn-secondary" onclick="window.location.href='scan-progress.html'">取消</button>
+      <button class="btn btn-outline" onclick="openPreview()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        打印预览
+      </button>
+      <button class="btn btn-primary" onclick="startPrint()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        确认打印
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal-overlay" id="previewModal" onclick="if(event.target===this)closePreview()">
+  <div class="modal">
+    <div class="modal__header">
+      <span class="modal__title">打印预览</span>
+      <div class="preview-nav">
+        <button class="preview-nav-btn" id="prevStuBtn" onclick="prevStudent()">◂</button>
+        <span style="font-size:11px;" id="stuNavLabel">张三 1/3</span>
+        <button class="preview-nav-btn" id="nextStuBtn" onclick="nextStudent()">▸</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="preview-zoom">
+          <button onclick="zoomPrev(-0.08)">−</button>
+          <span id="zoomVal">65%</span>
+          <button onclick="zoomPrev(0.08)">+</button>
+        </div>
+        <button class="modal__close" onclick="closePreview()">✕</button>
+      </div>
+    </div>
+    <div class="modal__body">
+      <div class="paper" id="paperPreview" style="transform:scale(0.65);"></div>
+    </div>
+    <div class="modal__footer">
+      <span style="font-size:11px;color:var(--text-secondary);">共 <span id="footerPages">3</span> 页</span>
+      <button class="btn btn-secondary" onclick="closePreview()">关闭预览</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Printer-dependent options =====
+  const printerOptions = {
+    epson: {
+      papers: ['A4','A3','B4','B5','8K','16K','Letter','Legal','4×6英寸','5×7英寸'],
+      trays: ['自动选择','纸盒 1（主纸盒）','纸盒 2（后部进纸）','手动进纸'],
+    },
+    canon: {
+      papers: ['A4','A3','B5','8K','Letter','Legal','照片纸 4×6'],
+      trays: ['自动选择','纸盒 1','后端托盘','手动进纸'],
+    },
+    hp: {
+      papers: ['A4','A3','B4','B5','8K','16K','Letter','Legal','Executive'],
+      trays: ['自动选择','纸盒 1','纸盒 2','纸盒 3','多功能进纸器'],
+    },
+  };
+
+  function onPrinterChange() {
+    const val = document.getElementById('printerSelect').value;
+    const opts = printerOptions[val];
+    const paperSel = document.getElementById('paperType');
+    const traySel = document.getElementById('paperTray');
+    paperSel.innerHTML = opts.papers.map(p => `<option>${p}</option>`).join('');
+    traySel.innerHTML = opts.trays.map(t => `<option>${t}</option>`).join('');
+  }
+
+  function toggleCrossStyle() {
+    const show = document.getElementById('optCrossMark').checked;
+    document.getElementById('crossStyleRow').style.display = show ? '' : 'none';
+  }
+
+  // ===== Question selection (grouped) =====
+  const qGroups = [
+    { id:'qgSingle', range:[1,7], label:'单选题' },
+    { id:'qgMulti',  range:[8,10], label:'多选题' },
+    { id:'qgSubj',   range:[11,15], label:'主观题' },
+  ];
+  let qSelected = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+
+  function renderQGrid() {
+    qGroups.forEach(g => {
+      const grid = document.getElementById(g.id);
+      let html = '';
+      for (let i = g.range[0]; i <= g.range[1]; i++) {
+        const on = qSelected.has(i);
+        html += `<div class="q-check ${on?'':'q-check--off'}" onclick="toggleQ(${i})">${i}</div>`;
+      }
+      grid.innerHTML = html;
+    });
+  }
+  function toggleQ(n) { if(qSelected.has(n)) qSelected.delete(n); else qSelected.add(n); renderQGrid(); }
+  function selectAllQs() { for(let i=1;i<=15;i++)qSelected.add(i); renderQGrid(); }
+  function deselectAllQs() { qSelected.clear(); renderQGrid(); }
+
+  function selectChip(chip, rowId) {
+    document.querySelectorAll('#'+rowId+' .radio-chip').forEach(c=>c.classList.remove('radio-chip--active'));
+    chip.classList.add('radio-chip--active');
+  }
+
+  // ===== Students =====
+  const students = [
+    {name:'张三',examNo:'20250101',cls:'高一·1班',score:88,totalMax:100,
+      answers:[{q:1,r:'B',c:'B'},{q:2,r:'C',c:'C'},{q:3,r:'A',c:'A'},{q:4,r:'C',c:'D',reason:'概念混淆'},{q:5,r:'B',c:'B'},{q:6,r:'A',c:'A'},{q:7,r:'C',c:'C'},{q:8,r:'B',c:'B'},{q:9,r:'D',c:'D'},{q:10,r:null,c:'A',reason:'未作答'}],
+      subj:[{q:11,s:6,m:8},{q:12,s:5,m:8},{q:13,s:7,m:10},{q:14,s:2,m:10,reason:'公式错误'},{q:15,s:8,m:8}]},
+    {name:'李四',examNo:'20250102',cls:'高一·1班',score:94,totalMax:100,
+      answers:[{q:1,r:'B',c:'B'},{q:2,r:'C',c:'C'},{q:3,r:'A',c:'A'},{q:4,r:'D',c:'D'},{q:5,r:'B',c:'B'},{q:6,r:'A',c:'A'},{q:7,r:'C',c:'C'},{q:8,r:'B',c:'B'},{q:9,r:'D',c:'D'},{q:10,r:'A',c:'A'}],
+      subj:[{q:11,s:8,m:8},{q:12,s:7,m:8},{q:13,s:9,m:10},{q:14,s:6,m:10},{q:15,s:8,m:8}]},
+    {name:'王五',examNo:'20250103',cls:'高一·1班',score:72,totalMax:100,
+      answers:[{q:1,r:'B',c:'B'},{q:2,r:'A',c:'C',reason:'计算错误'},{q:3,r:'A',c:'A'},{q:4,r:'C',c:'D',reason:'概念混淆'},{q:5,r:'B',c:'B'},{q:6,r:'A',c:'A'},{q:7,r:'C',c:'C'},{q:8,r:'A',c:'B',reason:'审题不清'},{q:9,r:'D',c:'D'},{q:10,r:null,c:'A',reason:'未作答'}],
+      subj:[{q:11,s:5,m:8},{q:12,s:4,m:8},{q:13,s:6,m:10},{q:14,s:3,m:10,reason:'步骤缺失'},{q:15,s:7,m:8}]},
+  ];
+
+  let previewIdx = 0;
+  let previewZoom = 0.65;
+
+  // ===== Preview =====
+  function renderPreview() {
+    const paper = document.getElementById('paperPreview');
+    const stu = students[previewIdx];
+    const showTotal = document.getElementById('optTotalScore').checked;
+    const showPerQ = document.getElementById('optPerQScore').checked;
+    const showCheck = document.getElementById('optCheckMark').checked;
+    const showCross = document.getElementById('optCrossMark').checked;
+    const crossStyle = document.querySelector('#crossStyleGroup .radio-chip--active')?.dataset.val || 'X';
+    const showAnswer = document.getElementById('optShowAnswer').checked;
+    const showReason = document.getElementById('optShowReason').checked;
+    const printMode = document.querySelector('#printModeRow .radio-chip--active').dataset.val;
+    const isOverlay = printMode === 'overlay';
+    const dateText = document.getElementById('printDate').value.trim();
+
+    let html = `<div class="paper__header">
+      <div class="paper__title">数学周练卷（五）答题卡${isOverlay?'批改结果':'原卷'}</div>
+      <div class="paper__info"><span>班级：${stu.cls}</span><span>教师：张建国</span></div>
+    </div>`;
+
+    html += `<div class="prev-stu">
+      <div class="prev-stu__head">
+        <span>${stu.name} · ${stu.examNo} · ${stu.cls}</span>`;
+    if (showTotal) html += `<span class="prev-stu__score" style="color:${stu.score>=90?'var(--color-success-700)':stu.score>=60?'var(--color-warning-700)':'var(--color-error-700)'};">${stu.score}/${stu.totalMax}</span>`;
+    html += `</div>`;
+
+    if (showCheck && isOverlay) {
+      const allOk = stu.answers.every(a=>a.r===a.c) && stu.subj.every(s=>s.s===s.m);
+      html += `<div class="prev-mark ${allOk?'prev-mark--ok':'prev-mark--ng'}">${allOk?'✓':'✗'}</div>`;
+    }
+
+    html += `<div class="prev-answers">`;
+    stu.answers.forEach(a => {
+      if (!qSelected.has(a.q)) return;
+      const isOk = a.r === a.c;
+      const hasR = a.r !== null;
+      html += `<span class="prev-ans"><span>${a.q}.</span>`;
+      if (hasR) {
+        html += `<span class="prev-ans__a ${isOk?'prev-ans__a--ok':'prev-ans__a--err'}">${a.r}</span>`;
+        if (!isOk && showCross) html += `<span style="color:var(--color-error-700);font-size:9px;">${crossStyle==='X'?'✗':'○'}</span>`;
+        if (isOk && showCheck) html += `<span style="color:var(--color-success-700);font-size:9px;">✓</span>`;
+      } else {
+        html += `<span style="color:var(--color-warning-700);">空</span>`;
+      }
+      if (!isOk && showAnswer) html += `<span class="prev-ans__correct">${a.c}</span>`;
+      if (!isOk && showReason && a.reason) html += `<span class="prev-ans__reason">${a.reason}</span>`;
+      html += `</span>`;
+    });
+    html += `</div>`;
+
+    if (stu.subj.some(s=>qSelected.has(s.q))) {
+      html += `<div class="prev-subj">`;
+      stu.subj.forEach(s => {
+        if (!qSelected.has(s.q)) return;
+        html += `<div class="prev-subj__row"><span>第${s.q}题（主观）</span>`;
+        if (showPerQ) html += `<span style="color:${s.s===s.m?'var(--color-success-700)':s.s>0?'var(--color-warning-700)':'var(--color-error-700)'};">${s.s}/${s.m}</span>`;
+        if (!isOverlay && s.reason && showReason) html += `<span style="font-size:8px;color:var(--color-warning-700);">${s.reason}</span>`;
+        html += `</div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+
+    if (dateText) html += `<div class="paper__date">批改日期：${dateText}</div>`;
+    html += `<div class="paper__footer">— 第 1 页 —</div>`;
+
+    paper.innerHTML = html;
+    paper.style.transform = `scale(${previewZoom})`;
+
+    document.getElementById('prevStuBtn').disabled = previewIdx === 0;
+    document.getElementById('nextStuBtn').disabled = previewIdx >= students.length - 1;
+    document.getElementById('stuNavLabel').textContent = `${students[previewIdx].name} ${previewIdx+1}/${students.length}`;
+  }
+
+  function updatePreview() { if (document.getElementById('previewModal').classList.contains('modal-overlay--visible')) renderPreview(); }
+  function openPreview() { previewIdx=0; document.getElementById('previewModal').classList.add('modal-overlay--visible'); renderPreview(); }
+  function closePreview() { document.getElementById('previewModal').classList.remove('modal-overlay--visible'); }
+  function prevStudent() { if(previewIdx>0){previewIdx--;renderPreview();} }
+  function nextStudent() { if(previewIdx<students.length-1){previewIdx++;renderPreview();} }
+  function zoomPrev(d) { previewZoom=Math.max(0.35,Math.min(1.2,previewZoom+d)); document.getElementById('paperPreview').style.transform=`scale(${previewZoom})`; document.getElementById('zoomVal').textContent=Math.round(previewZoom*100)+'%'; }
+
+  // ===== Init =====
+  function initDate() { const d=new Date(); document.getElementById('printDate').value=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; }
+
+  function openDriverSettings() { showToast('正在打开打印机驱动设置页面…'); }
+  function startPrint() {
+    // Signal scan-progress to mark selected cards as printed
+    sessionStorage.setItem('pendingPrint', 'true');
+    window.location.href = 'scan-progress.html';
+  }
+
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePreview(); });
+
+  function showToast(msg) {
+    const e=document.querySelector('.toast'); if(e)e.remove();
+    const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2600);
+  }
+
+  onPrinterChange();
+  initDate();
+  renderQGrid();
+
+  // Show actual selected count from scan-progress
+  (function(){
+    const count = sessionStorage.getItem('printSelectedCount') || '0';
+    document.getElementById('footerSelCount').textContent = count;
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 学生预览</title>
+<style>
+  :root {
+    /* === Primary (品牌/交互) === */
+    --color-primary-50: #effafa;
+    --color-primary-100: #def8f9;
+    --color-primary-200: #b2f1f2;
+    --color-primary-300: #7de3e6;
+    --color-primary-500: #50d8dc;
+    --color-primary-700: #00a6ab;
+    --color-primary-950: #007a7e;
+
+    /* === Gray (中性) === */
+    --color-gray-50: #f8f8fc;
+    --color-gray-100: #d2d3de;
+    --color-gray-200: #bcbdc0;
+    --color-gray-300: #a2a3a6;
+    --color-gray-400: #88898c;
+    --color-gray-500: #6e6f71;
+    --color-gray-600: #545557;
+    --color-gray-700: #3a3b3d;
+    --color-gray-900: #212123;
+
+    /* === Base === */
+    --color-base-01: #000000;
+    --color-base-02: #ffffff;
+
+    /* === Semantic - Success (结果反馈) === */
+    --color-success-100: #bef8fa;
+    --color-success-300: #66dade;
+    --color-success-500: #11c5ca;
+    --color-success-700: #00a6ab;
+    --color-success-900: #008a8f;
+
+    /* === Semantic - Error === */
+    --color-error-100: #ffece8;
+    --color-error-300: #fdcdc5;
+    --color-error-500: #fbaca3;
+    --color-error-700: #f53f3f;
+    --color-error-900: #cb2634;
+
+    /* === Semantic - Warning === */
+    --color-warning-100: #fff7e8;
+    --color-warning-300: #ffe4ba;
+    --color-warning-500: #ffcf8b;
+    --color-warning-700: #ff7d00;
+    --color-warning-900: #d25f00;
+
+    /* === Semantic - Info === */
+    --color-info-100: #e4f0fb;
+    --color-info-300: #97c4f1;
+    --color-info-500: #3089e3;
+    --color-info-700: #2675c4;
+    --color-info-900: #185695;
+
+    /* === Accent 1 (绿 - 分类/图表) === */
+    --color-accent-1-50: #d2f0e1;
+    --color-accent-1-400: #a7eaca;
+    --color-accent-1-600: #5ad0a3;
+    --color-accent-1-800: #049d75;
+
+    /* === Accent 2 (粉 - 分类/图表) === */
+    --color-accent-2-50: #fff1f7;
+    --color-accent-2-400: #fbcde4;
+    --color-accent-2-600: #ff86c8;
+    --color-accent-2-800: #d14692;
+
+    /* === Accent 3 (紫 - 分类/图表) === */
+    --color-accent-3-50: #f3f1ff;
+    --color-accent-3-400: #cfc6ff;
+    --color-accent-3-600: #8b6ff2;
+    --color-accent-3-800: #5936b1;
+
+    /* === Accent 4 (黄 - 分类/图表) === */
+    --color-accent-4-50: #fff9e7;
+    --color-accent-4-400: #ffeeb6;
+    --color-accent-4-600: #f9b932;
+    --color-accent-4-800: #c27b00;
+
+    /* === Overlay Alpha-2 (黑底半透明) === */
+    --color-overlay-alpha-2-5: rgba(19,19,21,0.05);
+    --color-overlay-alpha-2-10: rgba(19,19,21,0.10);
+    --color-overlay-alpha-2-20: rgba(19,19,21,0.20);
+    --color-overlay-alpha-2-55: rgba(19,19,21,0.55);
+
+    /* === Overlay Alpha-1 (白底半透明) === */
+    --color-overlay-alpha-1-10: rgba(255,255,255,0.10);
+    --color-overlay-alpha-1-35: rgba(255,255,255,0.35);
+    --color-overlay-alpha-1-60: rgba(255,255,255,0.60);
+    --color-overlay-alpha-1-78: rgba(255,255,255,0.78);
+
+    /* === Legacy Aliases (向后兼容) === */
+    --bg-primary: var(--color-gray-50);
+    --bg-header: var(--color-primary-950);
+    --text-primary: var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
+    --text-muted: var(--color-gray-400);
+    --border: var(--color-gray-100);
+    --accent: var(--color-primary-700);
+    --accent-dark: var(--color-primary-950);
+    --accent-light: var(--color-primary-50);
+    --success: var(--color-success-700);
+    --danger: var(--color-error-700);
+    --warning: var(--color-warning-700);
+    --danger-bg: var(--color-error-100);
+    --orange: var(--color-warning-700);
+    --purple: var(--color-accent-3-600);
+
+    /* === Border Radius === */
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    /* === Shadows === */
+    --shadow-sm: 0 1px 2px var(--color-overlay-alpha-2-5);
+    --shadow: 0 1px 3px var(--color-overlay-alpha-2-10);
+    --shadow-md: 0 4px 12px var(--color-overlay-alpha-2-10);
+    --shadow-lg: 0 12px 32px var(--color-overlay-alpha-2-10);
+
+    /* === Typography === */
+    --font-display: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+
+    /* === Transitions === */
+    --transition: 160ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:var(--font-body);
+    background:var(--color-gray-50);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  }
+  .app-window{
+    width:1580px;max-width:100%;
+    background:var(--color-base-02);
+    border-radius:var(--radius-xl);
+    box-shadow:0 0 0 1px var(--color-overlay-alpha-2-5),0 24px 64px var(--color-overlay-alpha-2-10);
+    overflow:hidden;display:flex;flex-direction:column;max-height:97vh;
+  }
+  .title-bar{
+    height:32px;background:var(--color-primary-950);
+    display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;
+  }
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;opacity:0.85;}
+  .title-bar__dot--close{background:var(--color-error-700);}
+  .title-bar__dot--min{background:var(--color-warning-700);}
+  .title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{
+    background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);
+    padding:0 24px;height:48px;display:flex;align-items:center;gap:12px;flex-shrink:0;
+  }
+  .header__back{display:flex;align-items:center;gap:5px;color:var(--color-overlay-alpha-1-78);font-size:12px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:14px;height:14px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:12px;}
+  .header__page-title{color:var(--color-base-02);font-size:14px;font-weight:600;flex:1;}
+
+  /* === Student Info Bar === */
+  .student-info-bar{
+    background:var(--color-base-02);border-bottom:1px solid var(--border);padding:8px 20px;
+    display:flex;align-items:center;gap:20px;flex-shrink:0;
+  }
+  .student-info-bar__item{display:flex;align-items:center;gap:8px;}
+  .student-info-bar__label{font-size:10px;color:var(--text-muted);}
+  .student-info-bar__value{font-size:13px;font-weight:600;color:var(--text-primary);}
+  .student-info-bar__divider{width:1px;height:22px;background:var(--border);}
+  .student-info-bar__associate-btn{
+    padding:5px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:500;cursor:pointer;
+    transition:all var(--transition);font-family:var(--font-body);
+    border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-secondary);
+  }
+  .student-info-bar__associate-btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+
+  /* Student search dropdown (for re-association) */
+  .associate-wrap{position:relative;}
+  .associate-dropdown{
+    position:absolute;top:calc(100% + 4px);left:0;width:400px;max-height:320px;
+    background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);z-index:100;display:none;overflow-y:auto;
+  }
+  .associate-dropdown--visible{display:block;animation:fadeSlideIn 160ms ease-out;}
+  @keyframes fadeSlideIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+  .associate-dropdown__search{
+    padding:8px 12px;border-bottom:1px solid var(--color-gray-50);position:sticky;top:0;background:var(--color-base-02);
+  }
+  .associate-dropdown__search input{
+    width:100%;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-full);
+    font-size:11px;outline:none;font-family:var(--font-body);
+  }
+  .associate-dropdown__search input:focus{border-color:var(--accent);}
+  .associate-dropdown__item{
+    padding:7px 14px;cursor:pointer;font-size:12px;transition:background var(--transition);
+    display:flex;align-items:center;gap:12px;
+  }
+  .associate-dropdown__item:hover{background:var(--color-gray-50);}
+  .associate-dropdown__item--active{background:var(--accent-light);color:var(--color-primary-700);font-weight:600;}
+  .associate-dropdown__item .ad-name{flex:1;font-weight:500;min-width:60px;}
+  .associate-dropdown__item .ad-exam{font-size:10px;color:var(--text-muted);min-width:70px;}
+  .associate-dropdown__item .ad-class{font-size:10px;color:var(--text-muted);min-width:65px;text-align:right;}
+  .associate-dropdown__header{
+    display:flex;align-items:center;gap:12px;padding:6px 14px;
+    font-size:10px;font-weight:600;color:var(--text-muted);
+    background:var(--color-gray-50);border-bottom:1px solid var(--color-gray-50);
+    position:sticky;top:0;z-index:1;
+  }
+  .associate-dropdown__header .ad-name{flex:1;min-width:60px;}
+  .associate-dropdown__header .ad-exam{min-width:70px;}
+  .associate-dropdown__header .ad-class{min-width:65px;text-align:right;}
+
+  /* Nav buttons */
+  .student-nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+  .student-nav__btn{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--border);
+    background:var(--color-base-02);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all var(--transition);color:var(--text-secondary);
+  }
+  .student-nav__btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+  .student-nav__btn:disabled{opacity:0.3;cursor:not-allowed;}
+  .student-nav__info{font-size:11px;color:var(--text-secondary);min-width:50px;text-align:center;}
+
+  /* === Main Content === */
+  .main-content{display:flex;flex:1;overflow:hidden;}
+
+  /* === Image Panel (Left) === */
+  .image-panel{
+    flex:1;background:var(--color-gray-50);position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .image-panel__container{
+    transform-origin:center center;transition:transform 80ms ease-out;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .image-panel__img{
+    width:520px;height:640px;background:var(--color-base-02);border:1px solid var(--border);
+    border-radius:var(--radius-lg);box-shadow:var(--shadow-md);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:var(--text-muted);font-size:13px;gap:8px;user-select:none;
+  }
+  .image-panel__img svg{width:64px;height:64px;opacity:0.18;}
+  .image-panel__zoom-hint{
+    position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+    background:var(--color-overlay-alpha-2-55);color:var(--color-base-02);padding:4px 14px;border-radius:var(--radius-full);
+    font-size:10px;pointer-events:none;
+  }
+
+  /* === Results Panel (Right) === */
+  .results-panel{
+    width:540px;background:var(--color-base-02);border-left:1px solid var(--border);
+    display:flex;flex-direction:column;flex-shrink:0;
+  }
+  .results-panel__header{
+    padding:12px 16px;font-size:11px;font-weight:600;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid var(--color-gray-50);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .results-panel__score{
+    font-size:14px;font-weight:700;color:var(--accent);
+  }
+  .results-panel__body{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
+  .results-panel__body::-webkit-scrollbar{width:4px;}
+  .results-panel__body::-webkit-scrollbar-thumb{background:var(--color-gray-100);border-radius:2px;}
+
+  /* Question card — compact single-row */
+  .question-card{
+    display:flex;align-items:center;gap:6px;
+    padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);
+    background:var(--color-base-02);min-height:38px;
+  }
+  .qc-no{font-size:12px;font-weight:700;color:var(--text-primary);min-width:20px;flex-shrink:0;}
+  .qc-type{font-size:9px;font-weight:600;padding:1px 6px;border-radius:var(--radius-sm);flex-shrink:0;background:var(--color-accent-3-50);color:var(--color-accent-3-800);}
+  .qc-type--subj{background:var(--color-accent-4-50);color:var(--color-accent-4-800);}
+  .qc-options{display:flex;gap:4px;align-items:center;flex:1;flex-wrap:wrap;}
+  .qc-score{font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0;min-width:30px;text-align:right;}
+
+  /* Option chip (compact) */
+  .option-chip{
+    width:28px;height:28px;border-radius:50%;border:2px solid var(--border);
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;cursor:pointer;transition:all var(--transition);
+    background:var(--color-base-02);color:var(--text-primary);flex-shrink:0;
+  }
+  .option-chip:hover{border-color:var(--accent);background:var(--accent-light);}
+  .option-chip--correct{border-color:var(--color-success-700);background:var(--color-success-700);color:var(--color-base-02);}
+  .option-chip--wrong{border-color:var(--color-error-700);background:var(--color-base-02);color:var(--color-error-700);}
+  .option-chip--correct-missed{border-color:var(--color-success-700);background:var(--color-base-02);color:var(--color-success-700);border-style:dashed;}
+
+  /* Subjective score + edit hint */
+  .qc-subj-score{display:flex;align-items:baseline;gap:2px;}
+  .subj-score-val{
+    font-size:14px;font-weight:700;cursor:pointer;
+    padding:1px 4px;border-radius:3px;transition:all var(--transition);
+    border-bottom:1.5px dashed transparent;
+  }
+  .subj-score-val:hover{background:var(--color-gray-50);border-bottom-color:var(--accent);}
+  .subj-score-max{font-size:11px;color:var(--text-muted);}
+  .qc-edit-hint{font-size:12px;color:var(--text-muted);cursor:pointer;opacity:0.4;transition:opacity var(--transition);}
+  .qc-edit-hint:hover{opacity:1;color:var(--accent);}
+  .score-full{color:var(--color-success-700);}
+  .score-partial{color:var(--color-warning-700);}
+  .score-zero{color:var(--color-error-700);}
+
+  /* Toast */
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--color-gray-900) 0%,var(--color-gray-700) 100%);color:var(--color-base-02);padding:9px 18px;border-radius:22px;font-size:12px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-6px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="scan-progress.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">学生预览</span>
+  </header>
+
+  <!-- Student Info Bar -->
+  <div class="student-info-bar">
+    <div class="student-info-bar__item">
+      <span class="student-info-bar__label">姓名</span>
+      <span class="student-info-bar__value" id="studentName">张三</span>
+    </div>
+    <div class="student-info-bar__divider"></div>
+    <div class="student-info-bar__item">
+      <span class="student-info-bar__label">考号</span>
+      <span class="student-info-bar__value" id="studentExamNo">20250103</span>
+    </div>
+    <div class="student-info-bar__divider"></div>
+    <div class="student-info-bar__item">
+      <span class="student-info-bar__label">班级</span>
+      <span class="student-info-bar__value">高一·1班</span>
+    </div>
+    <div class="student-info-bar__divider"></div>
+    <div class="student-info-bar__item associate-wrap" id="associateWrap">
+      <span class="student-info-bar__label">关联学生</span>
+      <button class="student-info-bar__associate-btn" onclick="toggleAssociateDropdown()">修改关联 ▾</button>
+      <div class="associate-dropdown" id="associateDropdown">
+        <div class="associate-dropdown__search">
+          <input type="text" placeholder="搜索姓名或拼音…" id="associateSearch" oninput="filterAssociateList()">
+        </div>
+        <div id="associateList"></div>
+      </div>
+    </div>
+    <div class="student-info-bar__divider"></div>
+    <div class="student-info-bar__item">
+      <span class="student-info-bar__label">总分</span>
+      <span class="student-info-bar__value" style="color:var(--accent);font-size:15px;" id="totalScore">88</span>
+      <span style="font-size:11px;color:var(--text-muted);">/100</span>
+    </div>
+
+    <!-- Student Navigation -->
+    <div class="student-nav">
+      <button class="student-nav__btn" id="prevBtn" onclick="navigateStudent(-1)">◂</button>
+      <span class="student-nav__info" id="navInfo">1 / 15</span>
+      <button class="student-nav__btn" id="nextBtn" onclick="navigateStudent(1)">▸</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Image Panel (zoomable) -->
+    <div class="image-panel" id="imagePanel">
+      <div class="image-panel__container" id="imageContainer" style="transform:scale(1);">
+        <div class="image-panel__img">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="15" x2="10" y2="15"/></svg>
+          <span>学生原卷扫描图像</span>
+          <span style="font-size:10px;">滚动鼠标滚轮缩放 | 当前：<span id="zoomLevel">100</span>%</span>
+        </div>
+      </div>
+      <div class="image-panel__zoom-hint" id="zoomHint" style="opacity:0;">缩放：100%</div>
+    </div>
+
+    <!-- Results Panel -->
+    <div class="results-panel">
+      <div class="results-panel__header">
+        <span>答题识别结果</span>
+        <span class="results-panel__score" id="headerScore">88 / 100</span>
+      </div>
+      <div class="results-panel__body" id="resultsBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Student Data =====
+  const allStudents = [];
+  const names = ['张三','李四','王五','赵六','钱七','孙八','周九','吴十','郑十一','王小明','李小华','张大伟','刘洋','陈芳','杨柳'];
+  for (let i = 0; i < 15; i++) {
+    allStudents.push({
+      name: names[i],
+      examNo: '2025' + String(100 + i).padStart(3,'0'),
+      class: '高一·1班',
+      score: 60 + Math.floor(Math.random() * 38),
+      maxScore: 100,
+    });
+  }
+
+  // Class roster for re-association
+  const classRoster = [
+    {name:'张三',pinyin:'zhangsan',examNo:'20250101',cls:'高一·1班'},
+    {name:'李四',pinyin:'lisi',examNo:'20250102',cls:'高一·1班'},
+    {name:'王五',pinyin:'wangwu',examNo:'20250103',cls:'高一·1班'},
+    {name:'赵六',pinyin:'zhaoliu',examNo:'20250104',cls:'高一·1班'},
+    {name:'钱七',pinyin:'qianqi',examNo:'20250105',cls:'高一·1班'},
+    {name:'孙八',pinyin:'sunba',examNo:'20250106',cls:'高一·1班'},
+    {name:'周九',pinyin:'zhoujiu',examNo:'20250107',cls:'高一·2班'},
+    {name:'吴十',pinyin:'wushi',examNo:'20250108',cls:'高一·2班'},
+    {name:'郑十一',pinyin:'zhengshiyi',examNo:'20250109',cls:'高一·2班'},
+    {name:'王小明',pinyin:'wangxiaoming',examNo:'20250110',cls:'高一·2班'},
+    {name:'李小华',pinyin:'lixiaohua',examNo:'20250111',cls:'高一·2班'},
+    {name:'张大伟',pinyin:'zhangdawei',examNo:'20250112',cls:'高一·3班'},
+    {name:'刘洋',pinyin:'liuyang',examNo:'20250113',cls:'高一·3班'},
+    {name:'陈芳',pinyin:'chenfang',examNo:'20250114',cls:'高一·3班'},
+    {name:'杨柳',pinyin:'yangliu',examNo:'20250115',cls:'高一·3班'},
+    {name:'黄同学',pinyin:'huangtongxue',examNo:'20250116',cls:'高一·3班'},
+    {name:'林同学',pinyin:'lintongxue',examNo:'20250117',cls:'高一·1班'},
+    {name:'何同学',pinyin:'hetongxue',examNo:'20250118',cls:'高一·2班'},
+    {name:'郭同学',pinyin:'guotongxue',examNo:'20250119',cls:'高一·3班'},
+    {name:'马同学',pinyin:'matongxue',examNo:'20250120',cls:'高一·1班'},
+  ];
+
+  // Questions for current student (regenerated on navigate)
+  let currentQuestions = [];
+
+  let currentIdx = 0;
+  let zoomScale = 1;
+
+  function currentStudent() { return allStudents[currentIdx]; }
+
+  // ===== Generate Questions =====
+  function generateQuestions(studentName) {
+    const seed = studentName.charCodeAt(0) + studentName.length;
+    return [
+      {no:1,type:'objective',score:4, options:4, multiSelect:false, recognized:'B', correct:'B'},
+      {no:2,type:'objective',score:4, options:4, multiSelect:false, recognized:'C', correct:'C'},
+      {no:3,type:'objective',score:4, options:4, multiSelect:false, recognized:'A', correct:'A'},
+      {no:4,type:'objective',score:4, options:4, multiSelect:false, recognized:'C', correct:'D'},
+      {no:5,type:'objective',score:4, options:4, multiSelect:false, recognized:'B', correct:'B'},
+      {no:6,type:'objective',score:4, options:3, multiSelect:false, recognized:'A', correct:'A'},
+      {no:7,type:'objective',score:4, options:4, multiSelect:false, recognized:'C', correct:'C'},
+      {no:8,type:'objective',score:6, options:4, multiSelect:true,  recognized:['A','C'], correct:['A','C','D']},
+      {no:9,type:'objective',score:6, options:4, multiSelect:true,  recognized:['B','D'], correct:['B','D']},
+      {no:10,type:'objective',score:6,options:4, multiSelect:true,  recognized:['A'],     correct:['A','B']},
+      {no:11,type:'subjective',score:8,  maxScore:8,  awarded:((seed*7)%8)+1, feedback:'步骤完整，答案正确'},
+      {no:12,type:'subjective',score:8,  maxScore:8,  awarded:((seed*3)%6)+2, feedback:'思路正确，计算有误'},
+      {no:13,type:'subjective',score:10, maxScore:10, awarded:((seed*5)%8)+1, feedback:'部分步骤缺失'},
+      {no:14,type:'subjective',score:10, maxScore:10, awarded:((seed*11)%9),  feedback:'答案错误，请订正'},
+      {no:15,type:'subjective',score:8,  maxScore:8,  awarded:8,               feedback:''},
+    ];
+  }
+
+  // ===== Render =====
+  function renderAll() {
+    updateStudentInfo();
+    renderResults();
+    updateNavButtons();
+  }
+
+  function updateStudentInfo() {
+    const s = currentStudent();
+    document.getElementById('studentName').textContent = s.name;
+    document.getElementById('studentExamNo').textContent = s.examNo;
+    document.getElementById('totalScore').textContent = s.score;
+    document.getElementById('headerScore').textContent = `${s.score} / ${s.maxScore}`;
+    document.getElementById('navInfo').textContent = `${currentIdx+1} / ${allStudents.length}`;
+  }
+
+  function updateNavButtons() {
+    document.getElementById('prevBtn').disabled = currentIdx === 0;
+    document.getElementById('nextBtn').disabled = currentIdx >= allStudents.length - 1;
+  }
+
+  function renderResults() {
+    currentQuestions = generateQuestions(currentStudent().name);
+    const body = document.getElementById('resultsBody');
+    body.innerHTML = currentQuestions.map((q, i) => {
+      if (q.type === 'objective') {
+        return renderObjective(q, i);
+      } else {
+        return renderSubjective(q, i);
+      }
+    }).join('');
+
+    // Recalculate total score
+    let total = 0;
+    currentQuestions.forEach(q => {
+      if (q.type === 'objective') total += (q.recognized === q.correct) ? q.score : 0;
+      else total += q.awarded;
+    });
+    allStudents[currentIdx].score = total;
+  }
+
+  function renderObjective(q, idx) {
+    const labels = 'ABCDEFGH'.slice(0, q.options);
+    const isMulti = q.multiSelect === true;
+    const recognized = isMulti ? (q.recognized || []) : q.recognized;
+    const correct = q.correct;
+
+    // Build option chips inline
+    let optionsHtml = labels.split('').map(letter => {
+      let cls = 'option-chip';
+      const isRecognized = isMulti ? recognized.includes(letter) : (recognized === letter);
+      const isInCorrect = isMulti ? correct.includes(letter) : (correct === letter);
+
+      if (isRecognized && isInCorrect) {
+        cls += ' option-chip--correct';
+      } else if (isRecognized && !isInCorrect) {
+        cls += ' option-chip--wrong';
+      } else if (!isRecognized && isInCorrect) {
+        cls += ' option-chip--correct-missed';
+      }
+
+      return `<span class="${cls}" onclick="toggleOption(${idx},'${letter}')">${letter}</span>`;
+    }).join('');
+
+    // Calculate score
+    let questionScore = 0;
+    if (isMulti) {
+      const correctSet = new Set(correct);
+      const recognizedSet = new Set(recognized);
+      const intersection = [...recognizedSet].filter(x => correctSet.has(x)).length;
+      const union = new Set([...recognizedSet, ...correctSet]).size;
+      questionScore = union > 0 ? Math.round((intersection / union) * q.score) : 0;
+    } else {
+      questionScore = (recognized === correct) ? q.score : 0;
+    }
+
+    const typeLabel = isMulti ? '多选' : '单选';
+
+    // Compact single-row layout: [题号] [类型] [选项按钮...] [分数]
+    return `<div class="question-card question-card--compact">
+      <span class="qc-no">${q.no}</span>
+      <span class="qc-type">${typeLabel}</span>
+      <span class="qc-options">${optionsHtml}</span>
+      <span class="qc-score">${questionScore}/${q.score}</span>
+    </div>`;
+  }
+
+  function renderSubjective(q, idx) {
+    const pct = q.awarded / q.maxScore;
+    let scoreClass = 'score-partial';
+    if (pct >= 1) scoreClass = 'score-full';
+    else if (pct === 0) scoreClass = 'score-zero';
+
+    // Compact row: [题号] [主观] [spacer] [得分] [编辑]
+    return `<div class="question-card question-card--compact">
+      <span class="qc-no">${q.no}</span>
+      <span class="qc-type qc-type--subj">主观</span>
+      <span class="qc-options"></span>
+      <span class="qc-subj-score">
+        <span class="subj-score-val ${scoreClass}" onclick="editSubjectiveScore(event,${idx})" title="点击修改">${q.awarded}</span>
+        <span class="subj-score-max">/${q.maxScore}</span>
+      </span>
+      <span class="qc-edit-hint" onclick="editSubjectiveScore(event,${idx})" title="点击修改分数">✎</span>
+    </div>`;
+  }
+
+  // ===== Option toggle =====
+  function toggleOption(qIdx, letter) {
+    const q = currentQuestions[qIdx];
+    if (q.type !== 'objective') return;
+
+    if (q.multiSelect) {
+      // Multi-select: toggle the letter in/out of the array
+      if (!Array.isArray(q.recognized)) q.recognized = [];
+      const pos = q.recognized.indexOf(letter);
+      if (pos >= 0) {
+        q.recognized.splice(pos, 1);
+      } else {
+        q.recognized.push(letter);
+        q.recognized.sort();
+      }
+    } else {
+      // Single-select: toggle or replace
+      if (q.recognized === letter) {
+        q.recognized = null;
+      } else {
+        q.recognized = letter;
+      }
+    }
+
+    // Re-render just this question
+    refreshQuestionCard(qIdx);
+
+    // Recalculate score
+    updateTotalScore();
+  }
+
+  function refreshQuestionCard(qIdx) {
+    const q = currentQuestions[qIdx];
+    const body = document.getElementById('resultsBody');
+    const card = body.children[qIdx];
+    const html = document.createElement('div');
+    html.innerHTML = q.type === 'objective' ? renderObjective(q, qIdx) : renderSubjective(q, qIdx);
+    body.replaceChild(html.firstElementChild, card);
+  }
+
+  function updateTotalScore() {
+    let total = 0;
+    currentQuestions.forEach(q => {
+      if (q.type === 'objective') {
+        if (q.multiSelect) {
+          const correctSet = new Set(q.correct);
+          const recognizedSet = new Set(q.recognized || []);
+          const intersection = [...recognizedSet].filter(x => correctSet.has(x)).length;
+          const union = new Set([...recognizedSet, ...correctSet]).size;
+          total += union > 0 ? Math.round((intersection / union) * q.score) : 0;
+        } else {
+          total += (q.recognized === q.correct) ? q.score : 0;
+        }
+      } else {
+        total += q.awarded;
+      }
+    });
+    allStudents[currentIdx].score = total;
+    document.getElementById('totalScore').textContent = total;
+    document.getElementById('headerScore').textContent = `${total} / ${allStudents[currentIdx].maxScore}`;
+  }
+
+  // ===== Image Zoom =====
+  const imagePanel = document.getElementById('imagePanel');
+  const imageContainer = document.getElementById('imageContainer');
+  const zoomHint = document.getElementById('zoomHint');
+
+  imagePanel.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    zoomScale = Math.max(0.5, Math.min(3, zoomScale + delta));
+    imageContainer.style.transform = `scale(${zoomScale})`;
+    document.getElementById('zoomLevel').textContent = Math.round(zoomScale * 100);
+    // Show hint briefly
+    zoomHint.style.opacity = '1';
+    zoomHint.textContent = `缩放：${Math.round(zoomScale * 100)}%`;
+    clearTimeout(zoomHint._timeout);
+    zoomHint._timeout = setTimeout(() => { zoomHint.style.opacity = '0'; }, 1200);
+  }, { passive: false });
+
+  // ===== Student Navigation =====
+  function navigateStudent(dir) {
+    const ni = currentIdx + dir;
+    if (ni < 0 || ni >= allStudents.length) return;
+    currentIdx = ni;
+    zoomScale = 1;
+    imageContainer.style.transform = 'scale(1)';
+    document.getElementById('zoomLevel').textContent = '100';
+    renderAll();
+  }
+
+  // ===== Edit Subjective Score =====
+  function editSubjectiveScore(e, qIdx) {
+    e.stopPropagation();
+    const q = currentQuestions[qIdx];
+    const el = e.target;
+    const current = q.awarded;
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = 0;
+    input.max = q.maxScore;
+    input.value = current;
+    input.style.cssText = 'width:44px;font-size:16px;font-weight:700;border:1px solid var(--accent);border-radius:4px;padding:1px 4px;font-family:var(--font-body);color:var(--accent);text-align:center;';
+    el.replaceWith(input);
+    input.focus();
+    input.select();
+    input.addEventListener('blur', () => saveSubjectiveScore(input, qIdx, current));
+    input.addEventListener('keydown', (ev) => { if (ev.key==='Enter') saveSubjectiveScore(input, qIdx, current); if (ev.key==='Escape') saveSubjectiveScore(input, qIdx, current); });
+  }
+
+  function saveSubjectiveScore(input, qIdx, fallback) {
+    let val = parseInt(input.value);
+    if (isNaN(val) || val < 0) val = fallback;
+    const q = currentQuestions[qIdx];
+    val = Math.min(val, q.maxScore);
+    q.awarded = val;
+    updateTotalScore();
+    renderResults();
+  }
+
+  // ===== Associate Student =====
+  function toggleAssociateDropdown() {
+    const dd = document.getElementById('associateDropdown');
+    const isVisible = dd.classList.contains('associate-dropdown--visible');
+    if (isVisible) {
+      dd.classList.remove('associate-dropdown--visible');
+    } else {
+      dd.classList.add('associate-dropdown--visible');
+      document.getElementById('associateSearch').value = '';
+      renderAssociateList();
+      setTimeout(() => document.getElementById('associateSearch').focus(), 100);
+    }
+  }
+
+  function filterAssociateList() {
+    renderAssociateList(document.getElementById('associateSearch').value);
+  }
+
+  function renderAssociateList(filter = '') {
+    const list = document.getElementById('associateList');
+    const f = filter.toLowerCase();
+    const filtered = classRoster.filter(s =>
+      !f || s.name.includes(f) || s.pinyin.includes(f) || s.examNo.includes(f) || s.cls.includes(f)
+    );
+    list.innerHTML = `
+      <div class="associate-dropdown__header">
+        <span class="ad-name">姓名</span>
+        <span class="ad-exam">考号</span>
+        <span class="ad-class">班级</span>
+      </div>
+      ${filtered.map(s => {
+        const isCurrent = s.name === currentStudent().name;
+        return `<div class="associate-dropdown__item ${isCurrent?'associate-dropdown__item--active':''}" onclick="associateStudent('${s.name}')">
+          <span class="ad-name">${isCurrent ? '● ' : ''}${s.name}</span>
+          <span class="ad-exam">${s.examNo}</span>
+          <span class="ad-class">${s.cls}</span>
+        </div>`;
+      }).join('') || '<div style="padding:12px;font-size:11px;color:var(--text-muted);text-align:center;">无匹配学生</div>'}
+    `;
+  }
+
+  function associateStudent(newName) {
+    const oldName = currentStudent().name;
+    allStudents[currentIdx].name = newName;
+    document.getElementById('associateDropdown').classList.remove('associate-dropdown--visible');
+    showToast(`已将「${oldName}」的试卷关联至：${newName}`);
+    renderAll();
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('associateWrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('associateDropdown').classList.remove('associate-dropdown--visible');
+    }
+  });
+
+  // ===== Keyboard =====
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft' && !document.activeElement.closest('input')) navigateStudent(-1);
+    if (e.key === 'ArrowRight' && !document.activeElement.closest('input')) navigateStudent(1);
+    if (e.key === 'Escape') {
+      document.getElementById('associateDropdown').classList.remove('associate-dropdown--visible');
+    }
+  });
+
+  // ===== Toast =====
+  function showToast(msg) {
+    const e = document.querySelector('.toast'); if(e) e.remove();
+    const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);
+  }
+
+  // ===== Init =====
+  renderAll();
+</script>
+</body>
+</html>

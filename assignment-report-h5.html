@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>作业报告 — Unit 3 单词听写</title>
+<style>
+  :root{
+    --primary:#00a6ab;--primary-dark:#007a7e;--primary-light:#effafa;
+    --gray-50:#f8f8fc;--gray-100:#d2d3de;--gray-200:#bcbdc0;--gray-300:#a2a3a6;
+    --gray-400:#88898c;--gray-500:#6e6f71;--gray-700:#3a3b3d;--gray-900:#212123;
+    --white:#fff;--black:#000;
+    --success:#00a6ab;--danger:#f53f3f;--warning:#ff7d00;--info:#2675c4;
+    --success-bg:#bef8fa;--danger-bg:#ffece8;--warning-bg:#fff7e8;--info-bg:#e4f0fb;
+    --radius:10px;--radius-sm:6px;--radius-full:9999px;
+    --shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);
+    --font:'PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{font-family:var(--font);background:#f0f2f5;display:flex;justify-content:center;align-items:flex-start;}
+  .app{width:100%;max-width:480px;min-height:100vh;background:var(--white);display:flex;flex-direction:column;position:relative;overflow:hidden;}
+  .header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:var(--white);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .header__back{color:rgba(255,255,255,.75);font-size:18px;cursor:pointer;text-decoration:none;line-height:1;flex-shrink:0;}
+  .header__title{flex:1;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .header__role-select{font-size:11px;padding:4px 8px;border-radius:var(--radius-full);background:rgba(255,255,255,.15);color:var(--white);border:none;font-family:var(--font);font-weight:500;outline:none;max-width:120px;}
+  .info-strip{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:11px;color:var(--gray-500);border-bottom:1px solid var(--gray-50);flex-shrink:0;overflow-x:auto;white-space:nowrap;}
+  .info-strip span{flex-shrink:0;}
+  .info-strip .dot{width:3px;height:3px;border-radius:50%;background:var(--gray-200);}
+  .info-strip select{border:1px solid var(--gray-100);border-radius:var(--radius-full);padding:3px 8px;font-size:11px;font-family:var(--font);color:var(--gray-700);outline:none;background:var(--white);}
+  .main-content{flex:1;overflow-y:auto;padding:12px 14px 64px;-webkit-overflow-scrolling:touch;}
+  .tab-panel{display:none;}
+  .tab-panel--active{display:block;}
+  .tab-bar{position:absolute;bottom:0;left:0;right:0;display:flex;background:var(--white);border-top:1px solid var(--gray-50);padding:6px 0 env(safe-area-inset-bottom,6px);z-index:10;flex-shrink:0;}
+  .tab-bar__item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;cursor:pointer;font-size:10px;color:var(--gray-400);transition:color .15s;user-select:none;}
+  .tab-bar__item--active{color:var(--primary);}
+  .tab-bar__item__icon{font-size:20px;line-height:1;}
+
+  .subtab-nav{display:flex;gap:0;margin-bottom:12px;border-bottom:1px solid var(--gray-50);}
+  .subtab-nav__item{flex:1;padding:8px 0;font-size:11px;font-weight:500;color:var(--gray-400);cursor:pointer;text-align:center;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;user-select:none;}
+  .subtab-nav__item--active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600;}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+  .stat-card{background:var(--white);border-radius:var(--radius);padding:12px 14px;border:1px solid var(--gray-50);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:2px;}
+  .stat-card__label{font-size:10px;color:var(--gray-400);font-weight:500;}
+  .stat-card__value{font-size:22px;font-weight:700;color:var(--gray-900);}
+  .stat-card__sub{font-size:10px;color:var(--gray-400);}
+  .stat-card--accent{border-left:3px solid var(--primary);}
+  .stat-card--danger{border-left:3px solid var(--danger);}
+  .stat-card--warning{border-left:3px solid var(--warning);}
+  .stat-card--success{border-left:3px solid var(--success);}
+
+  .section{margin-bottom:16px;}
+  .section__header{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .section__title{font-size:13px;font-weight:700;color:var(--gray-900);}
+  .section__badge{font-size:9px;padding:2px 7px;border-radius:var(--radius-full);background:var(--primary-light);color:var(--primary);font-weight:600;}
+
+  .tag-list{display:flex;flex-wrap:wrap;gap:5px;}
+  .tag{padding:4px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:500;background:var(--danger-bg);color:var(--danger);}
+
+  /* Per-class bars */
+  .class-compare-row{display:flex;align-items:center;gap:8px;padding:6px 0;}
+  .class-compare-row__label{font-size:11px;font-weight:600;color:var(--gray-900);min-width:62px;}
+  .class-compare-row__bar-wrap{flex:1;height:18px;background:var(--gray-50);border-radius:3px;overflow:hidden;position:relative;}
+  .class-compare-row__bar{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;font-weight:600;color:var(--white);}
+  .class-compare-row__val{font-size:11px;font-weight:600;color:var(--gray-900);min-width:38px;text-align:right;}
+
+  .wq-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);border-radius:var(--radius);border:1px solid var(--gray-50);margin-bottom:6px;box-shadow:var(--shadow);cursor:pointer;}
+  .wq-card__no{width:30px;height:30px;border-radius:50%;background:var(--danger-bg);color:var(--danger);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+  .wq-card__info{flex:1;min-width:0;}
+  .wq-card__title{font-size:12px;font-weight:600;color:var(--gray-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .wq-card__meta{font-size:10px;color:var(--gray-400);margin-top:1px;}
+  .wq-card__rates{display:flex;gap:12px;text-align:right;flex-shrink:0;}
+  .wq-card__rate-item{display:flex;flex-direction:column;align-items:center;}
+  .wq-card__rate-val{font-size:16px;font-weight:700;color:var(--danger);}
+  .wq-card__rate-val--grade{font-size:13px;color:var(--gray-500);}
+  .wq-card__rate-label{font-size:8px;color:var(--gray-400);}
+
+  .link-btn{font-size:10px;color:var(--primary);font-weight:500;text-decoration:none;padding:3px 8px;border:1px solid var(--primary);border-radius:var(--radius-full);display:inline-flex;align-items:center;gap:3px;}
+  .link-btn:active{background:var(--primary);color:var(--white);}
+
+  .mobile-table{border-radius:var(--radius);overflow:hidden;border:1px solid var(--gray-50);}
+  .mobile-table__row{display:flex;align-items:center;padding:8px 10px;background:var(--white);border-bottom:1px solid var(--gray-50);font-size:11px;gap:4px;}
+  .mobile-table__row:last-child{border-bottom:none;}
+  .mobile-table__row--header{background:var(--gray-50);font-weight:600;color:var(--gray-500);font-size:10px;}
+  .mobile-table__row .col{flex:1;text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mobile-table__row .col--wide{flex:2;text-align:left;}
+  .col-good{color:var(--success);font-weight:600;}
+  .col-bad{color:var(--danger);font-weight:600;}
+  .col-warn{color:var(--warning);font-weight:600;}
+  .mobile-table__row--header .sortable{color:var(--primary);}
+
+  /* Threshold slider (collapsible) */
+  .threshold-panel{margin-bottom:12px;}
+  .threshold-panel__toggle{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gray-400);cursor:pointer;user-select:none;padding:2px 0;}
+  .threshold-panel__toggle .arrow{font-size:7px;transition:transform .15s;}
+  .threshold-panel--open .threshold-panel__toggle .arrow{transform:rotate(90deg);}
+  .threshold-panel__body{display:none;margin-top:4px;background:var(--gray-50);border:1px solid var(--gray-50);border-radius:var(--radius);padding:10px 12px;}
+  .threshold-panel--open .threshold-panel__body{display:block;}
+  .threshold-panel__track{position:relative;height:36px;margin:0 10px;cursor:pointer;}
+  .threshold-panel__bg{position:absolute;top:16px;left:0;right:0;height:6px;border-radius:3px;background:linear-gradient(to right,#f53f3f,#ff7d00,#f9b932,#00a6ab);}
+  .threshold-handle{position:absolute;top:8px;width:18px;height:24px;background:var(--white);border:2px solid var(--gray-700);border-radius:4px;transform:translateX(-50%);z-index:2;display:flex;align-items:center;justify-content:center;font-size:7px;color:var(--gray-700);font-weight:700;}
+  .threshold-labels{display:flex;justify-content:space-between;font-size:8px;color:var(--gray-400);margin-top:1px;}
+  .threshold-summary{font-size:10px;color:var(--gray-400);}
+  .threshold-summary span{padding:1px 5px;border-radius:var(--radius-full);font-size:9px;font-weight:500;}
+
+  .review-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--gray-50);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
+  .review-card__header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--gray-50);border-bottom:1px solid var(--gray-50);}
+  .review-card__no{width:26px;height:26px;border-radius:50%;background:var(--primary);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+  .review-card__type{font-size:9px;font-weight:600;padding:1px 6px;border-radius:var(--radius-sm);background:#f3f1ff;color:#5936b1;}
+  .review-card__score{font-size:10px;color:var(--gray-400);margin-left:auto;}
+  .review-card__body{padding:10px 12px;}
+  .review-card__stem{font-size:13px;line-height:1.6;color:var(--gray-900);margin-bottom:8px;}
+  .review-card__answer{display:inline-block;font-size:11px;padding:5px 10px;background:var(--success-bg);border-radius:var(--radius-sm);color:var(--success);font-weight:600;margin-bottom:8px;}
+  .review-card__stats{display:flex;flex-wrap:wrap;gap:8px;font-size:10px;color:var(--gray-500);margin-bottom:6px;}
+  .review-card__knowledge{font-size:10px;color:var(--gray-400);}
+  .review-card__similar{font-size:11px;color:var(--primary);font-weight:500;}
+  .review-card__grade-tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:var(--radius-full);font-weight:600;margin-left:6px;}
+  .download-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;background:var(--info-bg);color:var(--info);border-radius:var(--radius);border:none;font-family:var(--font);font-size:12px;font-weight:600;margin-bottom:12px;cursor:pointer;}
+
+  .kp-item{background:var(--white);border-radius:var(--radius);border:1px solid var(--gray-50);padding:12px;margin-bottom:8px;box-shadow:var(--shadow);}
+  .kp-item__name{font-size:12px;font-weight:600;color:var(--gray-900);margin-bottom:8px;}
+  .kp-item__row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:10px;}
+  .kp-item__label{color:var(--gray-500);min-width:48px;}
+  .kp-item__bar{flex:1;height:8px;background:var(--gray-50);border-radius:4px;overflow:hidden;}
+  .kp-item__fill{height:100%;border-radius:4px;}
+  .kp-item__fill--class{background:var(--primary);}
+  .kp-item__fill--grade{background:var(--gray-200);}
+  .kp-item__pct{min-width:32px;text-align:right;font-weight:600;color:var(--gray-900);}
+  .kp-item__diff{font-size:9px;margin-left:4px;}
+
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--gray-900);color:var(--white);padding:8px 18px;border-radius:20px;font-size:11px;z-index:999;pointer-events:none;animation:fadeIn .3s;}
+  @keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="scan-progress.html" class="header__back">←</a>
+    <span class="header__title">Unit 3 单词听写</span>
+    <select class="header__role-select" id="roleSelect" onchange="onRoleChange()">
+      <option value="teacher">任课老师（1、2班）</option>
+      <option value="head">备课组长（全级）</option>
+    </select>
+  </div>
+  <div class="info-strip">
+    <span>高二 · 英语</span><span class="dot"></span><span>2025-12-08</span><span class="dot"></span>
+    <select id="classFilter" onchange="onClassFilter()"></select>
+  </div>
+  <div class="main-content" id="mainContent"></div>
+  <div class="tab-bar" id="tabBar">
+    <div class="tab-bar__item tab-bar__item--active" data-tab="overview" onclick="switchTab('overview')"><span class="tab-bar__item__icon">📊</span>总览</div>
+    <div class="tab-bar__item" data-tab="analysis" onclick="switchTab('analysis')"><span class="tab-bar__item__icon">📈</span>分析</div>
+    <div class="tab-bar__item" data-tab="review" onclick="switchTab('review')"><span class="tab-bar__item__icon">🎯</span>讲评</div>
+    <div class="tab-bar__item" data-tab="knowledge" onclick="switchTab('knowledge')"><span class="tab-bar__item__icon">📚</span>知识点</div>
+  </div>
+</div>
+
+<script>
+// ===== Mock Data =====
+const CLASS_NAMES=['高一·1班','高一·2班','高一·3班'];
+const studentNames=['张三','李四','王五','赵六','钱七','孙八','周九','吴十','郑十一','王小明','李小华','张大伟','刘洋','陈芳','杨柳','黄同学','林同学','何同学','郭同学','马同学','罗同学','梁同学','宋同学','唐同学','韩同学','冯同学','董同学','程同学','曹同学','袁同学','邓同学','许同学','傅同学','沈同学','曾同学','彭同学','吕同学','苏同学','蒋同学','蔡同学'];
+
+function generateStudents(){
+  const students=[];
+  for(let c=0;c<3;c++){const size=38+c*2;const unsub=c===0?['张三','王五']:(c===1?['陈芳','黄同学','林同学']:['梁同学','沈同学']);const uset=new Set(unsub);
+    for(let i=0;i<size;i++){const name=studentNames[i]||`学生${c+1}-${i+1}`;const sub=!uset.has(name);const scores=[];
+      if(sub){const qs=[4,4,4,4,4,4,4,4,4,4,6,8,8,10,10];let seed=c*100+i*7+13;for(let q=0;q<15;q++){const r=((seed*(q+3)+q*17)%100)/100;scores.push(q<10?(r<0.78?qs[q]:0):Math.max(0,Math.round(qs[q]*(0.3+r*0.7))));seed+=1;}}
+      else{for(let q=0;q<15;q++)scores.push(null);}
+      students.push({name,classIdx:c,submitted:sub,scores,total:sub?scores.reduce((a,b)=>a+(b||0),0):null});
+    }
+  }
+  return students;
+}
+const allStudents=generateStudents();
+
+const questions=[
+  {no:1,type:'objective',stem:'The meeting has been ___ till next Monday.',options:['A. put up','B. put off','C. put away','D. put on'],answer:'B',knowledge:'动词短语辨析',score:4},{no:2,type:'objective',stem:'He ___ to bed until his mother came back.',options:['A. went','B. didn\'t go','C. goes','D. doesn\'t go'],answer:'B',knowledge:'not…until 句型',score:4},{no:3,type:'objective',stem:'Would you mind ___ the window?',options:['A. open','B. to open','C. opening','D. opened'],answer:'C',knowledge:'mind doing 用法',score:4},{no:4,type:'objective',stem:'The book ___ on the desk is mine.',options:['A. lying','B. lay','C. lied','D. laying'],answer:'A',knowledge:'现在分词作定语',score:4},{no:5,type:'objective',stem:'I don\'t know if he ___ tomorrow.',options:['A. comes','B. will come','C. came','D. has come'],answer:'B',knowledge:'if 条件句时态',score:4},{no:6,type:'objective',stem:'She is one of the girls who ___ always on time.',options:['A. is','B. are','C. was','D. has been'],answer:'B',knowledge:'定语从句主谓一致',score:4},{no:7,type:'objective',stem:'The teacher asked us ___ in class.',options:['A. not talk','B. not to talk','C. don\'t talk','D. not talking'],answer:'B',knowledge:'ask sb not to do',score:4},{no:8,type:'objective',stem:'___ important information it is!',options:['A. What','B. What an','C. How','D. How an'],answer:'A',knowledge:'感叹句',score:4},{no:9,type:'objective',stem:'The man ___ is standing there is my uncle.',options:['A. who','B. which','C. whom','D. whose'],answer:'A',knowledge:'关系代词 who',score:4},{no:10,type:'objective',stem:'Neither he nor I ___ a teacher.',options:['A. is','B. am','C. are','D. be'],answer:'B',knowledge:'neither…nor 就近原则',score:4},{no:11,type:'subjective',stem:'根据中文完成句子：我每天花半小时读英语。I ___ half an hour ___ English every day.',answer:'spend, reading',knowledge:'spend…doing 句型',score:6},{no:12,type:'subjective',stem:'用所给词的适当形式填空：The little boy was ___ (frighten) by the loud noise.',answer:'frightened',knowledge:'-ed/-ing 形容词辨析',score:8},{no:13,type:'subjective',stem:'句型转换：She said, "I have finished my homework."（改为间接引语）',answer:'She said that she had finished her homework.',knowledge:'间接引语时态变化',score:8},{no:14,type:'subjective',stem:'阅读理解：What is the main idea of the passage?（根据短文内容作答，不少于15词）',answer:'The passage mainly discusses the importance of protecting endangered animals.',knowledge:'阅读理解主旨归纳',score:10},{no:15,type:'subjective',stem:'书面表达：以"My Favorite Sport"为题写一篇短文（不少于60词）。',answer:'略（按评分标准给分）',knowledge:'书面表达',score:10},
+];
+
+const knowledgePoints=[
+  {name:'动词短语辨析',qnos:[1]},{name:'not…until 句型',qnos:[2]},{name:'mind doing 用法',qnos:[3]},{name:'现在分词作定语',qnos:[4]},{name:'if 条件句时态',qnos:[5]},{name:'定语从句主谓一致',qnos:[6]},{name:'ask sb not to do',qnos:[7]},{name:'感叹句',qnos:[8]},{name:'关系代词 who',qnos:[9]},{name:'neither…nor 就近原则',qnos:[10]},{name:'spend…doing 句型',qnos:[11]},{name:'-ed/-ing 形容词辨析',qnos:[12]},{name:'间接引语时态变化',qnos:[13]},{name:'阅读理解主旨归纳',qnos:[14]},{name:'书面表达',qnos:[15]},
+];
+
+// ===== Grade thresholds =====
+let gradeThresholds={bad:0.60,mid:0.75,good:0.85};
+function getGradeLabel(rate){if(rate>=gradeThresholds.good)return'优';if(rate>=gradeThresholds.mid)return'良';if(rate>=gradeThresholds.bad)return'中';return'差';}
+function getGradeColor(rate){if(rate>=gradeThresholds.good)return'var(--success)';if(rate>=gradeThresholds.mid)return'#049d75';if(rate>=gradeThresholds.bad)return'var(--warning)';return'var(--danger)';}
+function getGradeBg(rate){if(rate>=gradeThresholds.good)return'var(--success-bg)';if(rate>=gradeThresholds.mid)return'#d2f0e1';if(rate>=gradeThresholds.bad)return'var(--warning-bg)';return'var(--danger-bg)';}
+
+// ===== State =====
+let currentRole='teacher',currentTab='overview',currentClassFilter='all',currentAnalysisSubtab='questions',analysisSort={field:'no',dir:'asc'};
+function getTeacherClasses(){return[0,1];}
+function getFilteredClassIndices(){if(currentRole==='teacher'){if(currentClassFilter==='all')return getTeacherClasses();return[parseInt(currentClassFilter)];}if(currentClassFilter==='all')return[0,1,2];return[parseInt(currentClassFilter)];}
+function getFilteredStudents(){const ix=getFilteredClassIndices();return allStudents.filter(s=>ix.includes(s.classIdx));}
+function getStudentsByClass(ci){return allStudents.filter(s=>s.classIdx===ci);}
+function getSubmitted(s){return s.filter(x=>x.submitted);}
+function getUnsubmitted(s){return s.filter(x=>!x.submitted);}
+function getQuestionStats(students,qi){const sub=getSubmitted(students);const q=questions[qi];let corr=0,ts=0;sub.forEach(s=>{const sc=s.scores[qi];if(sc!==null){ts+=sc;if(sc===q.score)corr++;}});return{avg:sub.length>0?ts/sub.length:0,rate:q.score>0?(sub.length>0?ts/sub.length:0)/q.score:0,correctRate:sub.length>0?corr/sub.length:0,total:sub.length,correct:corr};}
+function getClassAvg(s){const sub=getSubmitted(s);return sub.length>0?sub.reduce((a,x)=>a+(x.total||0),0)/sub.length:0;}
+function getGradeStudents(){return[0,1,2].flatMap(ci=>getStudentsByClass(ci));}
+
+function renderAll(){updateInfoStrip();renderCurrentTab();}
+function updateInfoStrip(){
+  const sel=document.getElementById('classFilter');
+  if(currentRole==='teacher'){const cls=getTeacherClasses();sel.innerHTML=`<option value="all">全部我的班级（${cls.map(c=>CLASS_NAMES[c].replace('高一·','')+'班').join('、')}）</option>`+cls.map(c=>`<option value="${c}">${CLASS_NAMES[c]}</option>`).join('');}
+  else{sel.innerHTML='<option value="all">全部班级</option>'+[0,1,2].map(c=>`<option value="${c}">${CLASS_NAMES[c]}</option>`).join('');}
+  sel.value=currentClassFilter;
+}
+function switchTab(tab){currentTab=tab;document.querySelectorAll('.tab-bar__item').forEach(el=>el.classList.toggle('tab-bar__item--active',el.dataset.tab===tab));renderCurrentTab();}
+function onRoleChange(){currentRole=document.getElementById('roleSelect').value;currentClassFilter='all';analysisSort={field:'no',dir:'asc'};renderAll();}
+function onClassFilter(){currentClassFilter=document.getElementById('classFilter').value;renderCurrentTab();}
+function renderCurrentTab(){const mc=document.getElementById('mainContent');switch(currentTab){case'overview':mc.innerHTML=renderOverview();break;case'analysis':mc.innerHTML=renderAnalysis();break;case'review':mc.innerHTML=renderReview();break;case'knowledge':mc.innerHTML=renderKnowledge();break;}mc.scrollTop=0;}
+
+// ===== Tab 1: Overview =====
+function renderOverview(){
+  const indices=getFilteredClassIndices();const students=getFilteredStudents();
+  const submitted=getSubmitted(students);const unsubmitted=getUnsubmitted(students);
+  const allGraded=submitted.every(s=>s.scores.every(sc=>sc!==null));
+  const classAvg=getClassAvg(students);const gradeStudents=getGradeStudents();const gradeAvg=getClassAvg(gradeStudents);
+  const totalScore=questions.reduce((a,q)=>a+q.score,0);
+  const gradeQStats=questions.map((q,i)=>({...getQuestionStats(gradeStudents,i)}));
+  const qStats=questions.map((q,i)=>({...getQuestionStats(students,i),no:q.no,stem:q.stem,knowledge:q.knowledge,score:q.score,gradeRate:gradeQStats[i].rate}));
+  qStats.sort((a,b)=>a.rate-b.rate);const topWrong=qStats.slice(0,5);
+  let h='';
+  h+=`<div class="stat-grid">
+    <div class="stat-card stat-card--accent"><div class="stat-card__label">学生总数</div><div class="stat-card__value">${students.length}</div><div class="stat-card__sub">${indices.length}个班</div></div>
+    <div class="stat-card stat-card--success"><div class="stat-card__label">已提交</div><div class="stat-card__value">${submitted.length}</div><div class="stat-card__sub">提交率${students.length>0?Math.round(submitted.length/students.length*100):0}%</div></div>
+    <div class="stat-card stat-card--danger"><div class="stat-card__label">未提交</div><div class="stat-card__value">${unsubmitted.length}</div><div class="stat-card__sub">${unsubmitted.length>0?'需跟进':'全部交齐✓'}</div></div>
+    <div class="stat-card ${allGraded?'stat-card--success':'stat-card--warning'}"><div class="stat-card__label">批改进度</div><div class="stat-card__value">${allGraded?'100%':'…'}</div><div class="stat-card__sub">${allGraded?'已完成':'待批改'}</div></div>
+  </div>`;
+
+  if(unsubmitted.length>0){h+=`<div class="section"><div class="section__header"><span class="section__title">📋 未提交名单</span><span class="section__badge">${unsubmitted.length}人</span></div><div class="tag-list">`;unsubmitted.forEach(s=>{h+=`<span class="tag">${s.name}<span style="font-size:9px;opacity:.6;">${CLASS_NAMES[s.classIdx].replace('高一·','')}</span></span>`;});h+=`</div>
+    <div style="margin-top:8px;"><a class="link-btn" href="anomaly-handling.html?type=examNo" style="background:var(--warning-bg);border-color:#ffcf8b;color:var(--warning);">⚠️ 异常答题卡处理 →</a></div></div>`;}
+
+  // Per-class comparison bars
+  h+=`<div class="section"><div class="section__header"><span class="section__title">📊 各班得分率对比</span></div>
+    <div style="border:1px solid var(--gray-50);border-radius:var(--radius);padding:10px 14px;background:var(--white);">`;
+  indices.forEach(ci=>{const cls=getStudentsByClass(ci);const avg=getClassAvg(cls);const rate=totalScore>0?avg/totalScore:0;const pct=(rate*100).toFixed(1);h+=`<div class="class-compare-row"><span class="class-compare-row__label">${CLASS_NAMES[ci]}</span><div class="class-compare-row__bar-wrap"><div class="class-compare-row__bar" style="width:${pct}%;background:var(--primary);">${pct}%</div></div><span class="class-compare-row__val">${avg.toFixed(1)}分</span></div>`;});
+  const gRate=totalScore>0?gradeAvg/totalScore:0;const gPct=(gRate*100).toFixed(1);
+  h+=`<div class="class-compare-row"><span class="class-compare-row__label" style="color:var(--gray-400);">年级均分</span><div class="class-compare-row__bar-wrap"><div class="class-compare-row__bar" style="width:${gPct}%;background:var(--gray-200);color:var(--gray-500);">${gPct}%</div></div><span class="class-compare-row__val" style="color:var(--gray-400);">${gradeAvg.toFixed(1)}分</span></div>`;
+  const classRate=totalScore>0?classAvg/totalScore:0;
+  h+=`<div style="font-size:10px;color:var(--gray-400);margin-top:4px;text-align:right;">综合得分率<strong style="color:var(--gray-900);">${(classRate*100).toFixed(1)}%</strong>（满分${totalScore}分）${classAvg>=gradeAvg?'<span style="color:var(--success);">·高于年级↑</span>':'<span style="color:var(--danger);">·低于年级↓</span>'}</div></div></div>`;
+
+  // Top wrong questions with grade rate
+  h+=`<div class="section"><div class="section__header"><span class="section__title">⚠️ 高频错题 Top 5</span></div>`;
+  topWrong.forEach(q=>{h+=`<div class="wq-card" onclick="switchTab('review');setTimeout(()=>{const el=document.getElementById('q'+${q.no});if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},200);"><div class="wq-card__no">${q.no}</div><div class="wq-card__info"><div class="wq-card__title">${q.stem}</div><div class="wq-card__meta">${q.knowledge}·${q.score}分</div></div><div class="wq-card__rates"><div class="wq-card__rate-item"><div class="wq-card__rate-val">${(q.rate*100).toFixed(0)}%</div><div class="wq-card__rate-label">班级</div></div><div class="wq-card__rate-item"><div class="wq-card__rate-val wq-card__rate-val--grade">${(q.gradeRate*100).toFixed(0)}%</div><div class="wq-card__rate-label">年级</div></div></div></div>`;});
+  h+=`</div>`;
+  return h;
+}
+
+// ===== Tab 2: Analysis =====
+function switchAnalysisSubtab(st){currentAnalysisSubtab=st;renderCurrentTab();}
+
+function renderAnalysis(){
+  const students=getFilteredStudents();const gradeStudents=getGradeStudents();const totalScore=questions.reduce((a,q)=>a+q.score,0);
+  let h=`<div class="subtab-nav">
+    <div class="subtab-nav__item${currentAnalysisSubtab==='questions'?' subtab-nav__item--active':''}" onclick="switchAnalysisSubtab('questions')">📋 试题分析</div>
+    <div class="subtab-nav__item${currentAnalysisSubtab==='classes'?' subtab-nav__item--active':''}" onclick="switchAnalysisSubtab('classes')">🏫 班级对比</div>
+    <div class="subtab-nav__item${currentAnalysisSubtab==='students'?' subtab-nav__item--active':''}" onclick="switchAnalysisSubtab('students')">👤 学生成绩</div>
+  </div>`;
+
+  if(currentAnalysisSubtab==='questions'){
+    const isThresholdOpen=document.getElementById('thresholdPanel')?.classList.contains('threshold-panel--open');
+    h+=`<div class="threshold-panel${isThresholdOpen?' threshold-panel--open':''}" id="thresholdPanel">
+      <div class="threshold-panel__toggle" onclick="toggleThreshold()">🎚️ 等级阈值 <span class="threshold-summary"><span style="background:var(--danger-bg);color:var(--danger);">差&lt;${(gradeThresholds.bad*100).toFixed(0)}%</span> <span style="background:var(--warning-bg);color:var(--warning);">中&lt;${(gradeThresholds.mid*100).toFixed(0)}%</span> <span style="background:#d2f0e1;color:#049d75;">良&lt;${(gradeThresholds.good*100).toFixed(0)}%</span> <span style="background:var(--success-bg);color:var(--success);">优</span></span> <span class="arrow">▶</span></div>
+      <div class="threshold-panel__body"><div class="threshold-panel__track" id="thresholdTrack"><div class="threshold-panel__bg"></div><div class="threshold-handle" id="handleBad" style="left:${gradeThresholds.bad*100}%;" data-key="bad">差</div><div class="threshold-handle" id="handleMid" style="left:${gradeThresholds.mid*100}%;" data-key="mid">中</div><div class="threshold-handle" id="handleGood" style="left:${gradeThresholds.good*100}%;" data-key="good">良</div></div><div class="threshold-labels"><span>差</span><span>中</span><span>良</span><span>优</span></div></div>
+    </div>`;
+    const gradeQStats=questions.map((q,i)=>({...getQuestionStats(gradeStudents,i)}));
+    let rows=questions.map((q,i)=>{const stats=getQuestionStats(students,i);const gStats=gradeQStats[i];const diff=stats.rate-gStats.rate;return{no:q.no,type:q.type,knowledge:q.knowledge,score:q.score,avg:stats.avg,rate:stats.rate,gAvg:gStats.avg,gRate:gStats.rate,diff};});
+    const sf=analysisSort;rows.sort((a,b)=>{let va=a[sf.field],vb=b[sf.field];if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase();}return sf.dir==='asc'?(va>vb?1:-1):(va<vb?1:-1);});
+    h+=`<div class="section"><div class="section__header"><span class="section__title">📋 试题分析（点击列头排序）</span></div><div class="mobile-table"><div class="mobile-table__row mobile-table__row--header"><span class="col sortable" onclick="sortAnalysis('no')">题号</span><span class="col col--wide">知识点</span><span class="col sortable" onclick="sortAnalysis('rate')">班级</span><span class="col sortable" onclick="sortAnalysis('gRate')">年级</span><span class="col sortable" onclick="sortAnalysis('diff')">差距</span><span class="col">等级</span></div>`;
+    rows.forEach(r=>{const grade=getGradeLabel(r.rate);h+=`<div class="mobile-table__row"><span class="col">${r.no}</span><span class="col col--wide">${r.knowledge}</span><span class="col" style="font-weight:600;color:${getGradeColor(r.rate)}">${(r.rate*100).toFixed(0)}%</span><span class="col">${(r.gRate*100).toFixed(0)}%</span><span class="col ${r.diff>=0?'col-good':'col-bad'}">${r.diff>=0?'+':''}${(r.diff*100).toFixed(0)}%</span><span class="col"><span style="padding:2px 6px;border-radius:10px;font-size:9px;font-weight:600;background:${getGradeBg(r.rate)};color:${getGradeColor(r.rate)};">${grade}</span></span></div>`;});
+    h+=`</div></div>`;
+    const compareIndices=getFilteredClassIndices();
+    if(currentClassFilter==='all'&&compareIndices.length>1){const isTeacher=currentRole==='teacher';h+=`<div class="section"><div class="section__header"><span class="section__title">🏫 各班小题得分率</span><span class="section__badge">${isTeacher?'我的班级':'全年级'}</span></div><div class="mobile-table"><div class="mobile-table__row mobile-table__row--header"><span class="col">题号</span>${compareIndices.map(ci=>`<span class="col">${CLASS_NAMES[ci].replace('高一·','')}</span>`).join('')}<span class="col">年级</span></div>`;questions.forEach((q,i)=>{h+=`<div class="mobile-table__row"><span class="col">${q.no}</span>`;compareIndices.forEach(ci=>{const cs=getQuestionStats(getStudentsByClass(ci),i);h+=`<span class="col" style="font-weight:600;color:${getGradeColor(cs.rate)}">${(cs.rate*100).toFixed(0)}%</span>`;});const gs=getQuestionStats(gradeStudents,i);h+=`<span class="col">${(gs.rate*100).toFixed(0)}%</span></div>`;});h+=`</div></div>`;}
+    setTimeout(initThresholdDrag,50);
+  }
+  else if(currentAnalysisSubtab==='classes'){
+    const compareIndices=getFilteredClassIndices();
+    if(currentClassFilter==='all'&&compareIndices.length>1){
+      h+=`<div class="section"><div class="section__header"><span class="section__title">🏅 一分四率</span></div><div class="mobile-table"><div class="mobile-table__row mobile-table__row--header"><span class="col col--wide">班级</span><span class="col">均分</span><span class="col">优秀</span><span class="col">良好</span><span class="col">及格</span></div>`;
+      compareIndices.forEach(ci=>{const cls=getSubmitted(getStudentsByClass(ci));const avg=getClassAvg(getStudentsByClass(ci));const n=cls.length;const e=cls.filter(s=>(s.total||0)/totalScore>=0.85).length;const g=cls.filter(s=>(s.total||0)/totalScore>=0.70).length;const p=cls.filter(s=>(s.total||0)/totalScore>=0.60).length;h+=`<div class="mobile-table__row"><span class="col col--wide">${CLASS_NAMES[ci]}</span><span class="col" style="font-weight:600;">${avg.toFixed(1)}</span><span class="col">${e}(${n>0?Math.round(e/n*100):0}%)</span><span class="col">${g}(${n>0?Math.round(g/n*100):0}%)</span><span class="col">${p}(${n>0?Math.round(p/n*100):0}%)</span></div>`;});
+      h+=`</div></div>`;
+      const isTeacher=currentRole==='teacher';h+=`<div class="section"><div class="section__header"><span class="section__title">🏫 各班小题得分率</span><span class="section__badge">${isTeacher?'我的班级':'全年级'}</span></div><div class="mobile-table"><div class="mobile-table__row mobile-table__row--header"><span class="col">题号</span>${compareIndices.map(ci=>`<span class="col">${CLASS_NAMES[ci].replace('高一·','')}</span>`).join('')}<span class="col">年级</span></div>`;questions.forEach((q,i)=>{h+=`<div class="mobile-table__row"><span class="col">${q.no}</span>`;compareIndices.forEach(ci=>{const cs=getQuestionStats(getStudentsByClass(ci),i);h+=`<span class="col" style="font-weight:600;color:${getGradeColor(cs.rate)}">${(cs.rate*100).toFixed(0)}%</span>`;});const gs=getQuestionStats(gradeStudents,i);h+=`<span class="col">${(gs.rate*100).toFixed(0)}%</span></div>`;});h+=`</div></div>`;
+    }else{h+=`<div style="text-align:center;padding:40px;color:var(--gray-400);">请选择「全部班级」查看</div>`;}
+  }
+  else if(currentAnalysisSubtab==='students'){
+    const submitted=getSubmitted(students).sort((a,b)=>(b.total||0)-(a.total||0));const show=submitted.slice(0,15);
+    h+=`<div class="section"><div class="section__header"><span class="section__title">👤 学生成绩 Top 15</span></div><div class="mobile-table"><div class="mobile-table__row mobile-table__row--header"><span class="col">#</span><span class="col col--wide">姓名</span><span class="col">总分</span><span class="col">得分率</span><span class="col">原卷</span></div>`;
+    show.forEach((s,rank)=>{const rate=(s.total||0)/totalScore;h+=`<div class="mobile-table__row"><span class="col">${rank+1}</span><span class="col col--wide">${s.name}<span style="font-size:9px;color:var(--gray-400);"> ${CLASS_NAMES[s.classIdx].replace('高一·','')}</span></span><span class="col" style="font-weight:600;">${s.total}</span><span class="col ${rate>=0.8?'col-good':(rate<0.5?'col-bad':'')}">${(rate*100).toFixed(0)}%</span><span class="col"><a class="link-btn" href="student-preview.html?name=${encodeURIComponent(s.name)}">📄</a></span></div>`;});
+    h+=`</div></div>`;
+  }
+  return h;
+}
+
+function sortAnalysis(field){if(analysisSort.field===field){analysisSort.dir=analysisSort.dir==='asc'?'desc':'asc';}else{analysisSort.field=field;analysisSort.dir='asc';}renderCurrentTab();}
+function toggleThreshold(){const panel=document.getElementById('thresholdPanel');if(panel)panel.classList.toggle('threshold-panel--open');}
+
+// ===== Threshold drag =====
+function initThresholdDrag(){
+  const track=document.getElementById('thresholdTrack');if(!track)return;
+  track.querySelectorAll('.threshold-handle').forEach(h=>{
+    h.onmousedown=function(e){e.preventDefault();const key=h.dataset.key;
+      function onMove(ev){const rect=track.getBoundingClientRect();let pct=Math.max(0.05,Math.min(0.95,(ev.clientX-rect.left)/rect.width));if(key==='bad')pct=Math.min(pct,gradeThresholds.mid-0.05);if(key==='mid'){pct=Math.max(pct,gradeThresholds.bad+0.05);pct=Math.min(pct,gradeThresholds.good-0.05);}if(key==='good')pct=Math.max(pct,gradeThresholds.mid+0.05);gradeThresholds[key]=Math.round(pct*100)/100;h.style.left=(gradeThresholds[key]*100)+'%';updateThresholdLabels();}
+      function onUp(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);renderCurrentTab();}
+      document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);};
+    h.ontouchstart=function(e){e.preventDefault();const key=h.dataset.key;
+      function onMove(ev){const rect=track.getBoundingClientRect();let pct=Math.max(0.05,Math.min(0.95,(ev.touches[0].clientX-rect.left)/rect.width));if(key==='bad')pct=Math.min(pct,gradeThresholds.mid-0.05);if(key==='mid'){pct=Math.max(pct,gradeThresholds.bad+0.05);pct=Math.min(pct,gradeThresholds.good-0.05);}if(key==='good')pct=Math.max(pct,gradeThresholds.mid+0.05);gradeThresholds[key]=Math.round(pct*100)/100;h.style.left=(gradeThresholds[key]*100)+'%';updateThresholdLabels();}
+      function onUp(){document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);renderCurrentTab();}
+      document.addEventListener('touchmove',onMove,{passive:false});document.addEventListener('touchend',onUp);};
+  });
+}
+function updateThresholdLabels(){const labels=document.querySelector('.threshold-labels');if(labels)labels.innerHTML=`<span>差&lt;${(gradeThresholds.bad*100).toFixed(0)}%</span><span>中${(gradeThresholds.bad*100).toFixed(0)}-${(gradeThresholds.mid*100).toFixed(0)}%</span><span>良${(gradeThresholds.mid*100).toFixed(0)}-${(gradeThresholds.good*100).toFixed(0)}%</span><span>优≥${(gradeThresholds.good*100).toFixed(0)}%</span>`;}
+
+// ===== Tab 3: Review =====
+function renderReview(){
+  const students=getFilteredStudents();const gradeStudents=getGradeStudents();let h='';
+  h+=`<button class="download-btn" onclick="alert('模拟下载：试题讲评课件.pdf')">⬇ 下载 PDF 课件（课堂讲评用）</button>`;
+  questions.forEach((q,i)=>{const stats=getQuestionStats(students,i);const gStats=getQuestionStats(gradeStudents,i);const grade=getGradeLabel(stats.rate);
+    h+=`<div class="review-card" id="q${q.no}"><div class="review-card__header"><div class="review-card__no">${q.no}</div><span class="review-card__type">${q.type==='objective'?'客观':'主观'}</span><span style="font-size:11px;font-weight:600;color:var(--gray-700);">${q.knowledge}</span><span class="review-card__grade-tag" style="background:${getGradeBg(stats.rate)};color:${getGradeColor(stats.rate)};">${grade}</span><span class="review-card__score">${q.score}分</span></div>
+    <div class="review-card__body"><div class="review-card__stem">${q.stem}</div>${q.options?`<div style="font-size:11px;color:var(--gray-500);margin-bottom:8px;">${q.options.join('  ')}</div>`:''}
+    <div class="review-card__answer">✅ ${q.answer}</div><div class="review-card__stats"><span>班级均分<b>${stats.avg.toFixed(1)}</b></span><span>得分率<b style="color:${getGradeColor(stats.rate)}">${(stats.rate*100).toFixed(0)}%</b></span>${currentRole==='head'?`<span>年级<b>${(gStats.rate*100).toFixed(0)}%</b></span>`:''}<span>答对<b>${stats.correct}/${stats.total}</b></span></div>
+    ${q.type==='objective'&&stats.rate<0.8?`<div style="font-size:10px;color:var(--gray-500);margin-bottom:6px;">🔍 常见误选：${(q.options||[]).filter(o=>!o.startsWith(q.answer)).slice(0,2).join('、')}</div>`:''}
+    <div class="review-card__knowledge">📖 ${q.knowledge} · ${q.type==='objective'?'考查语境分析和语法规则结合。':'考查综合运用，评分关注要点完整性和语言准确性。'}</div>
+    <span class="review-card__similar" onclick="alert('推荐3道相似题：'+'${q.knowledge}'.replace(/'/g,'')+'同类练习')">💡 相似题推荐 →</span></div></div>`;
+  });
+  return h;
+}
+
+// ===== Tab 4: Knowledge =====
+function renderKnowledge(){
+  const students=getFilteredStudents();const gradeStudents=getGradeStudents();
+  const kpData=knowledgePoints.map(kp=>{let cTotal=0,cCorrect=0,gTotal=0,gCorrect=0;kp.qnos.forEach(qi=>{const q=questions[qi-1];const cs=getQuestionStats(students,qi-1);const gs=getQuestionStats(gradeStudents,qi-1);cTotal+=q.score*cs.total;cCorrect+=cs.avg*cs.total;gTotal+=q.score*gs.total;gCorrect+=gs.avg*gs.total;});return{...kp,classRate:cTotal>0?cCorrect/cTotal:0,gradeRate:gTotal>0?gCorrect/gTotal:0};});
+  kpData.sort((a,b)=>a.classRate-b.classRate);
+  let h=`<div class="section"><div class="section__header"><span class="section__title">📚 知识点掌握情况</span><span class="section__badge">共${kpData.length}个</span></div>`;
+  kpData.forEach(kp=>{const cp=(kp.classRate*100).toFixed(0),gp=(kp.gradeRate*100).toFixed(0);const diff=kp.classRate-kp.gradeRate;h+=`<div class="kp-item"><div class="kp-item__name">${kp.name}<span style="font-size:10px;color:var(--gray-400);font-weight:400;"> · 题${kp.qnos.join('、')}</span></div><div class="kp-item__row"><span class="kp-item__label">班级</span><span class="kp-item__bar"><span class="kp-item__fill kp-item__fill--class" style="width:${cp}%"></span></span><span class="kp-item__pct">${cp}%</span></div><div class="kp-item__row"><span class="kp-item__label">年级</span><span class="kp-item__bar"><span class="kp-item__fill kp-item__fill--grade" style="width:${gp}%"></span></span><span class="kp-item__pct">${gp}%</span><span class="kp-item__diff" style="color:${diff>=0?'var(--success)':'var(--danger)'}">${diff>=0?'↑'+Math.abs(diff*100).toFixed(0)+'%':'↓'+Math.abs(diff*100).toFixed(0)+'%'}</span></div></div>`;});h+=`</div>`;
+  const weak=kpData.filter(k=>k.classRate<0.65);if(weak.length>0){h+=`<div class="section"><div class="section__header"><span class="section__title">⚠️ 需重点加强</span></div><div class="tag-list">`;weak.forEach(k=>{h+=`<span class="tag" style="background:var(--warning-bg);color:var(--warning);">${k.name}（${(k.classRate*100).toFixed(0)}%）</span>`;});h+=`</div></div>`;}
+  return h;
+}
+
+renderAll();
+</script>
+</body>
+</html>

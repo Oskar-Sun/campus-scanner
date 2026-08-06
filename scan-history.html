@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 扫描记录</title>
+<style>
+  :root {
+    /* ===== Primary (Brand/Interaction) ===== */
+    --color-primary-50: #effafa;
+    --color-primary-100: #def8f9;
+    --color-primary-200: #b2f1f2;
+    --color-primary-300: #7de3e6;
+    --color-primary-500: #50d8dc;
+    --color-primary-700: #00a6ab;
+    --color-primary-950: #007a7e;
+
+    /* ===== Gray (Neutral) ===== */
+    --color-gray-50: #f8f8fc;
+    --color-gray-100: #d2d3de;
+    --color-gray-200: #bcbdc0;
+    --color-gray-300: #a2a3a6;
+    --color-gray-400: #88898c;
+    --color-gray-500: #6e6f71;
+    --color-gray-600: #545557;
+    --color-gray-700: #3a3b3d;
+    --color-gray-900: #212123;
+
+    /* ===== Base ===== */
+    --color-base-01: #000000;
+    --color-base-02: #ffffff;
+
+    /* ===== Semantic - Success ===== */
+    --color-success-100: #bef8fa;
+    --color-success-300: #66dade;
+    --color-success-500: #11c5ca;
+    --color-success-700: #00a6ab;
+    --color-success-900: #008a8f;
+
+    /* ===== Semantic - Error ===== */
+    --color-error-100: #ffece8;
+    --color-error-300: #fdcdc5;
+    --color-error-500: #fbaca3;
+    --color-error-700: #f53f3f;
+    --color-error-900: #cb2634;
+
+    /* ===== Semantic - Warning ===== */
+    --color-warning-100: #fff7e8;
+    --color-warning-300: #ffe4ba;
+    --color-warning-500: #ffcf8b;
+    --color-warning-700: #ff7d00;
+    --color-warning-900: #d25f00;
+
+    /* ===== Semantic - Info ===== */
+    --color-info-100: #e4f0fb;
+    --color-info-300: #97c4f1;
+    --color-info-500: #3089e3;
+    --color-info-700: #2675c4;
+    --color-info-900: #185695;
+
+    /* ===== Accent-1 (Green - classification/data-viz) ===== */
+    --color-accent-1-50: #d2f0e1;
+    --color-accent-1-400: #a7eaca;
+    --color-accent-1-600: #5ad0a3;
+    --color-accent-1-800: #049d75;
+
+    /* ===== Accent-2 (Pink) ===== */
+    --color-accent-2-50: #fff1f7;
+    --color-accent-2-400: #fbcde4;
+    --color-accent-2-600: #ff86c8;
+    --color-accent-2-800: #d14692;
+
+    /* ===== Accent-3 (Purple) ===== */
+    --color-accent-3-50: #f3f1ff;
+    --color-accent-3-400: #cfc6ff;
+    --color-accent-3-600: #8b6ff2;
+    --color-accent-3-800: #5936b1;
+
+    /* ===== Accent-4 (Yellow) ===== */
+    --color-accent-4-50: #fff9e7;
+    --color-accent-4-400: #ffeeb6;
+    --color-accent-4-600: #f9b932;
+    --color-accent-4-800: #c27b00;
+
+    /* ===== Overlay (semi-transparent — white base) ===== */
+    --overlay-alpha-1-10: rgba(255,255,255,0.1);
+    --overlay-alpha-1-35: rgba(255,255,255,0.35);
+    --overlay-alpha-1-60: rgba(255,255,255,0.6);
+    --overlay-alpha-1-78: rgba(255,255,255,0.78);
+
+    /* ===== Overlay (semi-transparent — black base) ===== */
+    --overlay-alpha-2-04: rgba(19,19,21,0.04);
+    --overlay-alpha-2-05: rgba(19,19,21,0.05);
+    --overlay-alpha-2-06: rgba(19,19,21,0.06);
+    --overlay-alpha-2-08: rgba(19,19,21,0.08);
+    --overlay-alpha-2-10: rgba(19,19,21,0.10);
+
+    /* ===== Legacy Aliases (backward compatibility) ===== */
+    --accent: var(--color-primary-700);
+    --accent-dark: var(--color-primary-950);
+    --accent-light: var(--color-primary-100);
+    --text-primary: var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
+    --text-muted: var(--color-gray-400);
+    --border: var(--color-gray-100);
+    --bg-primary: var(--color-gray-50);
+    --bg-header: var(--color-primary-950);
+    --success: var(--color-success-700);
+    --success-bg: var(--color-success-100);
+    --warning: var(--color-warning-700);
+    --warning-bg: var(--color-warning-100);
+    --danger: var(--color-error-700);
+    --danger-bg: var(--color-error-100);
+
+    /* ===== Morphology ===== */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    /* ===== Shadows (overlay-only) ===== */
+    --shadow-sm: 0 1px 2px var(--overlay-alpha-2-04);
+    --shadow: 0 1px 3px var(--overlay-alpha-2-06);
+    --shadow-md: 0 4px 14px var(--overlay-alpha-2-06);
+    --shadow-lg: 0 12px 32px var(--overlay-alpha-2-08);
+
+    /* ===== Typography ===== */
+    --font-display: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --transition: 160ms cubic-bezier(0.4,0,0.2,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:var(--font-body);
+    background:var(--color-gray-50);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:24px;-webkit-font-smoothing:antialiased;
+  }
+  .app-window{
+    width:1480px;max-width:100%;
+    background:var(--color-base-02);
+    border-radius:var(--radius-xl);
+    box-shadow:0 0 0 1px var(--overlay-alpha-2-05),0 24px 64px var(--overlay-alpha-2-10);
+    overflow:hidden;display:flex;flex-direction:column;max-height:95vh;
+  }
+
+  .title-bar{
+    height:32px;background:var(--color-primary-950);
+    display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;
+  }
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;opacity:0.85;}
+  .title-bar__dot--close{background:var(--color-error-700);}
+  .title-bar__dot--min{background:var(--color-warning-500);}
+  .title-bar__dot--max{background:var(--color-success-500);}
+  .title-bar__title{flex:1;text-align:center;color:var(--overlay-alpha-1-60);font-size:11px;}
+
+  .header{
+    background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);
+    padding:0 24px;height:52px;display:flex;align-items:center;gap:14px;flex-shrink:0;
+  }
+  .header__back{
+    display:flex;align-items:center;gap:5px;color:var(--overlay-alpha-1-78);
+    font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);
+  }
+  .header__back:hover{color:var(--color-base-02);background:var(--overlay-alpha-1-10);}
+  .header__back svg{width:15px;height:15px;opacity:0.8;}
+  .header__breadcrumb{color:var(--overlay-alpha-1-35);font-size:13px;}
+  .header__page-title{color:var(--color-base-02);font-size:15px;font-weight:600;font-family:var(--font-display);flex:1;}
+
+  /* === Filter Bar === */
+  .filter-bar{
+    background:var(--color-base-02);border-bottom:1px solid var(--border);
+    padding:10px 24px;display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap;
+  }
+  .filter-bar__search{
+    display:flex;align-items:center;gap:8px;padding:6px 12px;
+    background:var(--color-gray-50);border:1px solid var(--border);border-radius:var(--radius-full);
+    flex:1;max-width:320px;
+  }
+  .filter-bar__search svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0;}
+  .filter-bar__search input{
+    border:none;outline:none;background:transparent;font-size:12px;color:var(--text-primary);
+    font-family:var(--font-body);flex:1;
+  }
+  .filter-bar__search input::placeholder{color:var(--text-muted);}
+  .filter-chip{
+    padding:5px 14px;border-radius:var(--radius-full);font-size:11px;font-weight:500;
+    border:1.5px solid var(--border);background:var(--color-base-02);cursor:pointer;
+    transition:all var(--transition);font-family:var(--font-body);
+    display:flex;align-items:center;gap:4px;white-space:nowrap;
+  }
+  .filter-chip:hover{border-color:var(--color-primary-300);background:var(--color-primary-50);}
+  .filter-chip--active{
+    border-color:var(--accent);background:var(--accent-light);color:var(--color-primary-950);font-weight:600;
+  }
+  .filter-bar__count{font-size:11px;color:var(--text-muted);margin-left:auto;white-space:nowrap;}
+  .filter-bar__divider{width:1px;height:18px;background:var(--border);margin:0 2px;}
+  .filter-bar__date-label{font-size:11px;color:var(--text-secondary);}
+  .filter-bar__date{
+    padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-full);
+    font-size:11px;color:var(--text-primary);font-family:var(--font-body);
+    outline:none;transition:all var(--transition);background:var(--color-gray-50);width:140px;
+  }
+  .filter-bar__date:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--color-primary-100);}
+  .filter-bar__date-clear{
+    width:20px;height:20px;border-radius:50%;border:1px solid var(--border);
+    background:var(--color-base-02);cursor:pointer;font-size:9px;color:var(--text-muted);
+    display:flex;align-items:center;justify-content:center;transition:all var(--transition);
+  }
+  .filter-bar__date-clear:hover{background:var(--color-error-100);border-color:var(--color-error-300);color:var(--color-error-700);}
+
+  /* === Table === */
+  .table-wrapper{flex:1;overflow-y:auto;}
+  .table-wrapper::-webkit-scrollbar{width:5px;}
+  .table-wrapper::-webkit-scrollbar-track{background:transparent;}
+  .table-wrapper::-webkit-scrollbar-thumb{background:var(--color-gray-200);border-radius:3px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead{position:sticky;top:0;z-index:1;}
+  thead th{
+    background:var(--color-gray-50);padding:11px 16px;text-align:left;font-size:11px;font-weight:600;
+    color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;
+    border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  tbody tr{
+    cursor:pointer;transition:background var(--transition);
+    border-bottom:1px solid var(--color-gray-50);
+  }
+  tbody tr:hover{background:var(--color-primary-50);}
+  tbody tr:last-child{border-bottom:none;}
+  tbody td{padding:13px 16px;color:var(--text-primary);white-space:nowrap;}
+
+  /* Column styles */
+  .col-time{color:var(--text-secondary);font-size:12px;}
+  .col-user{font-weight:600;}
+  .col-assignment{display:flex;align-items:center;gap:8px;}
+  .col-assignment__dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+  .col-class{font-weight:500;}
+  .col-count{font-weight:600;color:var(--accent);}
+  .col-type{
+    font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--radius-full);
+    display:inline-block;
+  }
+  .col-type--smart{background:var(--color-primary-100);color:var(--color-primary-950);}
+  .col-type--designated{background:var(--color-accent-3-50);color:var(--color-accent-3-800);}
+  .col-type--free{background:var(--color-accent-1-50);color:var(--color-accent-1-800);}
+  .col-actions{text-align:right;white-space:nowrap;}
+  .col-actions button+.col-actions button{margin-left:4px;}
+  .col-actions button{
+    padding:4px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:500;
+    border:1px solid var(--border);background:var(--color-base-02);cursor:pointer;
+    transition:all var(--transition);font-family:var(--font-body);color:var(--text-secondary);
+  }
+  .col-actions button:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+
+  /* === Footer === */
+  .footer{
+    background:var(--color-base-02);border-top:1px solid var(--border);
+    padding:8px 20px;display:flex;align-items:center;justify-content:space-between;
+    flex-shrink:0;font-size:11px;color:var(--text-muted);
+  }
+  .pagination{display:flex;align-items:center;gap:6px;}
+  .pagination__btn{
+    width:26px;height:26px;border-radius:50%;border:1px solid var(--border);
+    background:var(--color-base-02);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:var(--text-secondary);transition:all var(--transition);
+  }
+  .pagination__btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+  .pagination__btn--active{background:var(--accent);border-color:var(--accent);color:var(--color-base-02);}
+  .pagination__btn:disabled{color:var(--color-gray-400);cursor:not-allowed;pointer-events:none;}
+
+  /* Toast */
+  .toast{
+    position:fixed;top:24px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,var(--color-gray-900) 0%,var(--color-gray-700) 100%);
+    color:var(--color-base-02);padding:9px 18px;border-radius:var(--radius-full);font-size:12px;
+    z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);
+  }
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-6px);}}
+
+  /* Responsive */
+  @media (max-width:800px){
+    .filter-bar{padding:8px 14px;gap:6px;}
+    .filter-bar__search{max-width:100%;}
+    thead th,tbody td{padding:8px 10px;font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots">
+      <div class="title-bar__dot title-bar__dot--close"></div>
+      <div class="title-bar__dot title-bar__dot--min"></div>
+      <div class="title-bar__dot title-bar__dot--max"></div>
+    </div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="index.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      首页
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">扫描记录</span>
+  </header>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-bar__search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="搜索作业名称、班级、人员…" id="searchInput" oninput="filterRecords()">
+    </div>
+    <span class="filter-chip filter-chip--active" data-filter="all" onclick="setFilter(this,'all')">全部记录</span>
+    <span class="filter-chip" data-filter="smart" onclick="setFilter(this,'smart')">智慧作业</span>
+    <span class="filter-chip" data-filter="designated" onclick="setFilter(this,'designated')">指定作业</span>
+    <span class="filter-chip" data-filter="free" onclick="setFilter(this,'free')">自由作业</span>
+    <span class="filter-bar__divider"></span>
+    <span class="filter-bar__date-label">日期：</span>
+    <input type="date" class="filter-bar__date" id="dateFrom" onchange="onDateChange()" title="开始日期">
+    <span style="color:var(--text-muted);font-size:11px;">至</span>
+    <input type="date" class="filter-bar__date" id="dateTo" onchange="onDateChange()" title="结束日期">
+    <button class="filter-bar__date-clear" id="dateClear" onclick="clearDateFilter()" style="display:none;" title="清除日期筛选">✕</button>
+    <span class="filter-bar__count" id="recordCount">共 128 条记录</span>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:155px;">扫描时间</th>
+          <th style="width:100px;">扫描类型</th>
+          <th>作业名称</th>
+          <th style="width:80px;">操作人员</th>
+          <th style="width:120px;">班级</th>
+          <th style="width:60px;">人数</th>
+          <th style="width:80px;">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span id="paginationInfo">显示 1-15 条，共 128 条</span>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<script>
+  // ===== Data =====
+  const assignmentColorMap = {
+    '数学周练卷（五）':'var(--color-primary-700)','数学月考卷':'var(--color-primary-700)','数学期中模拟':'var(--color-primary-700)',
+    '英语单元测试':'var(--color-accent-3-600)','英语阅读理解专练':'var(--color-accent-3-600)','英语听力测试':'var(--color-accent-3-600)',
+    '语文阅读理解':'var(--color-accent-4-600)','语文作文训练':'var(--color-accent-4-600)',
+    '物理实验报告':'var(--color-accent-1-600)','物理章节练习':'var(--color-accent-1-600)',
+  };
+
+  const rawRecords = [];
+  const assignments = [
+    '数学周练卷（五）','英语单元测试','语文阅读理解','物理实验报告',
+    '数学月考卷','英语阅读理解专练','语文作文训练','物理章节练习',
+    '数学期中模拟','英语听力测试'
+  ];
+  const classes = ['高一·1班','高一·2班','高一·3班','高二·1班','高二·2班','高二·3班'];
+  const users = ['张建国','李明','王芳','陈强','刘敏'];
+  const types = ['smart','smart','smart','smart','designated','designated','designated'];
+
+  // Pick N unique random assignments
+  function pickAssignments(count) {
+    const shuffled = [...assignments].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+  }
+
+  // Generate 128 records
+  for (let i = 0; i < 128; i++) {
+    const date = new Date(2025, 11, 1);
+    date.setDate(date.getDate() - Math.floor(i * 0.9));
+    date.setHours(8 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60), 0, 0);
+
+    const cls = classes[Math.floor(Math.random() * classes.length)];
+    const user = users[Math.floor(Math.random() * users.length)];
+
+    // First decide type, then batch size:
+    // - smart (智慧作业): can mix multiple assignments in one scan → 1~3
+    // - designated (指定作业): single assignment per scan → always 1
+    const type = types[Math.floor(Math.random() * types.length)];
+    const batchSize = type === 'smart'
+      ? (Math.random() < 0.60 ? 1 : (Math.random() < 0.80 ? 2 : 3))
+      : 1;
+
+    const batchAssignments = pickAssignments(batchSize);
+
+    // Each assignment in the batch has its own student count
+    const assignmentDetails = batchAssignments.map(name => ({
+      name: name,
+      count: 10 + Math.floor(Math.random() * 30),
+    }));
+    const totalCount = assignmentDetails.reduce((sum, a) => sum + a.count, 0);
+
+    rawRecords.push({
+      id: i + 1,
+      time: date,
+      type: type,
+      assignments: assignmentDetails,  // array of {name, count}
+      user: user,
+      class: cls,
+      count: totalCount,
+    });
+  }
+  // Add free homework records (~10 records)
+  const freeTaskNames = ['Unit 1 单词听写','Unit 2 单词听写','Unit 3 单词听写','Unit 4 单词听写','Unit 5 单词听写','Unit 6 单词听写','不规则动词过去式听写','英语短语默写','课堂单词小测','早读听写练习'];
+  const freeClasses = ['高一·3班','高一·4班','高一·5班'];
+  for (let i = 0; i < 10; i++) {
+    const date = new Date(2026, 5, 1 - i * 2);
+    date.setHours(8 + Math.floor(Math.random()*4), Math.floor(Math.random()*60), 0, 0);
+    rawRecords.push({
+      id: 200 + i,
+      time: date,
+      type: 'free',
+      assignments: [{ name: freeTaskNames[i], count: 15 + Math.floor(Math.random()*15) }],
+      user: '张建国',
+      class: freeClasses[Math.floor(Math.random()*freeClasses.length)],
+      count: 18 + Math.floor(Math.random()*12),
+      taskName: freeTaskNames[i],
+    });
+  }
+
+  // Sort by time desc
+  rawRecords.sort((a,b) => b.time - a.time);
+
+  let currentFilter = 'all';
+  let currentPage = 1;
+  const pageSize = 15;
+
+  // ===== Filter =====
+  function getFilteredRecords() {
+    let records = [...rawRecords];
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    // Type filter
+    if (currentFilter === 'smart') records = records.filter(r => r.type === 'smart');
+    else if (currentFilter === 'designated') records = records.filter(r => r.type === 'designated');
+    else if (currentFilter === 'free') records = records.filter(r => r.type === 'free');
+
+    // Date range filter
+    const fromVal = document.getElementById('dateFrom').value;
+    const toVal = document.getElementById('dateTo').value;
+    if (fromVal) {
+      const from = new Date(fromVal); from.setHours(0,0,0,0);
+      records = records.filter(r => r.time >= from);
+    }
+    if (toVal) {
+      const to = new Date(toVal); to.setHours(23,59,59,999);
+      records = records.filter(r => r.time <= to);
+    }
+
+    // Search filter
+    if (search) {
+      records = records.filter(r =>
+        r.assignments.some(a => a.name.toLowerCase().includes(search)) ||
+        r.class.includes(search) ||
+        r.user.includes(search)
+      );
+    }
+
+    return records;
+  }
+
+  function setFilter(chip, filter) {
+    currentFilter = filter;
+    currentPage = 1;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('filter-chip--active'));
+    chip.classList.add('filter-chip--active');
+    render();
+  }
+
+  function onDateChange() {
+    currentPage = 1;
+    const from = document.getElementById('dateFrom').value;
+    const to = document.getElementById('dateTo').value;
+    document.getElementById('dateClear').style.display = (from || to) ? 'inline-flex' : 'none';
+    render();
+  }
+
+  function clearDateFilter() {
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    document.getElementById('dateClear').style.display = 'none';
+    currentPage = 1;
+    render();
+  }
+
+  function filterRecords() {
+    currentPage = 1;
+    render();
+  }
+
+  // ===== Render =====
+  function render() {
+    const records = getFilteredRecords();
+    const totalPages = Math.ceil(records.length / pageSize);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+
+    const start = (currentPage - 1) * pageSize;
+    const pageRecords = records.slice(start, start + pageSize);
+
+    // Table body
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = pageRecords.map(r => {
+      const timeStr = formatTime(r.time);
+      const typeLabels = { smart:'智慧作业', designated:'指定作业', free:'自由作业' };
+      const typeClasses = { smart:'col-type--smart', designated:'col-type--designated', free:'col-type--free' };
+      const typeLabel = typeLabels[r.type] || r.type;
+      const typeClass = typeClasses[r.type] || '';
+
+      // Render assignment badges
+      const assignmentHtml = r.assignments.map(a => {
+        const color = assignmentColorMap[a.name] || 'var(--color-gray-400)';
+        return `<span style="display:inline-flex;align-items:center;gap:4px;margin-right:6px;white-space:nowrap;">
+          <span class="col-assignment__dot" style="background:${color};"></span>
+          ${a.name}
+          <span style="font-size:10px;color:var(--text-muted);">${a.count}张</span>
+        </span>`;
+      }).join('<span style="color:var(--color-gray-100);margin:0 2px;">·</span>');
+
+      return `<tr onclick="openDetail(${r.id})">
+        <td class="col-time">${timeStr}</td>
+        <td><span class="col-type ${typeClass}">${typeLabel}</span></td>
+        <td><div class="col-assignment" style="flex-wrap:wrap;">${assignmentHtml}</div></td>
+        <td class="col-user">${r.user}</td>
+        <td class="col-class">${r.class}</td>
+        <td class="col-count">${r.count} 人</td>
+        <td class="col-actions">
+          ${r.type === 'free' ? `
+            <button onclick="event.stopPropagation();newBatchFreeTask(${r.id})" style="color:var(--color-accent-3-600);border-color:var(--color-accent-3-400);">新班级扫描</button>
+          ` : ''}
+          <button onclick="event.stopPropagation();openDetail(${r.id})">查看详情</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    // Record count
+    document.getElementById('recordCount').textContent = `共 ${records.length} 条记录`;
+
+    // Pagination info
+    document.getElementById('paginationInfo').textContent =
+      records.length > 0
+        ? `显示 ${start+1}-${Math.min(start+pageSize, records.length)} 条，共 ${records.length} 条`
+        : '无匹配记录';
+
+    // Pagination buttons
+    const pag = document.getElementById('pagination');
+    let html = `<button class="pagination__btn" ${currentPage===1?'disabled':''} onclick="goPage(${currentPage-1})">‹</button>`;
+    for (let p = 1; p <= totalPages; p++) {
+      if (totalPages <= 7 || p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) {
+        html += `<button class="pagination__btn ${p===currentPage?'pagination__btn--active':''}" onclick="goPage(${p})">${p}</button>`;
+      } else if (p === 2 && currentPage > 4) {
+        html += `<span style="color:var(--text-muted);padding:0 2px;">…</span>`;
+      } else if (p === totalPages - 1 && currentPage < totalPages - 3) {
+        html += `<span style="color:var(--text-muted);padding:0 2px;">…</span>`;
+      }
+    }
+    html += `<button class="pagination__btn" ${currentPage===totalPages?'disabled':''} onclick="goPage(${currentPage+1})">›</button>`;
+    pag.innerHTML = html;
+  }
+
+  function goPage(p) {
+    const totalPages = Math.ceil(getFilteredRecords().length / pageSize);
+    if (p < 1 || p > totalPages) return;
+    currentPage = p;
+    render();
+  }
+
+  function formatTime(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    const h = String(d.getHours()).padStart(2,'0');
+    const min = String(d.getMinutes()).padStart(2,'0');
+    return `${y}/${m}/${day} ${h}:${min}`;
+  }
+
+  function openDetail(id) {
+    const r = rawRecords.find(rec => rec.id === id);
+    if (r) {
+      const params = new URLSearchParams();
+      params.set('id', r.id);
+      if (r.type === 'free') {
+        params.set('mode', 'free');
+        params.set('taskName', r.taskName || r.assignments[0].name);
+      } else if (r.type === 'designated') {
+        params.set('mode', 'designated');
+        params.set('taskName', r.taskName || r.assignments[0].name);
+      }
+      window.location.href = 'scan-progress.html?' + params.toString();
+    }
+  }
+
+  function newBatchFreeTask(id) {
+    const r = rawRecords.find(rec => rec.id === id);
+    if (r) {
+      // New class batch: same answers, re-select classes. Pre-fill task info.
+      const params = new URLSearchParams();
+      params.set('mode', 'continue');
+      params.set('taskName', r.taskName || r.assignments[0].name);
+      params.set('subject', 'english');
+      params.set('type', 'word-dictation');
+      window.location.href = 'free-task-create.html?' + params.toString();
+    }
+  }
+
+  // ===== Toast =====
+  function showToast(msg) {
+    const e = document.querySelector('.toast'); if(e) e.remove();
+    const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);
+  }
+
+  // ===== Keyboard =====
+  document.addEventListener('keydown', function(ev) {
+    if (ev.key === 'ArrowLeft') goPage(currentPage - 1);
+    if (ev.key === 'ArrowRight') goPage(currentPage + 1);
+  });
+
+  // ===== Init =====
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 作业报告</title>
+<style>
+  :root {
+    /* ===== Primary (Brand/Interaction) ===== */
+    --color-primary-50: #effafa;
+    --color-primary-100: #def8f9;
+    --color-primary-200: #b2f1f2;
+    --color-primary-300: #7de3e6;
+    --color-primary-500: #50d8dc;
+    --color-primary-700: #00a6ab;
+    --color-primary-950: #007a7e;
+
+    /* ===== Gray (Neutral) ===== */
+    --color-gray-50: #f8f8fc;
+    --color-gray-100: #d2d3de;
+    --color-gray-200: #bcbdc0;
+    --color-gray-300: #a2a3a6;
+    --color-gray-400: #88898c;
+    --color-gray-500: #6e6f71;
+    --color-gray-600: #545557;
+    --color-gray-700: #3a3b3d;
+    --color-gray-900: #212123;
+
+    /* ===== Base ===== */
+    --color-base-01: #000000;
+    --color-base-02: #ffffff;
+
+    /* ===== Semantic - Success ===== */
+    --color-success-100: #bef8fa;
+    --color-success-300: #66dade;
+    --color-success-500: #11c5ca;
+    --color-success-700: #00a6ab;
+    --color-success-900: #008a8f;
+
+    /* ===== Semantic - Error ===== */
+    --color-error-100: #ffece8;
+    --color-error-300: #fdcdc5;
+    --color-error-500: #fbaca3;
+    --color-error-700: #f53f3f;
+    --color-error-900: #cb2634;
+
+    /* ===== Semantic - Warning ===== */
+    --color-warning-100: #fff7e8;
+    --color-warning-300: #ffe4ba;
+    --color-warning-500: #ffcf8b;
+    --color-warning-700: #ff7d00;
+    --color-warning-900: #d25f00;
+
+    /* ===== Semantic - Info ===== */
+    --color-info-100: #e4f0fb;
+    --color-info-300: #97c4f1;
+    --color-info-500: #3089e3;
+    --color-info-700: #2675c4;
+    --color-info-900: #185695;
+
+    /* ===== Accent-1 (Green - classification/data-viz) ===== */
+    --color-accent-1-50: #d2f0e1;
+    --color-accent-1-400: #a7eaca;
+    --color-accent-1-600: #5ad0a3;
+    --color-accent-1-800: #049d75;
+
+    /* ===== Accent-2 (Pink) ===== */
+    --color-accent-2-50: #fff1f7;
+    --color-accent-2-400: #fbcde4;
+    --color-accent-2-600: #ff86c8;
+    --color-accent-2-800: #d14692;
+
+    /* ===== Accent-3 (Purple) ===== */
+    --color-accent-3-50: #f3f1ff;
+    --color-accent-3-400: #cfc6ff;
+    --color-accent-3-600: #8b6ff2;
+    --color-accent-3-800: #5936b1;
+
+    /* ===== Accent-4 (Yellow) ===== */
+    --color-accent-4-50: #fff9e7;
+    --color-accent-4-400: #ffeeb6;
+    --color-accent-4-600: #f9b932;
+    --color-accent-4-800: #c27b00;
+
+    /* ===== Overlay (semi-transparent — white base) ===== */
+    --overlay-alpha-1-10: rgba(255,255,255,0.1);
+    --overlay-alpha-1-35: rgba(255,255,255,0.35);
+    --overlay-alpha-1-60: rgba(255,255,255,0.6);
+    --overlay-alpha-1-78: rgba(255,255,255,0.78);
+
+    /* ===== Overlay (semi-transparent — black base) ===== */
+    --overlay-alpha-2-04: rgba(19,19,21,0.04);
+    --overlay-alpha-2-05: rgba(19,19,21,0.05);
+    --overlay-alpha-2-06: rgba(19,19,21,0.06);
+    --overlay-alpha-2-08: rgba(19,19,21,0.08);
+    --overlay-alpha-2-10: rgba(19,19,21,0.10);
+    --overlay-alpha-2-12: rgba(19,19,21,0.12);
+
+    /* ===== Legacy Aliases (backward compatibility) ===== */
+    --accent: var(--color-primary-700);
+    --accent-dark: var(--color-primary-950);
+    --accent-light: var(--color-primary-100);
+    --text-primary: var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
+    --text-muted: var(--color-gray-400);
+    --border: var(--color-gray-100);
+    --bg-primary: var(--color-gray-50);
+    --bg-header: var(--color-primary-950);
+    --success: var(--color-success-700);
+    --success-bg: var(--color-success-100);
+    --warning: var(--color-warning-700);
+    --warning-bg: var(--color-warning-100);
+    --danger: var(--color-error-700);
+    --danger-bg: var(--color-error-100);
+
+    /* ===== Subject Classification Aliases (data-viz for homework reports) ===== */
+    --color-math: var(--color-primary-700);
+    --color-math-bg: var(--color-primary-100);
+    --color-math-light: var(--color-primary-50);
+    --color-english: var(--color-accent-3-600);
+    --color-english-bg: var(--color-accent-3-50);
+    --color-english-light: var(--color-accent-3-50);
+    --color-chinese: var(--color-accent-4-600);
+    --color-chinese-bg: var(--color-accent-4-50);
+    --color-chinese-light: var(--color-accent-4-50);
+    --color-physics: var(--color-accent-1-600);
+    --color-physics-bg: var(--color-accent-1-50);
+    --color-physics-light: var(--color-accent-1-50);
+
+    /* ===== Morphology ===== */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    /* ===== Shadows (overlay-only) ===== */
+    --shadow-sm: 0 1px 2px var(--overlay-alpha-2-04);
+    --shadow: 0 1px 3px var(--overlay-alpha-2-06), 0 1px 2px var(--overlay-alpha-2-04);
+    --shadow-md: 0 4px 12px var(--overlay-alpha-2-06);
+    --shadow-lg: 0 12px 32px var(--overlay-alpha-2-08);
+
+    /* ===== Typography ===== */
+    --font-display: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --transition: 180ms cubic-bezier(0.4,0,0.2,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:var(--font-body);
+    background:var(--color-gray-50);
+    min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
+    padding:24px;-webkit-font-smoothing:antialiased;
+  }
+  .app-window{
+    width:1440px;max-width:100%;
+    background:var(--color-base-02);
+    border-radius:var(--radius-xl);
+    box-shadow:0 0 0 1px var(--overlay-alpha-2-06),0 24px 64px var(--overlay-alpha-2-12);
+    overflow:hidden;display:flex;flex-direction:column;max-height:95vh;
+  }
+
+  .title-bar{
+    height:32px;background:var(--color-primary-950);
+    display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;
+  }
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;opacity:0.85;}
+  .title-bar__dot--close{background:var(--color-error-700);}
+  .title-bar__dot--min{background:var(--color-warning-500);}
+  .title-bar__dot--max{background:var(--color-success-500);}
+  .title-bar__title{flex:1;text-align:center;color:var(--overlay-alpha-1-60);font-size:11px;}
+
+  .header{
+    background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);
+    padding:0 24px;height:52px;display:flex;align-items:center;gap:14px;flex-shrink:0;
+  }
+  .header__back{
+    display:flex;align-items:center;gap:5px;color:var(--overlay-alpha-1-78);
+    font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);
+  }
+  .header__back:hover{color:var(--color-base-02);background:var(--overlay-alpha-1-10);}
+  .header__back svg{width:15px;height:15px;opacity:0.8;}
+  .header__breadcrumb{color:var(--overlay-alpha-1-35);font-size:13px;}
+  .header__page-title{color:var(--color-base-02);font-size:15px;font-weight:600;flex:1;}
+
+  /* Summary bar */
+  .summary-bar{
+    background:var(--color-base-02);border-bottom:1px solid var(--border);
+    padding:10px 24px;display:flex;align-items:center;gap:20px;flex-shrink:0;
+  }
+  .summary-bar__item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);}
+  .summary-bar__item strong{color:var(--text-primary);font-size:14px;}
+  .summary-bar__dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .summary-bar__divider{width:1px;height:20px;background:var(--border);}
+
+  /* Content */
+  .content{flex:1;overflow-y:auto;padding:16px 24px;}
+  .content::-webkit-scrollbar{width:5px;}
+  .content::-webkit-scrollbar-track{background:transparent;}
+  .content::-webkit-scrollbar-thumb{background:var(--color-gray-200);border-radius:3px;}
+
+  /* === Report Card === */
+  .report-card{
+    background:var(--color-base-02);border-radius:var(--radius-lg);margin-bottom:12px;
+    box-shadow:var(--shadow-sm);border:1px solid var(--border);
+    overflow:hidden;transition:all var(--transition);
+  }
+  .report-card:hover{border-color:var(--color-gray-200);}
+
+  /* Card Header (always visible) */
+  .report-card__header{
+    display:flex;align-items:center;gap:14px;padding:14px 18px;
+    cursor:pointer;user-select:none;transition:background var(--transition);
+  }
+  .report-card__header:hover{background:var(--color-primary-50);}
+  .report-card__color-bar{width:4px;height:38px;border-radius:2px;flex-shrink:0;}
+  .report-card__subject-icon{
+    width:38px;height:38px;border-radius:var(--radius-md);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;font-weight:700;
+  }
+  .report-card__info{flex:1;min-width:0;}
+  .report-card__name{font-size:14px;font-weight:600;color:var(--text-primary);}
+  .report-card__meta{font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;gap:12px;}
+  .report-card__meta span{display:flex;align-items:center;gap:4px;}
+  .report-card__stats{display:flex;gap:18px;align-items:center;flex-shrink:0;}
+  .report-card__stat{text-align:center;}
+  .report-card__stat-value{font-size:16px;font-weight:700;}
+  .report-card__stat-label{font-size:10px;color:var(--text-muted);}
+  .report-card__expand-icon{
+    width:28px;height:28px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform var(--transition);color:var(--text-muted);
+    background:var(--color-gray-50);border:1px solid var(--border);
+  }
+  .report-card--expanded .report-card__expand-icon{transform:rotate(180deg);background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+
+  /* Card Body (expandable) */
+  .report-card__body{display:none;border-top:1px solid var(--border);background:var(--color-gray-50);}
+  .report-card--expanded .report-card__body{display:block;}
+
+  /* Class rows inside expanded card */
+  .class-rows{padding:6px 0;}
+  .class-row{
+    display:flex;align-items:center;gap:14px;padding:10px 18px 10px 28px;
+    transition:background var(--transition);border-bottom:1px solid var(--color-gray-50);
+  }
+  .class-row:last-child{border-bottom:none;}
+  .class-row:hover{background:var(--color-primary-50);}
+  .class-row__name{
+    font-size:13px;font-weight:600;color:var(--text-primary);
+    min-width:90px;flex-shrink:0;
+  }
+  .class-row__progress{
+    flex:1;display:flex;align-items:center;gap:8px;min-width:0;
+  }
+  .class-row__progress-bar-wrap{
+    flex:1;height:7px;background:var(--color-gray-100);border-radius:4px;overflow:hidden;
+  }
+  .class-row__progress-bar{
+    height:100%;border-radius:4px;transition:width 400ms ease-out;
+  }
+  .class-row__progress-text{font-size:11px;color:var(--text-secondary);white-space:nowrap;min-width:85px;text-align:right;}
+  .class-row__status{
+    display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;
+    padding:3px 10px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;
+  }
+  .class-row__status--done{background:var(--color-success-100);color:var(--color-success-700);}
+  .class-row__status--pending{background:var(--color-warning-100);color:var(--color-warning-700);}
+  .class-row__status--partial{background:var(--color-info-100);color:var(--color-info-700);}
+
+  /* Non-submitters */
+  .class-row__absent{
+    font-size:11px;color:var(--color-error-900);white-space:nowrap;flex-shrink:0;
+    max-width:200px;overflow:hidden;text-overflow:ellipsis;cursor:default;
+    padding:3px 10px;background:var(--color-error-100);border-radius:var(--radius-full);
+    border:1px solid var(--color-error-300);
+  }
+  .class-row__absent:hover{
+    max-width:none;overflow:visible;white-space:normal;
+    position:relative;z-index:10;box-shadow:var(--shadow-md);
+  }
+  .class-row__absent strong{color:var(--color-error-700);}
+
+  /* View detail button in header */
+  .report-card__view-btn{
+    padding:6px 16px;border-radius:var(--radius-full);font-size:11px;font-weight:600;
+    border:1.5px solid var(--accent);background:var(--color-base-02);color:var(--accent);
+    cursor:pointer;transition:all var(--transition);font-family:var(--font-body);
+    white-space:nowrap;flex-shrink:0;
+  }
+  .report-card__view-btn:hover{background:var(--accent-light);}
+
+  /* === Footer === */
+  .footer{
+    background:var(--color-base-02);border-top:1px solid var(--border);
+    padding:8px 20px;display:flex;align-items:center;justify-content:space-between;
+    flex-shrink:0;font-size:11px;color:var(--text-muted);
+  }
+
+  .toast{
+    position:fixed;top:24px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,var(--color-gray-900) 0%,var(--color-gray-700) 100%);
+    color:var(--color-base-02);padding:9px 18px;border-radius:var(--radius-full);font-size:12px;
+    z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);
+  }
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-6px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots">
+      <div class="title-bar__dot title-bar__dot--close"></div>
+      <div class="title-bar__dot title-bar__dot--min"></div>
+      <div class="title-bar__dot title-bar__dot--max"></div>
+    </div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="index.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">作业报告</span>
+  </header>
+
+  <!-- Summary -->
+  <div class="summary-bar">
+    <div class="summary-bar__item">
+      <span class="summary-bar__dot" style="background:var(--accent);"></span>
+      <span>本学期作业 <strong id="totalReports">0</strong> 次</span>
+    </div>
+    <div class="summary-bar__divider"></div>
+    <div class="summary-bar__item">
+      <span class="summary-bar__dot" style="background:var(--success);"></span>
+      <span>已完成批改 <strong id="totalCorrected">0</strong> 次</span>
+    </div>
+    <div class="summary-bar__divider"></div>
+    <div class="summary-bar__item">
+      <span class="summary-bar__dot" style="background:var(--warning);"></span>
+      <span>待批改 <strong id="totalPending">0</strong> 次</span>
+    </div>
+  </div>
+
+  <!-- Card List -->
+  <div class="content" id="reportList"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>当前账号：张建国 老师 · 高一数学组</span>
+  </div>
+</div>
+
+<script>
+  // ===== Subject Config =====
+  const subjectConfig = {
+    '数学': { color:'var(--color-math)', bg:'var(--color-math-bg)', icon:'∑' },
+    '英语': { color:'var(--color-english)', bg:'var(--color-english-bg)', icon:'En' },
+    '语文': { color:'var(--color-chinese)', bg:'var(--color-chinese-bg)', icon:'文' },
+    '物理': { color:'var(--color-physics)', bg:'var(--color-physics-bg)', icon:'φ' },
+  };
+
+  // Student name pools per class
+  const studentNames = {
+    '高一·1班': ['林浩','陈思远','张雨桐','王俊杰','赵明哲','刘晓薇','杨昊天','黄诗涵','周子轩','吴嘉豪','郑雅文','孙铭宇','钱小萌','李泽楷','徐若琳'],
+    '高一·2班': ['许晨阳','郭宇航','马欣然','罗文博','梁静怡','宋子豪','唐雨婷','韩明轩','冯佳琪','董浩然','程思源','曹新月','袁志远','邓婉清','傅佳伟'],
+    '高一·3班': ['沈梦琪','曾浩宇','彭诗雨','吕明哲','苏婉儿','蒋志豪','蔡晓萌','贾文博','丁雨晴','魏子涵'],
+  };
+
+  function pickRandom(arr, count) {
+    const shuffled = [...arr].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, Math.min(count, arr.length));
+  }
+
+  // ===== Report Data =====
+  const reports = [
+    { id:1, name:'数学周练卷（五）', subject:'数学', time:'2025/12/18 14:30', classes:['高一·1班','高一·2班','高一·3班'] },
+    { id:2, name:'英语单元测试',     subject:'英语', time:'2025/12/15 09:15', classes:['高一·1班','高一·2班'] },
+    { id:3, name:'语文阅读理解',     subject:'语文', time:'2025/12/10 10:45', classes:['高一·1班','高一·2班','高一·3班'] },
+    { id:4, name:'物理实验报告',     subject:'物理', time:'2025/12/05 16:00', classes:['高一·1班','高一·3班'] },
+    { id:5, name:'数学期中模拟',     subject:'数学', time:'2025/11/28 13:20', classes:['高一·1班','高一·2班','高一·3班'] },
+    { id:6, name:'英语阅读理解专练', subject:'英语', time:'2025/11/20 08:50', classes:['高一·1班','高一·2班'] },
+    { id:7, name:'语文作文训练',     subject:'语文', time:'2025/11/15 15:10', classes:['高一·1班','高一·2班','高一·3班'] },
+    { id:8, name:'物理章节练习',     subject:'物理', time:'2025/11/08 11:30', classes:['高一·2班','高一·3班'] },
+  ];
+
+  // Pre-generate class data for each report
+  const reportDetails = reports.map(r => {
+    const totalStudents = r.classes.reduce((sum, cls) => sum + (studentNames[cls]||[]).length, 0);
+    const submitted = Math.floor(totalStudents * (0.75 + Math.random() * 0.2));
+    const corrected = Math.floor(submitted * (0.5 + Math.random() * 0.5));
+    const pending = submitted - corrected;
+    const unsubmitted = totalStudents - submitted;
+
+    const classData = r.classes.map(cls => {
+      const total = (studentNames[cls]||[]).length;
+      const sub = Math.floor(total * (0.7 + Math.random() * 0.25));
+      const corr = Math.floor(sub * (0.45 + Math.random() * 0.55));
+      const unsub = total - sub;
+      const unsubNames = pickRandom(studentNames[cls]||[], unsub);
+      return { name:cls, total, submitted:sub, corrected:corr, pending:sub-corr, unsubmitted:unsub, unsubNames };
+    });
+
+    return { ...r, submitted, corrected, pending, unsubmitted, classData };
+  });
+
+  // ===== State =====
+  let expandedId = reportDetails.length > 0 ? reportDetails[0].id : null; // first card expanded
+
+  // ===== Render =====
+  function renderAll() {
+    const container = document.getElementById('reportList');
+    container.innerHTML = reportDetails.map(r => {
+      const cfg = subjectConfig[r.subject] || { color:'var(--color-gray-400)', bg:'var(--color-gray-50)', icon:'📄' };
+      const isExpanded = r.id === expandedId;
+
+      // Calculate overall stats
+      const progressPercent = r.total > 0 ? Math.round((r.submitted / (r.submitted + r.unsubmitted)) * 100) : 0;
+      const correctPercent = r.submitted > 0 ? Math.round((r.corrected / r.submitted) * 100) : 0;
+
+      const gradingStatus = r.pending === 0 ? 'done' : (r.corrected > 0 ? 'partial' : 'pending');
+      const gradingLabel = r.pending === 0 ? '✓ 已全部批改' : (r.corrected > 0 ? '批改中' : '待批改');
+
+      // Build class rows
+      const classRows = r.classData.map(cd => {
+        const subPercent = cd.total > 0 ? Math.round((cd.submitted / cd.total) * 100) : 0;
+        const corrPercent = cd.submitted > 0 ? Math.round((cd.corrected / cd.submitted) * 100) : 0;
+        const subBarColor = subPercent >= 90 ? 'var(--success)' : (subPercent >= 70 ? 'var(--warning)' : 'var(--danger)');
+        const corrBarColor = corrPercent >= 90 ? 'var(--success)' : (corrPercent >= 60 ? 'var(--warning)' : 'var(--color-warning-700)');
+
+        const statusClass = cd.pending === 0 ? 'class-row__status--done' : (cd.corrected > 0 ? 'class-row__status--partial' : 'class-row__status--pending');
+        const statusText = cd.pending === 0 ? '✓ 已批改' : (cd.corrected > 0 ? `批改中 ${cd.corrected}/${cd.submitted}` : '待批改');
+
+        const absentHtml = cd.unsubmitted > 0
+          ? `<span class="class-row__absent" title="${cd.unsubNames.join('、')}">⚠ 未交 <strong>${cd.unsubmitted}</strong> 人：${cd.unsubNames.join('、')}</span>`
+          : '';
+
+        return `<div class="class-row">
+          <span class="class-row__name">${cd.name}</span>
+          <div class="class-row__progress">
+            <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">提交</span>
+            <div class="class-row__progress-bar-wrap">
+              <div class="class-row__progress-bar" style="width:${subPercent}%;background:${subBarColor};"></div>
+            </div>
+            <span class="class-row__progress-text">${cd.submitted}/${cd.total} (${subPercent}%)</span>
+          </div>
+          <div class="class-row__progress">
+            <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">批改</span>
+            <div class="class-row__progress-bar-wrap">
+              <div class="class-row__progress-bar" style="width:${corrPercent}%;background:${corrBarColor};"></div>
+            </div>
+            <span class="class-row__progress-text">${cd.corrected}/${cd.submitted} (${corrPercent}%)</span>
+          </div>
+          <span class="class-row__status ${statusClass}">${statusText}</span>
+          ${absentHtml}
+        </div>`;
+      }).join('');
+
+      return `<div class="report-card ${isExpanded ? 'report-card--expanded' : ''}" id="card-${r.id}">
+        <div class="report-card__header" onclick="toggleCard(${r.id})">
+          <span class="report-card__color-bar" style="background:${cfg.color};"></span>
+          <span class="report-card__subject-icon" style="background:${cfg.bg};color:${cfg.color};">${cfg.icon}</span>
+          <div class="report-card__info">
+            <div class="report-card__name">${r.name}</div>
+            <div class="report-card__meta">
+              <span>📖 ${r.subject}</span>
+              <span>🕐 ${r.time}</span>
+              <span>👥 ${r.classes.length} 个班级</span>
+            </div>
+          </div>
+          <div class="report-card__stats">
+            <div class="report-card__stat">
+              <div class="report-card__stat-value" style="color:var(--accent);">${r.submitted + r.unsubmitted}</div>
+              <div class="report-card__stat-label">总人数</div>
+            </div>
+            <div class="report-card__stat">
+              <div class="report-card__stat-value" style="color:var(--success);">${r.submitted}</div>
+              <div class="report-card__stat-label">已提交</div>
+            </div>
+            <div class="report-card__stat">
+              <div class="report-card__stat-value" style="color:${r.pending > 0 ? 'var(--warning)' : 'var(--success)'};">${r.corrected}</div>
+              <div class="report-card__stat-label">已批改</div>
+            </div>
+          </div>
+          <button class="report-card__view-btn" onclick="event.stopPropagation();viewDetail(${r.id})">查看详情</button>
+          <span class="report-card__expand-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+        <div class="report-card__body">
+          <div class="class-rows">${classRows}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Update summary
+    document.getElementById('totalReports').textContent = reportDetails.length;
+    document.getElementById('totalCorrected').textContent = reportDetails.filter(r => r.pending === 0).length;
+    document.getElementById('totalPending').textContent = reportDetails.filter(r => r.pending > 0).length;
+  }
+
+  function toggleCard(id) {
+    expandedId = expandedId === id ? null : id;
+    renderAll();
+  }
+
+  function viewDetail(id) {
+    const r = reportDetails.find(rep => rep.id === id);
+    if (r) {
+      window.location.href = `assignment-report.html?name=${encodeURIComponent(r.name)}&classes=${r.classes}`;
+    }
+  }
+
+  function showToast(msg) {
+    const e = document.querySelector('.toast'); if(e) e.remove();
+    const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);
+  }
+
+  // Init
+  renderAll();
+</script>
+</body>
+</html>

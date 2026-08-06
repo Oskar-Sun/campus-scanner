@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题目答案与批改设置</title>
+<style>
+  :root{
+    --color-primary-50:#effafa;--color-primary-100:#def8f9;--color-primary-200:#b2f1f2;--color-primary-300:#7de3e6;
+    --color-primary-500:#50d8dc;--color-primary-700:#00a6ab;--color-primary-950:#007a7e;
+    --color-gray-50:#f8f8fc;--color-gray-100:#d2d3de;--color-gray-200:#bcbdc0;--color-gray-300:#a2a3a6;
+    --color-gray-400:#88898c;--color-gray-500:#6e6f71;--color-gray-600:#545557;--color-gray-700:#3a3b3d;--color-gray-900:#212123;
+    --color-base-01:#000000;--color-base-02:#ffffff;
+    --color-success-100:#bef8fa;--color-success-700:#00a6ab;
+    --color-error-100:#ffece8;--color-error-700:#f53f3f;
+    --color-warning-100:#fff7e8;--color-warning-700:#ff7d00;
+    --color-info-100:#e4f0fb;--color-info-700:#2675c4;
+    --color-accent-1-50:#d2f0e1;--color-accent-1-600:#5ad0a3;--color-accent-1-800:#049d75;
+    --color-accent-2-50:#fff1f7;--color-accent-2-600:#ff86c8;--color-accent-2-800:#d14692;
+    --color-accent-3-50:#f3f1ff;--color-accent-3-600:#8b6ff2;--color-accent-3-800:#5936b1;
+    --color-accent-4-50:#fff9e7;--color-accent-4-600:#f9b932;
+    --color-overlay-alpha-2-04:rgba(19,19,21,.04);--color-overlay-alpha-2-05:rgba(19,19,21,.05);
+    --color-overlay-alpha-2-06:rgba(19,19,21,.06);--color-overlay-alpha-2-08:rgba(19,19,21,.08);
+    --color-overlay-alpha-2-10:rgba(19,19,21,.10);--color-overlay-alpha-2-20:rgba(19,19,21,.20);--color-overlay-alpha-2-40:rgba(19,19,21,.40);
+    --color-overlay-alpha-1-10:rgba(255,255,255,.10);--color-overlay-alpha-1-15:rgba(255,255,255,.15);
+    --color-overlay-alpha-1-35:rgba(255,255,255,.35);--color-overlay-alpha-1-60:rgba(255,255,255,.60);
+    --color-overlay-alpha-1-75:rgba(255,255,255,.75);
+    --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:28px;--radius-full:9999px;
+    --shadow-sm:0 1px 2px var(--color-overlay-alpha-2-04);--shadow-md:0 4px 12px var(--color-overlay-alpha-2-06);
+    --shadow-lg:0 12px 32px var(--color-overlay-alpha-2-08);
+    --font-display:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --transition:180ms cubic-bezier(0.4,0,0.2,1);
+    --text-primary:var(--color-gray-900);--text-secondary:var(--color-gray-500);
+    --text-muted:var(--color-gray-400);--border:var(--color-gray-100);
+    --accent:var(--color-primary-700);--accent-dark:var(--color-primary-950);--accent-light:var(--color-primary-50);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--color-gray-50);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px;}
+  .app-window{width:1240px;max-width:100%;background:var(--color-base-02);border-radius:var(--radius-xl);box-shadow:0 0 0 1px var(--color-overlay-alpha-2-05),0 24px 64px var(--color-overlay-alpha-2-10);overflow:hidden;display:flex;flex-direction:column;max-height:95vh;}
+
+  .title-bar{height:32px;background:var(--color-primary-950);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;}
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;}
+  .title-bar__dot--close{background:var(--color-error-700);}.title-bar__dot--min{background:var(--color-warning-700);}.title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .header__back{display:flex;align-items:center;gap:5px;color:var(--color-overlay-alpha-1-75);font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:15px;height:15px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:13px;}
+  .header__page-title{color:var(--color-base-02);font-size:15px;font-weight:600;flex:1;}
+
+  /* Assignment switcher */
+  .assignment-bar{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--color-base-02);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+  .assignment-bar__label{font-size:10px;color:var(--text-muted);font-weight:600;white-space:nowrap;}
+  .assignment-chip{padding:5px 14px;border-radius:var(--radius-full);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--transition);border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-primary);white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .assignment-chip:hover{border-color:var(--accent);}
+  .assignment-chip--active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:600;}
+  .assignment-chip__status{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .assignment-chip__status--done{background:var(--color-success-700);}
+  .assignment-chip__status--pending{background:var(--color-warning-700);}
+  .assignment-chip__status--empty{background:var(--color-gray-300);}
+
+  .info-bar{display:flex;align-items:center;gap:16px;padding:10px 24px;background:var(--color-info-100);border-bottom:1px solid var(--color-info-100);font-size:12px;color:var(--color-info-700);flex-shrink:0;}
+  .info-bar__dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+  .tabs{display:flex;border-bottom:1px solid var(--border);background:var(--color-base-02);flex-shrink:0;padding:0 24px;}
+  .tab{padding:12px 20px;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--transition);white-space:nowrap;}
+  .tab:hover{color:var(--accent);}
+  .tab--active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+  .tab__count{font-size:10px;color:var(--text-muted);margin-left:4px;}
+
+  .content{flex:1;overflow-y:auto;padding:20px 24px;}
+
+  .choice-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+  .choice-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--color-gray-50);border-radius:var(--radius-md);font-size:12px;position:relative;}
+  .choice-item--editing{background:var(--color-warning-100);}
+  .choice-item__num{font-weight:600;color:var(--text-muted);min-width:20px;}
+  .choice-opt{display:flex;gap:4px;flex:1;justify-content:center;}
+  .choice-opt span{padding:3px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:default;font-size:11px;font-weight:500;transition:all var(--transition);color:var(--text-muted);}
+  .choice-item--editing .choice-opt span{cursor:pointer;color:var(--text-primary);}
+  .choice-item--editing .choice-opt span:hover{border-color:var(--accent);}
+  .choice-opt span--active{border-color:var(--accent);background:var(--accent);color:var(--color-base-02)!important;}
+  .choice-item__edit{font-size:10px;color:var(--accent);cursor:pointer;white-space:nowrap;padding:2px 6px;border-radius:var(--radius-full);border:1px solid transparent;}
+  .choice-item__edit:hover{background:var(--accent-light);border-color:var(--accent);}
+  .answer-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .answer-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);}
+  .answer-table td{padding:6px 12px;border-bottom:1px solid var(--color-gray-50);vertical-align:middle;}
+  .answer-table input[type="text"],.answer-table textarea{border:1.5px solid transparent;border-radius:var(--radius-sm);padding:5px 8px;font-size:12px;font-family:var(--font-body);width:100%;outline:none;resize:vertical;background:transparent;color:var(--text-primary);}
+  .answer-table tr--editing input,.answer-table tr--editing textarea{border-color:var(--border);background:var(--color-base-02);}
+  .answer-table tr--editing{background:var(--color-warning-50);}
+  .answer-value{color:var(--text-primary);padding:5px 8px;}
+  .answer-value--muted{color:var(--text-muted);font-style:italic;}
+  .row-edit-btn{font-size:10px;color:var(--accent);cursor:pointer;white-space:nowrap;padding:2px 8px;border-radius:var(--radius-full);border:1px solid transparent;background:transparent;font-family:var(--font-body);}
+  .row-edit-btn:hover{background:var(--accent-light);border-color:var(--accent);}
+  .row-save-btn{font-size:10px;color:var(--color-base-02);cursor:pointer;white-space:nowrap;padding:2px 8px;border-radius:var(--radius-full);border:none;background:var(--accent);font-family:var(--font-body);font-weight:600;}
+  .row-save-btn:hover{background:var(--accent-dark);}
+  .toggle-sw{position:relative;width:32px;height:18px;flex-shrink:0;cursor:pointer;display:inline-block;}
+  .toggle-sw input{display:none;}
+  .toggle-sw__slider{position:absolute;inset:0;background:var(--color-gray-200);border-radius:9px;transition:all var(--transition);}
+  .toggle-sw__slider::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--color-base-02);border-radius:50%;transition:all var(--transition);box-shadow:0 1px 2px var(--color-overlay-alpha-2-10);}
+  .toggle-sw input:checked+.toggle-sw__slider{background:var(--accent);}
+  .toggle-sw input:checked+.toggle-sw__slider::after{transform:translateX(14px);}
+  .essay-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .essay-type-badge{padding:4px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:600;background:var(--color-accent-4-50);color:var(--color-accent-4-800);}
+  .essay-margin-badge{padding:4px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:500;background:var(--color-accent-1-50);color:var(--color-accent-1-800);}
+  .form-group{margin-bottom:14px;}
+  .form-group__label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;display:block;}
+  .form-input,.form-textarea{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:13px;font-family:var(--font-body);outline:none;color:var(--text-primary);}
+  .form-textarea{resize:vertical;min-height:60px;line-height:1.6;}
+  .form-input:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+  .form-input--sm{width:100px;text-align:center;}
+  .req-list{display:flex;flex-direction:column;gap:6px;}
+  .req-row{display:flex;align-items:center;gap:8px;}
+  .req-row__num{width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .req-row input{flex:1;padding:5px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:var(--font-body);outline:none;color:var(--text-primary);}
+  .req-row input:focus{border-color:var(--accent);}
+  .req-row__del{color:var(--color-gray-300);cursor:pointer;font-size:16px;padding:0 4px;}
+  .req-row__del:hover{color:var(--color-error-700);}
+  .req-add{font-size:11px;color:var(--accent);cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:4px;}
+  .diff-chips{display:flex;gap:8px;}
+  .diff-chip{padding:6px 16px;border-radius:var(--radius-full);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--transition);border:1.5px solid var(--border);background:var(--color-base-02);color:var(--text-primary);}
+  .diff-chip:hover{border-color:var(--accent);}
+  .diff-chip--active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:600;}
+
+  .footer{background:var(--color-base-02);border-top:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .footer__hint{font-size:11px;color:var(--text-muted);}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;font-size:13px;font-weight:600;font-family:var(--font-body);border-radius:var(--radius-full);cursor:pointer;transition:all var(--transition);border:none;}
+  .btn-ghost{background:transparent;color:var(--text-secondary);}
+  .btn-ghost:hover{background:var(--color-gray-50);}
+  .btn-primary{background:var(--accent);color:var(--color-base-02);}
+  .btn-primary:hover{background:var(--accent-dark);}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--color-gray-900);color:var(--color-base-02);padding:8px 24px;border-radius:var(--radius-full);font-size:12px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-8px);}}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="scan-progress.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> 返回扫描
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">答案与评分要求</span>
+  </header>
+
+  <!-- Assignment switcher -->
+  <div class="assignment-bar" id="assignmentBar">
+    <span class="assignment-bar__label">切换作业：</span>
+  </div>
+
+  <div class="info-bar" id="infoBar">
+    📋 <strong id="infoAssignmentName">--</strong> · 高一·1班
+    <span style="display:flex;align-items:center;gap:4px;"><span class="info-bar__dot" style="background:var(--accent);"></span> 选择题×10</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span class="info-bar__dot" style="background:var(--color-accent-3-600);"></span> 填空题×5</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span class="info-bar__dot" style="background:var(--color-accent-4-600);"></span> 解答题×5</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span class="info-bar__dot" style="background:var(--color-accent-2-600);"></span> 作文题×1</span>
+    <span style="margin-left:auto;font-size:10px;">修改后即自动重新识别该题</span>
+  </div>
+
+  <div class="tabs">
+    <div class="tab tab--active" data-tab="choice" onclick="switchTab(this)">选择题<span class="tab__count">10题</span></div>
+    <div class="tab" data-tab="fill" onclick="switchTab(this)">填空题<span class="tab__count">5题</span></div>
+    <div class="tab" data-tab="short" onclick="switchTab(this)">解答题<span class="tab__count">5题</span></div>
+    <div class="tab" data-tab="essay" onclick="switchTab(this)">作文题<span class="tab__count">1题</span></div>
+  </div>
+
+  <div class="content" id="tabContent"></div>
+
+  <div class="footer">
+    <span class="footer__hint">点击每道题的「编辑」按钮可修改答案，修改后只重新识别该题</span>
+    <button class="btn btn-primary" onclick="window.location.href='scan-progress.html'">返回扫描页</button>
+  </div>
+</div>
+
+<script>
+  // ===== Assignments (multi-assignment batch support) =====
+  const assignments = [
+    {
+      name: '数学周练卷（五）',
+      answerStatus: 'done', // 'done' | 'pending' | 'empty'
+      config: {
+        choiceAnswers: [{index:1,answer:'B'},{index:2,answer:'C'},{index:3,answer:'A'},{index:4,answer:'D'},{index:5,answer:'C'},{index:6,answer:'B'},{index:7,answer:'A'},{index:8,answer:'D'},{index:9,answer:'B'},{index:10,answer:'C'}],
+        fillAnswers: [{index:11,answer:'光合作用'},{index:12,answer:'线粒体'},{index:13,answer:'细胞膜'},{index:14,answer:'DNA'},{index:15,answer:'RNA'}],
+        shortAnswers: [{index:16,answer:'参考答案详见教师用书第22页'},{index:17,answer:'详见教师用书第23页'},{index:18,answer:'详见教师用书第24页'},{index:19,answer:'详见教师用书第25页'},{index:20,answer:'详见教师用书第26页'}],
+        essayConfig:{type:'chinese',title:'以「人工智能与未来教育」为题，写一篇议论文。',materials:'近年来人工智能技术快速发展……',requirements:['观点明确，能围绕主题展开论述','至少引用一个具体案例或数据支撑论点','结构清晰，层次分明，逻辑严谨'],difficulty:'medium',wordCount:800,hasMarginArea:true},
+      }
+    },
+    {
+      name: '英语单元测试',
+      answerStatus: 'pending',
+      config: {
+        choiceAnswers: [{index:1,answer:'A'},{index:2,answer:'B'},{index:3,answer:'C'},{index:4,answer:'D'},{index:5,answer:'A'},{index:6,answer:'B'},{index:7,answer:'C'},{index:8,answer:''},{index:9,answer:''},{index:10,answer:''}],
+        fillAnswers: [{index:11,answer:'had been waiting'},{index:12,answer:''},{index:13,answer:''},{index:14,answer:''},{index:15,answer:''}],
+        shortAnswers: [{index:16,answer:'待设置'},{index:17,answer:'待设置'},{index:18,answer:'待设置'},{index:19,answer:'待设置'},{index:20,answer:'待设置'}],
+        essayConfig:{type:'english',title:'Write an email to your friend about your summer plan.',materials:'',requirements:['不少于120词','包含所有要点','格式正确'],difficulty:'easy',wordCount:120,hasMarginArea:false},
+      }
+    },
+    {
+      name: '物理周练',
+      answerStatus: 'empty',
+      config: {
+        choiceAnswers: [{index:1,answer:''},{index:2,answer:''},{index:3,answer:''},{index:4,answer:''},{index:5,answer:''},{index:6,answer:''},{index:7,answer:''},{index:8,answer:''},{index:9,answer:''},{index:10,answer:''}],
+        fillAnswers: [{index:11,answer:''},{index:12,answer:''},{index:13,answer:''},{index:14,answer:''},{index:15,answer:''}],
+        shortAnswers: [{index:16,answer:''},{index:17,answer:''},{index:18,answer:''},{index:19,answer:''},{index:20,answer:''}],
+        essayConfig:{type:'physics',title:'',materials:'',requirements:[],difficulty:'medium',wordCount:0,hasMarginArea:false},
+      }
+    },
+  ];
+
+  let currentAssignmentIdx = 0;
+  let activeTab = 'choice';
+  let editingState = {};
+
+  function currentAssignment() { return assignments[currentAssignmentIdx]; }
+  function currentConfig() { return currentAssignment().config; }
+  function isEditing(type,idx){return!!editingState[currentAssignmentIdx+'-'+type+'-'+idx];}
+  function setEditing(type,idx,v){if(v)editingState[currentAssignmentIdx+'-'+type+'-'+idx]=true;else delete editingState[currentAssignmentIdx+'-'+type+'-'+idx];}
+
+  // ===== Assignment switcher =====
+  function renderAssignmentBar() {
+    const bar = document.getElementById('assignmentBar');
+    let chips = '<span class="assignment-bar__label">切换作业：</span>';
+    assignments.forEach((a, i) => {
+      const active = i === currentAssignmentIdx;
+      let statusCls = 'empty';
+      if (a.answerStatus === 'done') statusCls = 'done';
+      else if (a.answerStatus === 'pending') statusCls = 'pending';
+      const statusLabel = {done:'已设置',pending:'部分设置',empty:'未设置'}[a.answerStatus];
+      chips += `<span class="assignment-chip${active?' assignment-chip--active':''}" onclick="selectAssignment(${i})">
+        <span class="assignment-chip__status assignment-chip__status--${statusCls}" title="${statusLabel}"></span>
+        ${a.name}
+      </span>`;
+    });
+    bar.innerHTML = chips;
+    document.getElementById('infoAssignmentName').textContent = currentAssignment().name;
+  }
+
+  function selectAssignment(idx) {
+    currentAssignmentIdx = idx;
+    renderAssignmentBar();
+    renderTab();
+    // Auto-switch answer status from empty to pending if any edit happens
+  }
+
+  function markAssignmentPending() {
+    if (currentAssignment().answerStatus === 'empty') {
+      currentAssignment().answerStatus = 'pending';
+      renderAssignmentBar();
+    }
+  }
+
+  // ===== Tabs =====
+  function switchTab(el) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('tab--active'));
+    el.classList.add('tab--active');
+    activeTab = el.dataset.tab;
+    renderTab();
+  }
+
+  function renderTab() {
+    const ct = document.getElementById('tabContent');
+    switch(activeTab) {
+      case 'choice': ct.innerHTML = renderChoiceTab(); break;
+      case 'fill': ct.innerHTML = renderFillTab(); break;
+      case 'short': ct.innerHTML = renderShortTab(); break;
+      case 'essay': ct.innerHTML = renderEssayTab(); break;
+    }
+  }
+
+  // ===== Choice Tab =====
+  function renderChoiceTab() {
+    const opts = ['A','B','C','D'];
+    const answers = currentConfig().choiceAnswers;
+    return `<div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">点击「编辑」可修改答案，修改后该题将被标记为待重新识别</div>
+      <div class="choice-grid">
+        ${answers.map(a => {
+          const editing = isEditing('choice',a.index);
+          return `<div class="choice-item${editing?' choice-item--editing':''}">
+            <span class="choice-item__num">${a.index}.</span>
+            <div class="choice-opt">${opts.map(o => `<span class="${a.answer===o?'choice-opt--active':''}" style="${a.answer===o?'border-color:var(--accent);background:var(--accent);color:var(--color-base-02);':''}" onclick="${editing?`selectChoice(${a.index},'${o}',this)`:''}">${o}</span>`).join('')}</div>
+            ${editing
+              ? `<span class="row-save-btn" onclick="saveChoice(${a.index})">✓ 确认</span>`
+              : `<span class="row-edit-btn" onclick="editChoice(${a.index})">✏️ 编辑</span>`
+            }
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  function editChoice(idx){setEditing('choice',idx,true);markAssignmentPending();renderTab();}
+  function saveChoice(idx){setEditing('choice',idx,false);showToast(`第${idx}题已重新识别`);renderTab();}
+  function selectChoice(idx,opt,el){
+    const item=currentConfig().choiceAnswers.find(a=>a.index===idx);
+    if(item)item.answer=opt;
+    el.parentElement.querySelectorAll('span').forEach(s=>{s.style.cssText='';s.classList.remove('choice-opt--active');});
+    el.style.cssText='border-color:var(--accent);background:var(--accent);color:var(--color-base-02);';
+    el.classList.add('choice-opt--active');
+  }
+
+  // ===== Fill Tab =====
+  function renderFillTab() {
+    const answers = currentConfig().fillAnswers;
+    return `<div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">默认只读。点击「编辑」可修改，保存后即标记为待重新识别</div>
+      <table class="answer-table">
+        <thead><tr><th style="width:45px;">题号</th><th>答案及评分标准</th><th style="width:60px;"></th></tr></thead>
+        <tbody>${answers.map(a=>{
+          const editing=isEditing('fill',a.index);
+          const rowCls=editing?'tr--editing':'';
+          return `<tr class="${rowCls}"><td>${a.index}</td><td>${editing?`<input type="text" value="${a.answer}" id="fill-${a.index}">`:`<span class="answer-value">${a.answer||'（未设置）'}</span>`}</td><td>${editing?`<span class="row-save-btn" onclick="saveFill(${a.index})">✓ 确认</span>`:`<span class="row-edit-btn" onclick="editFill(${a.index})">✏️ 编辑</span>`}</td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  function editFill(idx){setEditing('fill',idx,true);markAssignmentPending();renderTab();}
+  function saveFill(idx){const input=document.getElementById('fill-'+idx);const item=currentConfig().fillAnswers.find(a=>a.index===idx);if(input&&item)item.answer=input.value;setEditing('fill',idx,false);showToast(`第${idx}题已重新识别`);renderTab();}
+
+  // ===== Short Answer Tab =====
+  function renderShortTab() {
+    const answers = currentConfig().shortAnswers;
+    return `<div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">默认只读。修改后保存即标记为待重新识别</div>
+      <table class="answer-table">
+        <thead><tr><th style="width:45px;">题号</th><th>答案及评分标准</th><th style="width:60px;"></th></tr></thead>
+        <tbody>${answers.map(a=>{
+          const editing=isEditing('short',a.index);
+          const rowCls=editing?'tr--editing':'';
+          return `<tr class="${rowCls}"><td>${a.index}</td><td>${editing?`<textarea rows="2" id="short-${a.index}">${a.answer}</textarea>`:`<span class="answer-value">${a.answer||'（未设置）'}</span>`}</td><td>${editing?`<span class="row-save-btn" onclick="saveShort(${a.index})">✓ 确认</span>`:`<span class="row-edit-btn" onclick="editShort(${a.index})">✏️ 编辑</span>`}</td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  function editShort(idx){setEditing('short',idx,true);markAssignmentPending();renderTab();}
+  function saveShort(idx){const input=document.getElementById('short-'+idx);const item=currentConfig().shortAnswers.find(a=>a.index===idx);if(input&&item)item.answer=input.value;setEditing('short',idx,false);showToast(`第${idx}题已重新识别`);renderTab();}
+
+  // ===== Essay Tab =====
+  function renderEssayTab() {
+    const ec=currentConfig().essayConfig;
+    const typeLabels={chinese:'📖 语文作文',english:'🔤 英语作文',physics:'⚛️ 物理实验'};
+    return `<div>
+      <div class="essay-header">
+        <span class="essay-type-badge">${typeLabels[ec.type]||'📖 作文'}</span>
+        ${ec.hasMarginArea?'<span class="essay-margin-badge">✓ 答题卡已预留旁批区域</span>':''}
+        <span style="font-size:10px;color:var(--text-muted);margin-left:auto;">来源：二维码自动识别</span>
+      </div>
+      <div class="form-group"><label class="form-group__label">📝 作文题目 <span style="color:var(--color-error-700);">*必填</span></label><textarea class="form-textarea" rows="3" id="essayTitle">${ec.title}</textarea></div>
+      <div class="form-group"><label class="form-group__label">📎 相关材料</label><textarea class="form-textarea" rows="4" id="essayMaterials" placeholder="可选，提供作文背景材料、阅读素材等">${ec.materials||''}</textarea></div>
+      <div class="form-group"><label class="form-group__label">📋 写作要求（逐条输入，最多5条）</label>
+        <div class="req-list" id="reqList">${ec.requirements.map((r,i)=>`<div class="req-row"><span class="req-row__num">${i+1}</span><input type="text" value="${r.replace(/"/g,'&quot;')}" class="req-input">${ec.requirements.length>1?`<span class="req-row__del" onclick="delReq(this)" title="删除本条">×</span>`:''}</div>`).join('')}</div>
+        ${ec.requirements.length<5?`<span class="req-add" onclick="addReq()">+ 添加一条要求</span>`:''}
+      </div>
+      <div class="form-group"><label class="form-group__label">📊 评分难度</label>
+        <div class="diff-chips" id="diffChips">
+          <span class="diff-chip${ec.difficulty==='easy'?' diff-chip--active':''}" data-val="easy" onclick="selectDiff(this)">容易</span>
+          <span class="diff-chip${ec.difficulty==='medium'?' diff-chip--active':''}" data-val="medium" onclick="selectDiff(this)">中等</span>
+          <span class="diff-chip${ec.difficulty==='hard'?' diff-chip--active':''}" data-val="hard" onclick="selectDiff(this)">困难</span>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-group__label">🔢 字数要求</label><input class="form-input form-input--sm" id="essayWordCount" value="${ec.wordCount}" type="number" min="0"> 字</div>
+      <div style="display:flex;gap:8px;margin-top:16px;"><button class="btn btn-primary" onclick="saveEssay()">保存作文设置</button><button class="btn btn-ghost" onclick="showToast('已重置为二维码默认值')">重置为默认</button></div>
+    </div>`;
+  }
+
+  function selectDiff(el){document.querySelectorAll('#diffChips .diff-chip').forEach(c=>c.classList.remove('diff-chip--active'));el.classList.add('diff-chip--active');currentConfig().essayConfig.difficulty=el.dataset.val;}
+  function addReq(){if(currentConfig().essayConfig.requirements.length>=5)return;currentConfig().essayConfig.requirements.push('');renderTab();}
+  function delReq(el){const idx=Array.from(el.parentElement.parentElement.children).indexOf(el.parentElement);currentConfig().essayConfig.requirements.splice(idx,1);renderTab();}
+  function saveEssay(){
+    const titleEl=document.getElementById('essayTitle'),matEl=document.getElementById('essayMaterials'),wcEl=document.getElementById('essayWordCount'),reqInputs=document.querySelectorAll('#reqList .req-input');
+    if(!titleEl.value.trim()){showToast('作文题目为必填项');return;}
+    currentConfig().essayConfig.title=titleEl.value;currentConfig().essayConfig.materials=matEl.value;currentConfig().essayConfig.wordCount=parseInt(wcEl.value)||800;currentConfig().essayConfig.requirements=Array.from(reqInputs).map(inp=>inp.value).filter(v=>v.trim());
+    markAssignmentPending();showToast('作文设置已保存，已重新批改');
+  }
+
+  function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2000);}
+
+  // ===== Init =====
+  renderAssignmentBar();
+  // If coming from scan-progress with a specific assignment, select it
+  const params=new URLSearchParams(window.location.search);
+  const assnName=params.get('assignment');
+  if(assnName){const idx=assignments.findIndex(a=>a.name===assnName);if(idx>=0)currentAssignmentIdx=idx;}
+  renderAssignmentBar();
+  renderTab();
+</script>
+</body>
+</html>

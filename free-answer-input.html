@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自由作业 — 核对答案</title>
+<style>
+  :root{
+    --color-primary-50:#effafa;--color-primary-100:#def8f9;--color-primary-200:#b2f1f2;--color-primary-300:#7de3e6;
+    --color-primary-500:#50d8dc;--color-primary-700:#00a6ab;--color-primary-950:#007a7e;
+    --color-gray-50:#f8f8fc;--color-gray-100:#d2d3de;--color-gray-200:#bcbdc0;--color-gray-300:#a2a3a6;
+    --color-gray-400:#88898c;--color-gray-500:#6e6f71;--color-gray-600:#545557;--color-gray-700:#3a3b3d;--color-gray-900:#212123;
+    --color-base-01:#000000;--color-base-02:#ffffff;
+    --color-success-100:#bef8fa;--color-success-700:#00a6ab;
+    --color-error-100:#ffece8;--color-error-700:#f53f3f;
+    --color-warning-100:#fff7e8;--color-warning-700:#ff7d00;
+    --color-info-100:#e4f0fb;--color-info-700:#2675c4;
+    --color-accent-3-50:#f3f1ff;--color-accent-3-600:#8b6ff2;
+    --color-overlay-alpha-2-04:rgba(19,19,21,.04);--color-overlay-alpha-2-05:rgba(19,19,21,.05);
+    --color-overlay-alpha-2-06:rgba(19,19,21,.06);--color-overlay-alpha-2-08:rgba(19,19,21,.08);
+    --color-overlay-alpha-2-10:rgba(19,19,21,.10);--color-overlay-alpha-2-20:rgba(19,19,21,.20);
+    --color-overlay-alpha-2-40:rgba(19,19,21,.40);
+    --color-overlay-alpha-1-10:rgba(255,255,255,.10);--color-overlay-alpha-1-15:rgba(255,255,255,.15);
+    --color-overlay-alpha-1-35:rgba(255,255,255,.35);--color-overlay-alpha-1-60:rgba(255,255,255,.60);
+    --color-overlay-alpha-1-75:rgba(255,255,255,.75);
+    --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:28px;--radius-full:9999px;
+    --shadow-sm:0 1px 2px var(--color-overlay-alpha-2-04);
+    --shadow:0 1px 3px var(--color-overlay-alpha-2-06);
+    --shadow-md:0 4px 12px var(--color-overlay-alpha-2-06);
+    --shadow-lg:0 12px 32px var(--color-overlay-alpha-2-08);
+    --font-display:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --font-body:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    --transition:180ms cubic-bezier(0.4,0,0.2,1);
+    --text-primary:var(--color-gray-900);--text-secondary:var(--color-gray-500);
+    --text-muted:var(--color-gray-400);--border:var(--color-gray-100);
+    --accent:var(--color-primary-700);--accent-dark:var(--color-primary-950);--accent-light:var(--color-primary-50);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-body);background:var(--color-gray-50);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .app-window{width:1560px;max-width:98vw;background:var(--color-base-02);border-radius:var(--radius-xl);box-shadow:0 0 0 1px var(--color-overlay-alpha-2-05),0 24px 64px var(--color-overlay-alpha-2-10);overflow:hidden;display:flex;flex-direction:column;max-height:96vh;min-height:92vh;}
+
+  .title-bar{height:32px;background:var(--color-primary-950);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;}
+  .title-bar__dots{display:flex;gap:7px;}
+  .title-bar__dot{width:11px;height:11px;border-radius:50%;}
+  .title-bar__dot--close{background:var(--color-error-700);}.title-bar__dot--min{background:var(--color-warning-700);}.title-bar__dot--max{background:var(--color-success-700);}
+  .title-bar__title{flex:1;text-align:center;color:var(--color-overlay-alpha-1-60);font-size:11px;}
+
+  .header{background:linear-gradient(135deg,var(--color-primary-950) 0%,var(--color-primary-700) 60%,var(--color-primary-500) 100%);padding:0 24px;height:52px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .header__back{display:flex;align-items:center;gap:5px;color:var(--color-overlay-alpha-1-75);font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:var(--radius-sm);}
+  .header__back:hover{color:var(--color-base-02);background:var(--color-overlay-alpha-1-10);}
+  .header__back svg{width:15px;height:15px;opacity:0.8;}
+  .header__breadcrumb{color:var(--color-overlay-alpha-1-35);font-size:13px;}
+  .header__page-title{color:var(--color-base-02);font-size:15px;font-weight:600;flex:1;}
+
+  .steps-bar{display:flex;align-items:center;gap:0;padding:16px 32px;background:var(--color-base-02);border-bottom:1px solid var(--border);flex-shrink:0;}
+  .step-item{display:flex;align-items:center;gap:0;flex:1;}
+  .step-item__num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:var(--color-gray-100);color:var(--color-gray-400);}
+  .step-item--active .step-item__num{background:var(--color-primary-700);color:var(--color-base-02);}
+  .step-item--done .step-item__num{background:var(--color-success-700);color:var(--color-base-02);}
+  .step-item__label{margin-left:8px;font-size:13px;font-weight:600;color:var(--color-gray-400);}
+  .step-item--active .step-item__label,.step-item--done .step-item__label{color:var(--text-primary);}
+  .step-item__line{flex:1;height:1px;background:var(--color-gray-100);margin:0 12px;}
+  .step-item--done .step-item__line{background:var(--color-success-700);}
+  .step-item:last-child .step-item__line{display:none;}
+
+  .main-content{flex:1;display:flex;overflow:hidden;}
+
+  /* Tabs */
+  .tab-panel{width:200px;border-right:1px solid var(--border);background:var(--color-gray-50);flex-shrink:0;padding:16px 0;display:flex;flex-direction:column;gap:2px;}
+  .tab-item{padding:12px 16px;cursor:pointer;transition:all var(--transition);font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:8px;border-left:3px solid transparent;}
+  .tab-item:hover{background:var(--color-base-02);color:var(--text-primary);}
+  .tab-item--active{background:var(--color-base-02);border-left-color:var(--accent);color:var(--accent);font-weight:600;}
+  .tab-item__icon{font-size:18px;flex-shrink:0;}
+
+  /* Content */
+  .tab-content{flex:1;overflow-y:auto;padding:24px;transition:all var(--transition);}
+  .tab-pane{display:none;}
+  .tab-pane--active{display:block;}
+
+  /* Tab panel hidden state — after scan complete */
+  .tab-panel--hidden{display:none;}
+
+  /* Scan trigger area */
+  .scan-trigger{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;border:2.5px dashed var(--color-gray-100);border-radius:var(--radius-lg);text-align:center;gap:16px;cursor:pointer;transition:all 300ms ease;position:relative;overflow:hidden;}
+  .scan-trigger:hover{border-color:var(--accent);background:var(--accent-light);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .scan-trigger:hover .scan-trigger__icon{transform:scale(1.08);}
+  .scan-trigger__icon{width:72px;height:72px;background:var(--color-primary-50);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform 300ms ease;flex-shrink:0;}
+  .scan-trigger__icon svg{width:36px;height:36px;color:var(--accent);}
+  .scan-trigger__title{font-size:16px;font-weight:700;color:var(--text-primary);}
+  .scan-trigger__desc{font-size:12px;color:var(--text-muted);max-width:380px;line-height:1.6;}
+  .scan-trigger__hint{font-size:11px;color:var(--color-info-700);background:var(--color-info-100);padding:4px 14px;border-radius:var(--radius-full);font-weight:600;}
+
+  /* Scan line animation overlay */
+  .scan-trigger--scanning .scan-line{display:block;}
+  .scan-line{display:none;position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--accent) 20%,var(--color-primary-300) 50%,var(--accent) 80%,transparent 100%);animation:scanSweep 1.8s ease-in-out infinite;box-shadow:0 0 20px rgba(0,166,171,.4);pointer-events:none;}
+  @keyframes scanSweep{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
+
+  /* Answer table */
+  .answer-section{margin-top:16px;}
+  .answer-section__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .answer-section__title{font-size:13px;font-weight:600;color:var(--text-primary);}
+  .answer-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .answer-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);}
+  .answer-table td{padding:6px 12px;border-bottom:1px solid var(--color-gray-50);}
+  .answer-table__num{width:40px;color:var(--text-muted);font-weight:600;}
+  .answer-table__word{width:200px;}
+  .answer-table__word input{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 8px;font-size:12px;font-family:var(--font-body);width:100%;outline:none;}
+  .answer-table__word input:focus{border-color:var(--accent);}
+  .answer-table__actions{width:50px;text-align:right;}
+  .answer-table__actions button{background:none;border:none;color:var(--color-gray-400);cursor:pointer;font-size:16px;padding:0 4px;}
+  .answer-table__actions button:hover{color:var(--color-error-700);}
+
+  /* Result layout: left = scan image + overlays, right = answer list */
+  .result-layout{display:flex;gap:16px;align-items:stretch;}
+  .scan-preview{flex:1;min-width:0;position:relative;background:var(--color-gray-50);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;min-height:calc(100vh - 320px);max-height:calc(100vh - 320px);display:flex;align-items:center;justify-content:center;}
+  .scan-preview__img{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);font-size:12px;gap:6px;position:relative;}
+  .scan-preview__img svg{width:80px;height:80px;opacity:0.12;}
+  .scan-zone{position:absolute;border:2px solid var(--accent);border-radius:3px;background:var(--color-overlay-alpha-2-05);transition:all var(--transition);cursor:pointer;}
+  .scan-zone:hover{background:var(--color-overlay-alpha-2-10);border-color:var(--color-primary-500);}
+  .scan-zone__num{position:absolute;top:1px;left:1px;width:16px;height:16px;border-radius:50%;background:var(--accent);color:var(--color-base-02);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:1;}
+  .scan-zone__label{position:absolute;bottom:1px;left:2px;font-size:9px;color:var(--accent);font-weight:600;white-space:nowrap;background:var(--color-base-02);padding:0 2px;border-radius:2px;text-overflow:ellipsis;overflow:hidden;max-width:calc(100% - 4px);}
+
+  .answer-panel{width:390px;flex-shrink:0;}
+  .answer-panel__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .answer-panel__title{font-size:12px;font-weight:600;color:var(--text-primary);}
+  .answer-list{max-height:540px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;}
+  .answer-row{display:flex;align-items:center;gap:4px;padding:3px 6px;background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;}
+  .answer-row__num{width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+  .answer-row input{border:none;outline:none;flex:1;font-size:11px;font-family:var(--font-body);color:var(--text-primary);background:transparent;min-width:0;}
+  .answer-row input:focus{color:var(--accent);}
+  .answer-row__delete{color:var(--color-gray-300);cursor:pointer;font-size:14px;flex-shrink:0;line-height:1;}
+  .answer-row__delete:hover{color:var(--color-error-700);}
+
+  .answer-empty{text-align:center;padding:40px 0;color:var(--text-muted);font-size:12px;}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;font-size:14px;font-weight:600;font-family:var(--font-body);border-radius:var(--radius-full);cursor:pointer;transition:all var(--transition);border:none;text-decoration:none;}
+  .btn-outline{background:var(--color-base-02);color:var(--accent);border:1.5px solid var(--accent);}
+  .btn-outline:hover{background:var(--accent-light);}
+  .btn-primary{background:var(--accent);color:var(--color-base-02);position:relative;overflow:hidden;}
+  .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--color-overlay-alpha-1-15) 0%,transparent 60%);pointer-events:none;}
+  .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;pointer-events:none;}
+  .btn-sm{padding:6px 14px;font-size:11px;}
+
+  .footer{background:var(--color-base-02);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .footer__hint{font-size:11px;color:var(--text-muted);}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600;}
+  .badge--success{background:var(--color-success-100);color:var(--color-success-700);}
+  .badge--info{background:var(--color-info-100);color:var(--color-info-700);}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--color-gray-900);color:var(--color-base-02);padding:8px 24px;border-radius:var(--radius-full);font-size:12px;z-index:999;animation:toastIn 300ms ease-out;pointer-events:none;box-shadow:var(--shadow-lg);}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .toast--out{animation:toastOut 200ms ease-in forwards;}
+  @keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(-8px);}}
+
+  /* === Title Zone (for orientation) === */
+  .scan-zone--title{border-color:var(--color-warning-700);background:rgba(255,125,0,.08);cursor:move;}
+  .scan-zone--title .scan-zone__num{background:var(--color-warning-700);font-size:10px;top:1px;left:1px;}
+  .scan-zone--title .scan-zone__label{color:var(--color-warning-700);font-weight:700;bottom:1px;}
+
+  /* === Drag & Resize handles === */
+  .scan-zone{cursor:move;touch-action:none;}
+  .scan-zone__resize-handle{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--color-base-02);border:2px solid var(--accent);z-index:2;}
+  .scan-zone__resize-handle--tl{top:-5px;left:-5px;cursor:nw-resize;}
+  .scan-zone__resize-handle--tr{top:-5px;right:-5px;cursor:ne-resize;}
+  .scan-zone__resize-handle--bl{bottom:-5px;left:-5px;cursor:sw-resize;}
+  .scan-zone__resize-handle--br{bottom:-5px;right:-5px;cursor:se-resize;}
+  .scan-zone--dragging{opacity:0.8;z-index:10;transition:none !important;}
+
+  /* === Rotate Controls on scan preview === */
+  .rotate-controls{position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:5;}
+  .rotate-btn-sm{width:28px;height:28px;border-radius:50%;border:none;background:var(--color-overlay-alpha-2-55);color:var(--color-base-02);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--transition);}
+  .rotate-btn-sm:hover{background:var(--color-overlay-alpha-2-80);transform:scale(1.1);}
+
+  /* === Confidence indicator === */
+  .answer-row__confidence{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:help;position:relative;user-select:none;}
+  .answer-row__confidence--low{background:var(--color-error-100);color:var(--color-error-700);}
+  .answer-row__confidence--high{background:var(--color-success-100);color:var(--color-success-700);}
+  .answer-row__confidence__tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--color-gray-900);color:var(--color-base-02);font-size:10px;font-weight:400;padding:5px 10px;border-radius:var(--radius-sm);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 180ms;z-index:10;line-height:1.4;}
+  .answer-row__confidence:hover .answer-row__confidence__tip{opacity:1;}
+  .confidence-legend{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted);cursor:help;white-space:nowrap;}
+  .confidence-legend__dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .confidence-legend__dot--low{background:var(--color-error-700);}
+  .confidence-legend__dot--high{background:var(--color-success-700);}
+
+  /* === Editable question number === */
+  .answer-row__num-input{width:30px;height:22px;border:1.5px solid var(--border);border-radius:var(--radius-sm);text-align:center;font-size:11px;font-weight:700;color:var(--accent);background:var(--color-base-02);outline:none;font-family:var(--font-body);flex-shrink:0;transition:border-color var(--transition);}
+  .answer-row__num-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--color-primary-50);}
+  .answer-row__num-input:hover{border-color:var(--color-primary-300);}
+
+  /* === Grading Mode Switch (per question) === */
+  .grading-mode-switch{display:flex;flex-shrink:0;gap:1px;background:var(--color-gray-100);border-radius:var(--radius-sm);padding:1px;font-size:9px;}
+  .grading-mode-switch__pill{padding:3px 7px;border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-muted);font-weight:500;font-family:var(--font-body);font-size:9px;white-space:nowrap;transition:all var(--transition);border:1px solid transparent;}
+  .grading-mode-switch__pill:hover{color:var(--text-primary);background:var(--color-base-02);}
+  .grading-mode-switch__pill--auto.active{background:var(--color-base-02);color:var(--color-success-700);font-weight:700;border-color:var(--color-success-700);}
+  .grading-mode-switch__pill--manual.active{background:var(--color-base-02);color:var(--color-warning-700);font-weight:700;border-color:var(--color-warning-700);}
+  .grading-mode-switch__pill--auto:hover{background:var(--color-success-100);color:var(--color-success-700);}
+  .grading-mode-switch__pill--manual:hover{background:var(--color-warning-100);color:var(--color-warning-700);}
+
+  /* === Grading mode legend (mini) === */
+  .mode-legend{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:500;}
+  .mode-legend__dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .mode-legend__dot--auto{background:var(--color-success-700);}
+  .mode-legend__dot--manual{background:var(--color-warning-700);}
+
+  /* === Bulk mode selector === */
+  .bulk-mode-select{position:relative;display:inline-flex;}
+  .bulk-mode-select__btn{font-size:10px;font-weight:600;padding:3px 8px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--color-base-02);cursor:pointer;color:var(--text-secondary);font-family:var(--font-body);transition:all var(--transition);}
+  .bulk-mode-select__btn:hover{border-color:var(--accent);color:var(--accent);}
+  .bulk-mode-select__menu{display:none;position:absolute;top:100%;right:0;z-index:20;background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-md);overflow:hidden;min-width:160px;}
+  .bulk-mode-select__menu--open{display:block;}
+  .bulk-mode-select__menu-item{display:flex;align-items:center;gap:6px;padding:7px 12px;font-size:11px;cursor:pointer;font-family:var(--font-body);font-weight:500;transition:all var(--transition);}
+  .bulk-mode-select__menu-item:hover{background:var(--color-gray-50);}
+  .bulk-mode-select__menu-item--auto{color:var(--color-success-700);}
+  .bulk-mode-select__menu-item--manual{color:var(--color-warning-700);}
+
+  /* === Zone color variants by grading mode === */
+  .scan-zone--auto{border-color:var(--color-success-700);background:rgba(0,166,171,.06);}
+  .scan-zone--auto .scan-zone__num{background:var(--color-success-700);}
+  .scan-zone--auto .scan-zone__label{color:var(--color-success-700);}
+  .scan-zone--manual{border-color:var(--color-warning-700);background:rgba(255,125,0,.06);}
+  .scan-zone--manual .scan-zone__num{background:var(--color-warning-700);}
+  .scan-zone--manual .scan-zone__label{color:var(--color-warning-700);}
+  .scan-zone--manual:hover{border-color:var(--color-warning-500);}
+  .scan-zone--auto:hover{border-color:var(--color-success-500);}
+
+  /* === Bi-directional highlight (zone ↔ answer row) === */
+  .answer-row--highlighted{background:var(--color-accent-3-50) !important;border-color:var(--color-accent-3-600) !important;box-shadow:inset 0 0 0 1px var(--color-accent-3-400);transition:all 180ms ease;}
+  .scan-zone--highlighted{border-width:3px !important;box-shadow:0 0 12px rgba(139,111,242,.45);z-index:8;transition:all 180ms ease;}
+
+  /* === Flow Illustration === */
+  .flow-section{flex:1;display:flex;flex-direction:column;align-items:center;gap:28px;padding:24px 32px 32px;overflow-y:auto;}
+  .flow-section--hidden{display:none;}
+  .flow-steps{display:flex;align-items:flex-start;justify-content:center;gap:0;width:100%;max-width:900px;position:relative;}
+  .flow-step{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;text-align:center;position:relative;z-index:1;}
+  .flow-step__icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;position:relative;}
+  .flow-step__icon::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;animation:pulseRing 2.2s ease-in-out infinite;}
+  .flow-step--1 .flow-step__icon{background:var(--color-primary-50);color:var(--accent);}
+  .flow-step--1 .flow-step__icon::after{border-color:var(--color-primary-200);animation-delay:0s;}
+  .flow-step--2 .flow-step__icon{background:var(--color-accent-3-50);color:var(--color-accent-3-600);}
+  .flow-step--2 .flow-step__icon::after{border-color:var(--color-accent-3-400);animation-delay:0.55s;}
+  .flow-step--3 .flow-step__icon{background:var(--color-warning-100);color:var(--color-warning-700);}
+  .flow-step--3 .flow-step__icon::after{border-color:var(--color-warning-300);animation-delay:1.1s;}
+  .flow-step--4 .flow-step__icon{background:var(--color-success-100);color:var(--color-success-700);}
+  .flow-step--4 .flow-step__icon::after{border-color:var(--color-success-300);animation-delay:1.65s;}
+  @keyframes pulseRing{0%,100%{transform:scale(1);opacity:0.4;}50%{transform:scale(1.15);opacity:1;}}
+  .flow-step__label{font-size:13px;font-weight:600;color:var(--text-primary);}
+  .flow-step__desc{font-size:10px;color:var(--text-muted);line-height:1.5;max-width:140px;}
+
+  .flow-connector{position:absolute;top:28px;height:2px;background:var(--color-gray-100);z-index:0;}
+  .flow-connector--1{left:calc(12.5% + 28px);right:calc(87.5% + 28px);}
+  .flow-connector--2{left:calc(37.5% + 28px);right:calc(62.5% + 28px);}
+  .flow-connector--3{left:calc(62.5% + 28px);right:calc(37.5% + 28px);}
+
+  .flow-note{display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--color-accent-3-50);border:1px solid var(--color-accent-3-400);border-radius:var(--radius-md);font-size:12px;color:var(--color-accent-3-800);max-width:700px;}
+  .flow-note svg{width:20px;height:20px;flex-shrink:0;color:var(--color-accent-3-600);}
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="title-bar">
+    <div class="title-bar__dots"><div class="title-bar__dot title-bar__dot--close"></div><div class="title-bar__dot title-bar__dot--min"></div><div class="title-bar__dot title-bar__dot--max"></div></div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <header class="header">
+    <a href="free-task-create.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> 上一步
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">自由作业 · 核对答案</span>
+  </header>
+
+  <div class="steps-bar">
+    <div class="step-item step-item--done">
+      <span class="step-item__num">✓</span><span class="step-item__label">创建任务</span>
+      <div class="step-item__line"></div>
+    </div>
+    <div class="step-item step-item--done">
+      <span class="step-item__num">✓</span><span class="step-item__label">扫描答案卷</span>
+      <div class="step-item__line"></div>
+    </div>
+    <div class="step-item step-item--active">
+      <span class="step-item__num">3</span><span class="step-item__label">核对答案</span>
+      <div class="step-item__line"></div>
+    </div>
+    <div class="step-item">
+      <span class="step-item__num">4</span><span class="step-item__label">扫描学生作业</span>
+      <div class="step-item__line"></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Left tabs -->
+    <div class="tab-panel">
+      <div class="tab-item tab-item--active" data-tab="handwrite" onclick="switchTab(this)">
+        <span class="tab-item__icon">✍️</span>
+        <div>
+          <div style="font-size:12px;font-weight:600;line-height:1.3;">教师答案卷录入</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:400;">放入标准答案纸扫描</div>
+        </div>
+      </div>
+      <div class="tab-item" data-tab="student" onclick="switchTab(this)">
+        <span class="tab-item__icon">⭐</span>
+        <div>
+          <div style="font-size:12px;font-weight:600;line-height:1.3;">满分学生答卷</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:400;">选全对学生，免重复扫描</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content area -->
+    <div class="tab-content">
+      <!-- Shared scan trigger + flow illustration (before scan) -->
+      <div class="flow-section" id="flowSection">
+        <div class="scan-trigger" id="scanTrigger" onclick="simulateScan(activeTab)">
+          <div class="scan-trigger__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+          </div>
+          <div class="scan-trigger__title" id="scanTriggerTitle">放入答案纸，点击扫描</div>
+          <div class="scan-trigger__desc" id="scanTriggerDesc">系统将自动识别：题目位置 → 切题 → 手写答案OCR → 生成答案列表</div>
+          <div class="scan-trigger__hint" id="scanTriggerHint">✍️ 支持普通纸张，无需二维码</div>
+          <div class="scan-line"></div>
+        </div>
+
+        <!-- Flow illustration -->
+        <div style="position:relative;width:100%;max-width:900px;">
+          <div class="flow-steps">
+            <div class="flow-step flow-step--1">
+              <div class="flow-step__icon">📥</div>
+              <div class="flow-step__label">放入试卷</div>
+              <div class="flow-step__desc">将标准答案纸放入扫描仪</div>
+            </div>
+            <div class="flow-step flow-step--2">
+              <div class="flow-step__icon">🔍</div>
+              <div class="flow-step__label">智能切题</div>
+              <div class="flow-step__desc">识别标题方向、切分每道题区域</div>
+            </div>
+            <div class="flow-step flow-step--3">
+              <div class="flow-step__icon">✏️</div>
+              <div class="flow-step__label">OCR识别</div>
+              <div class="flow-step__desc">提取手写答案，标记置信度</div>
+            </div>
+            <div class="flow-step flow-step--4">
+              <div class="flow-step__icon">✅</div>
+              <div class="flow-step__label">校对确认</div>
+              <div class="flow-step__desc">检查修正后确认，开始批改</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context hint -->
+        <div class="flow-note" id="flowNote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span id="flowNoteText">教师答案卷录入：请手写一份标准答案并扫描。系统将自动切题并识别手写答案为标准答案。</span>
+        </div>
+      </div>
+
+      <!-- Answer section (after scan) — shared across both tabs, appended here -->
+      <div class="answer-section" id="answerSection" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="btn btn-outline btn-sm" onclick="resetToScan()" style="font-size:11px;padding:5px 12px;" title="重新扫描或重新上传答案">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;"><polyline points="15 18 9 12 15 6"/></svg>
+        返回重扫
+      </button>
+      <span class="footer__hint" id="footerHint">请先扫描答案卷</span>
+    </div>
+    <button class="btn btn-primary" id="confirmBtn" disabled onclick="confirmAndGo()">
+      确认答案，开始扫描学生作业 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  let answers = [];
+  let activeTab = 'handwrite';
+  let zonePositions = [];    // {left,top,width,height} as % numbers per answer
+  let titleZone = null;      // {left,top,width,height,text} for detected title region
+  let rotation = 0;          // 0|90|180|270 — image rotation tracking
+  let dragState = null;      // {type:'drag'|'resize', idx, handle, startX, startY, origL, origT, origW, origH}
+  let dragMoved = false;     // true if mouse moved >3px during drag (distinguishes click from drag)
+  let highlightIdx = -1;     // currently cross-highlighted question index (-1 = none)
+
+  const demoWords = ['apple','beautiful','classroom','dictionary','elephant','family','garden','hospital','important','journey','kitchen','library','mountain','notebook','orange','picture','question','restaurant','student','teacher'];
+
+  function switchTab(el) {
+    document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('tab-item--active');});
+    el.classList.add('tab-item--active');
+    activeTab = el.dataset.tab;
+    // Update flow illustration context text
+    updateFlowContext();
+  }
+
+  function updateFlowContext() {
+    var isTeacher = activeTab === 'handwrite';
+    document.getElementById('scanTriggerTitle').textContent = isTeacher ? '放入标准答案纸，点击扫描' : '放入满分学生答卷，点击扫描';
+    document.getElementById('scanTriggerDesc').textContent = isTeacher
+      ? '老师手写一份标准答案，系统自动切题并识别手写答案为标准答案'
+      : '扫描已知全对的学生答卷，系统自动提取答案，该学生无需重复扫描';
+    document.getElementById('scanTriggerHint').textContent = isTeacher ? '✍️ 支持普通纸张，无需二维码' : '⚠️ 请确保该学生答卷完全正确';
+    document.getElementById('flowNoteText').textContent = isTeacher
+      ? '教师答案卷录入：请手写一份标准答案并扫描。系统将自动切题并识别手写答案为标准答案。'
+      : '满分学生答卷：请选择一位已知成绩全对的学生，将其答卷放入扫描仪。系统自动提取为标准答案，且该学生在批改环节无需重新扫描。';
+    document.getElementById('flowNote').style.borderColor = isTeacher ? 'var(--color-accent-3-400)' : 'var(--color-warning-300)';
+    document.getElementById('flowNote').style.background = isTeacher ? 'var(--color-accent-3-50)' : 'var(--color-warning-100)';
+  }
+
+  function simulateScan(source) {
+    var trigger = document.getElementById('scanTrigger');
+    trigger.classList.add('scan-trigger--scanning');
+    showToast('正在扫描识别答案…');
+
+    setTimeout(function(){
+      // Build label from active tab
+      var sourceLabel = activeTab === 'handwrite' ? '教师手写答案' : '满分学生答卷';
+      // Simulate: add confidence + grading mode
+      answers = demoWords.map(function(w,i){
+        return {
+          index:i+1, word:w,
+          confidence: (i===3||i===11||i===17) ? 0.35+Math.random()*0.25 : 0.78+Math.random()*0.18,
+          gradingMode: i<10?'auto':'manual'
+        };
+      });
+      zonePositions = answers.map(function(a,i){
+        var col=i%5, row=Math.floor(i/5);
+        return {left:10+col*18, top:14+row*22, width:15, height:8};
+      });
+      titleZone = {left:5, top:2, width:90, height:6, text:'📌 标题校准区 · 学生卷方向比对依据'};
+      rotation = 0; dragState = null; highlightIdx = -1;
+
+      renderAnswerTable(sourceLabel);
+      trigger.classList.remove('scan-trigger--scanning');
+      document.getElementById('confirmBtn').disabled = false;
+      showToast('识别完成，共 '+answers.length+' 个单词');
+    }, 1800);
+  }
+
+  function renderAnswerTable(sourceLabel) {
+    var section = document.getElementById('answerSection');
+
+    // Hide flow section, hide tab panel
+    document.getElementById('flowSection').classList.add('flow-section--hidden');
+    document.querySelector('.tab-panel').classList.add('tab-panel--hidden');
+    section.style.display = 'block';
+
+    var autoCount = answers.filter(function(a){return a.gradingMode==='auto';}).length;
+    var manualCount = answers.filter(function(a){return a.gradingMode==='manual';}).length;
+
+    section.innerHTML =
+      '<div class="answer-section__header">'+
+        '<span class="answer-section__title">📋 识别结果 — '+sourceLabel+' <span class="badge badge--success">'+answers.length+' 题</span></span>'+
+      '</div>'+
+      '<div class="result-layout">'+
+        '<div class="scan-preview" id="scanPreview">'+
+          '<div class="scan-preview__img">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'+
+            '<span>扫描原图</span>'+
+            '<span style="font-size:10px;">'+sourceLabel+'</span>'+
+            (titleZone?
+              '<div class="scan-zone scan-zone--title" style="left:'+titleZone.left+'%;top:'+titleZone.top+'%;width:'+titleZone.width+'%;height:'+titleZone.height+'%;" title="📌 标题校准参考区 — 后续扫描学生作业时，以此为锚点判断图片是否需要旋转，确保方向一致">'+
+                '<span class="scan-zone__num">📌</span>'+
+                '<span class="scan-zone__label">'+titleZone.text+'</span>'+
+              '</div>':'')+
+            '<div class="rotate-controls">'+
+              '<button class="rotate-btn-sm" onclick="rotateImage(-90)" title="向左旋转90°">↺</button>'+
+              '<button class="rotate-btn-sm" onclick="rotateImage(90)" title="向右旋转90°">↻</button>'+
+              '<button class="rotate-btn-sm" onclick="rotateImage(180)" title="上下翻转">⇅</button>'+
+              '<span style="margin-left:4px;font-size:10px;color:var(--color-overlay-alpha-1-75);background:var(--color-overlay-alpha-2-40);padding:2px 6px;border-radius:4px;" id="rotationLabel">'+rotation+'°</span>'+
+            '</div>'+
+            zonePositions.map(function(z,i){
+              var a=answers[i]||{index:'?',word:'',gradingMode:'auto'};
+              return '<div class="scan-zone scan-zone--'+a.gradingMode+'" style="left:'+z.left+'%;top:'+z.top+'%;width:'+z.width+'%;height:'+z.height+'%;" title="题'+a.index+': '+a.word+' ('+(a.gradingMode==='auto'?'智能批改':'非智能批改·检测手写分数')+')" data-zone-index="'+i+'">'+
+                '<span class="scan-zone__num">'+a.index+'</span>'+
+                '<span class="scan-zone__label">'+a.word+'</span>'+
+                '<span class="scan-zone__resize-handle scan-zone__resize-handle--tl"></span>'+
+                '<span class="scan-zone__resize-handle scan-zone__resize-handle--tr"></span>'+
+                '<span class="scan-zone__resize-handle scan-zone__resize-handle--bl"></span>'+
+                '<span class="scan-zone__resize-handle scan-zone__resize-handle--br"></span>'+
+              '</div>';
+            }).join('')+
+          '</div>'+
+        '</div>'+
+        '<div class="answer-panel">'+
+          '<div class="answer-panel__header">'+
+            '<div style="display:flex;align-items:center;gap:6px;">'+
+              '<span class="answer-panel__title" style="margin-right:4px;">答案校对</span>'+
+              '<span class="mode-legend" title="两种批改方式">'+
+                '<span class="mode-legend__dot mode-legend__dot--auto"></span>智能批改'+
+                '<span class="mode-legend__dot mode-legend__dot--manual"></span>非智能批改'+
+              '</span>'+
+            '</div>'+
+            '<div style="display:flex;align-items:center;gap:6px;">'+
+              '<button class="btn btn-outline btn-sm" onclick="addRow()">+ 添加</button>'+
+              '<div class="bulk-mode-select" id="bulkModeSelect">'+
+                '<button class="bulk-mode-select__btn" onclick="toggleBulkMenu()">批量 ▼</button>'+
+                '<div class="bulk-mode-select__menu" id="bulkModeMenu">'+
+                  '<div class="bulk-mode-select__menu-item bulk-mode-select__menu-item--auto" onclick="setAllGradingModes(\'auto\')">🤖 全部设为智能批改</div>'+
+                  '<div class="bulk-mode-select__menu-item bulk-mode-select__menu-item--manual" onclick="setAllGradingModes(\'manual\')">✋ 全部设为非智能批改</div>'+
+                '</div>'+
+              '</div>'+
+            '</div>'+
+          '</div>'+
+          '<div class="answer-list">'+
+            answers.map(function(a,i){
+              var isLow=a.confidence<0.7, m=a.gradingMode||'auto';
+              return '<div class="answer-row" style="'+(isLow?'background:var(--color-error-100);border-color:var(--color-error-300);':'')+'" onclick="highlightZone('+i+',event)">'+
+                '<span class="answer-row__confidence '+(isLow?'answer-row__confidence--low':'answer-row__confidence--high')+'" title="'+(isLow?'⚠ 识别置信度低，请人工核对':'✓ 识别置信度高')+'">'+
+                  (isLow?'‼':'✓')+
+                  '<span class="answer-row__confidence__tip">'+(isLow?'⚠ 手写笔迹识别置信度低<br>可点击原图区域查看原始笔迹':'✓ 手写识别置信度高')+'</span>'+
+                '</span>'+
+                '<input class="answer-row__num-input" type="text" inputmode="numeric" value="'+a.index+'" onchange="updateIndex('+i+',this.value)" title="编辑题号">'+
+                '<input value="'+a.word+'" onchange="updateWord('+i+',this.value)" style="flex:1;min-width:0;">'+
+                '<div class="grading-mode-switch">'+
+                  '<button class="grading-mode-switch__pill grading-mode-switch__pill--auto'+(m==='auto'?' active':'')+'" onclick="setGradingMode('+i+',\'auto\')" title="智能批改：机器自动评分（适合选择/填空题）">🤖 智能</button>'+
+                  '<button class="grading-mode-switch__pill grading-mode-switch__pill--manual'+(m==='manual'?' active':'')+'" onclick="setGradingMode('+i+',\'manual\')" title="非智能批改：检测老师手写分数，未找到则网阅打分">✋ 非智能</button>'+
+                '</div>'+
+                '<span class="answer-row__delete" onclick="deleteRow('+i+')" title="删除">×</span>'+
+              '</div>';
+            }).join('')+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+    initZoneDrag('main');
+    setTimeout(function(){ document.addEventListener('click', closeBulkMenuOutside); }, 0);
+
+    document.getElementById('footerHint').innerHTML =
+      '已识别 '+answers.length+' 题 | <span style="color:var(--color-success-700);">🤖智能批改 '+autoCount+'</span> | <span style="color:var(--color-warning-700);">✋非智能批改 '+manualCount+'</span>';
+  }
+
+  // ===== Updated answer manipulation (syncs zonePositions) =====
+  function updateWord(idx, val) { answers[idx].word = val; }
+  function deleteRow(idx) {
+    answers.splice(idx,1);
+    if (zonePositions.length > idx) zonePositions.splice(idx,1);
+    renderAnswerTable(activeTab);
+  }
+  function addRow() {
+    answers.push({index:answers.length+1, word:'', confidence:1, gradingMode:'auto'});
+    zonePositions.push({left:50, top:50, width:15, height:8});
+    renderAnswerTable(activeTab);
+  }
+
+  // ===== Grading mode per question (binary: auto | manual) =====
+  function setGradingMode(idx, mode) {
+    answers[idx].gradingMode = mode;
+    // Update zone class live without full re-render
+    var zone = document.querySelector('.scan-zone[data-zone-index="'+idx+'"]');
+    if (zone) {
+      zone.className = zone.className.replace(/scan-zone--(auto|manual|title)/g, '');
+      zone.classList.add('scan-zone--'+mode);
+      zone.title = zone.title.replace(/\((智能批改|非智能批改.*?)\)/, '('+(mode==='auto'?'智能批改':'非智能批改·检测手写分数')+')');
+    }
+    // Update the switch pill states
+    var row = document.querySelectorAll('.answer-row')[idx];
+    if (row) {
+      var pills = row.querySelectorAll('.grading-mode-switch__pill');
+      pills.forEach(function(p){ p.classList.remove('active'); });
+      var modeIdx = mode==='auto'?0:1;
+      if (pills[modeIdx]) pills[modeIdx].classList.add('active');
+    }
+    updateFooterStats();
+  }
+
+  function setAllGradingModes(mode) {
+    answers.forEach(function(a){ a.gradingMode = mode; });
+    renderAnswerTable(activeTab);
+    showToast('已将所有题目设为：' + (mode==='auto'?'智能批改':'非智能批改'));
+  }
+
+  function updateFooterStats() {
+    var autoCount = answers.filter(function(a){return a.gradingMode==='auto';}).length;
+    var manualCount = answers.filter(function(a){return a.gradingMode==='manual';}).length;
+    document.getElementById('footerHint').innerHTML =
+      '已识别 '+answers.length+' 题 | <span style="color:var(--color-success-700);">🤖智能批改 '+autoCount+'</span> | <span style="color:var(--color-warning-700);">✋非智能批改 '+manualCount+'</span>';
+  }
+
+  // ===== Bulk mode dropdown =====
+  function toggleBulkMenu() {
+    var menu = document.getElementById('bulkModeMenu');
+    if (menu) menu.classList.toggle('bulk-mode-select__menu--open');
+    event.stopPropagation();
+  }
+  function closeBulkMenuOutside(e) {
+    var menu = document.getElementById('bulkModeMenu');
+    if (!menu) return;
+    if (e && e.target.closest('.bulk-mode-select')) return;
+    menu.classList.remove('bulk-mode-select__menu--open');
+  }
+
+  // ===== Editable question number =====
+  function updateIndex(idx, val) {
+    const newIdx = parseInt(val, 10);
+    if (isNaN(newIdx) || newIdx < 1) { renderAnswerTable(activeTab); return; }
+    answers[idx].index = newIdx;
+    // Sort both arrays in tandem by new index order
+    const combined = answers.map((a,i) => ({ answer:a, zone:zonePositions[i] }));
+    combined.sort((a,b) => a.answer.index - b.answer.index);
+    answers = combined.map(c => c.answer);
+    zonePositions = combined.map(c => c.zone);
+    renderAnswerTable(activeTab);
+  }
+
+  // ===== Cross-highlight: zone ↔ answer row =====
+  function highlightAnswer(idx) {
+    if (idx<0||idx>=answers.length) return;
+    // Remove old highlights
+    clearHighlights();
+    highlightIdx = idx;
+    // Highlight zone
+    var zone = document.querySelector('.scan-zone[data-zone-index="'+idx+'"]');
+    if (zone) { zone.classList.add('scan-zone--highlighted'); }
+    // Highlight + scroll to answer row
+    var rows = document.querySelectorAll('.answer-row');
+    if (rows[idx]) {
+      rows[idx].classList.add('answer-row--highlighted');
+      rows[idx].scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  }
+
+  function highlightZone(idx, e) {
+    // Ignore clicks on interactive child elements
+    if (e && (e.target.closest('input')||e.target.closest('button')||e.target.closest('.answer-row__confidence')||e.target.closest('.answer-row__delete'))) return;
+    // Toggle: if already highlighted, clear
+    if (highlightIdx === idx) { clearHighlights(); return; }
+    highlightIdx = idx;
+    clearHighlights();
+    // Highlight answer row
+    var rows = document.querySelectorAll('.answer-row');
+    if (rows[idx]) { rows[idx].classList.add('answer-row--highlighted'); }
+    // Highlight + flash zone
+    var zone = document.querySelector('.scan-zone[data-zone-index="'+idx+'"]');
+    if (zone) {
+      zone.classList.add('scan-zone--highlighted');
+      zone.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  }
+
+  function clearHighlights() {
+    highlightIdx = -1;
+    document.querySelectorAll('.answer-row--highlighted').forEach(function(r){r.classList.remove('answer-row--highlighted');});
+    document.querySelectorAll('.scan-zone--highlighted').forEach(function(z){z.classList.remove('scan-zone--highlighted');});
+  }
+
+  // ===== Zone Drag & Resize =====
+  function initZoneDrag(source) {
+    var preview = document.getElementById('scanPreview');
+    if (!preview) return;
+    preview.addEventListener('mousedown', function onZoneMD(e) {
+      const zone = e.target.closest('.scan-zone');
+      if (!zone) return;
+      const idxStr = zone.dataset.zoneIndex;
+      if (idxStr === undefined) return;
+      const idx = parseInt(idxStr,10);
+      if (idx<0 || idx>=zonePositions.length) return;
+      const handle = e.target.closest('.scan-zone__resize-handle');
+      const rect = preview.getBoundingClientRect();
+      const orig = zonePositions[idx];
+      if (!orig) return;
+      dragMoved = false;
+      if (handle) {
+        const dir = Array.from(handle.classList).find(c=>c.includes('--'))?.split('--')[1]||'br';
+        dragState = { type:'resize', idx, dir, startX:e.clientX, startY:e.clientY, origL:orig.left, origT:orig.top, origW:orig.width, origH:orig.height };
+      } else {
+        dragState = { type:'drag', idx, startX:e.clientX, startY:e.clientY, origL:orig.left, origT:orig.top, origW:orig.width, origH:orig.height };
+        zone.classList.add('scan-zone--dragging');
+      }
+      e.preventDefault();
+    });
+  }
+
+  function clamp(v,min,max) { return Math.max(min,Math.min(max,v)); }
+
+  // Global mousemove/mouseup for drag/resize (attach once)
+  document.addEventListener('mousemove', function(e) {
+    if (!dragState) return;
+    var dx = e.clientX-dragState.startX, dy = e.clientY-dragState.startY;
+    if (Math.abs(dx)>2||Math.abs(dy)>2) dragMoved = true;
+    const preview = document.querySelector('.scan-preview');
+    if (!preview) return;
+    const rect = preview.getBoundingClientRect();
+    const pctX = ((e.clientX-dragState.startX)/rect.width)*100;
+    const pctY = ((e.clientY-dragState.startY)/rect.height)*100;
+    const pos = zonePositions[dragState.idx];
+    if (!pos) return;
+    if (dragState.type === 'drag') {
+      pos.left = clamp(dragState.origL+pctX, 0, 100-pos.width);
+      pos.top  = clamp(dragState.origT+pctY, 0, 100-pos.height);
+      const el = document.querySelector('.scan-zone[data-zone-index="'+dragState.idx+'"]');
+      if (el) { el.style.left=pos.left+'%'; el.style.top=pos.top+'%'; }
+    } else if (dragState.type === 'resize') {
+      const d = dragState;
+      let l=d.origL, t=d.origT, w=d.origW, h=d.origH;
+      if (d.dir.includes('r')) w = Math.max(5, d.origW+pctX);
+      if (d.dir.includes('l')) { l = d.origL+pctX; w = Math.max(5, d.origW-pctX); }
+      if (d.dir.includes('b')) h = Math.max(3, d.origH+pctY);
+      if (d.dir.includes('t')) { t = d.origT+pctY; h = Math.max(3, d.origH-pctY); }
+      pos.left=clamp(l,0,95); pos.top=clamp(t,0,97);
+      pos.width=clamp(w,5,100-pos.left); pos.height=clamp(h,3,100-pos.top);
+      const el = document.querySelector('.scan-zone[data-zone-index="'+dragState.idx+'"]');
+      if (el) {
+        el.style.left=pos.left+'%'; el.style.top=pos.top+'%';
+        el.style.width=pos.width+'%'; el.style.height=pos.height+'%';
+      }
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (dragState) {
+      var idx = dragState.idx;
+      const el = document.querySelector('.scan-zone[data-zone-index="'+idx+'"]');
+      if (el) el.classList.remove('scan-zone--dragging');
+      // If barely moved, treat as click → cross-highlight
+      if (!dragMoved) { highlightAnswer(idx); }
+      dragState = null; dragMoved = false;
+    }
+  });
+
+  // ===== Image Rotation =====
+  function rotateImage(degrees) {
+    rotation = (rotation + degrees + 360) % 360;
+    var label = document.getElementById('rotationLabel');
+    if (label) label.textContent = rotation + '°';
+    showToast('图片已旋转 '+rotation+'°');
+    if (rotation % 180 === 0) {
+      zonePositions = answers.map(function(a,i){
+        var col=i%5, row=Math.floor(i/5);
+        return {left:10+col*18, top:14+row*22, width:15, height:8};
+      });
+    } else {
+      zonePositions = answers.map(function(a,i){
+        var col=Math.floor(i/4), row=i%4;
+        return {left:10+col*22, top:10+row*20, width:20, height:10};
+      });
+    }
+    var sourceLabel = activeTab === 'handwrite' ? '教师手写答案' : '满分学生答卷';
+    renderAnswerTable(sourceLabel);
+  }
+
+  // ===== Back / Reset to re-scan =====
+  function resetToScan() {
+    if (answers.length > 0 && !confirm('返回后将丢失当前的识别结果，确定要继续吗？')) return;
+    answers = []; zonePositions = []; titleZone = null; rotation = 0; dragState = null;
+    // Restore tab panel and flow section
+    document.querySelector('.tab-panel').classList.remove('tab-panel--hidden');
+    document.getElementById('flowSection').classList.remove('flow-section--hidden');
+    document.getElementById('answerSection').style.display = 'none';
+    document.getElementById('confirmBtn').disabled = true;
+    document.getElementById('footerHint').textContent = '请先扫描答案卷';
+  }
+
+  function confirmAndGo() {
+    if (answers.length === 0) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const taskName = urlParams.get('name') || '自由作业';
+    window.location.href = `scan-progress.html?mode=free&first=1&taskName=${encodeURIComponent(taskName)}`;
+  }
+
+  function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);}
+</script>
+</body>
+</html>

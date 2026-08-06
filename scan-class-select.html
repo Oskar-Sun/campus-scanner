@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 扫描前选择班级</title>
+<style>
+  :root {
+    /* ============================================================
+       Primary — 品牌/交互（teal）
+       ============================================================ */
+    --color-primary-50:  #effafa;
+    --color-primary-100: #def8f9;
+    --color-primary-200: #b2f1f2;
+    --color-primary-300: #7de3e6;
+    --color-primary-500: #50d8dc;
+    --color-primary-700: #00a6ab;
+    --color-primary-950: #007a7e;
+
+    /* ============================================================
+       Gray — 中性灰
+       ============================================================ */
+    --color-gray-50:  #f8f8fc;
+    --color-gray-100: #d2d3de;
+    --color-gray-200: #bcbdc0;
+    --color-gray-300: #a2a3a6;
+    --color-gray-400: #88898c;
+    --color-gray-500: #6e6f71;
+    --color-gray-600: #545557;
+    --color-gray-700: #3a3b3d;
+    --color-gray-900: #212123;
+
+    /* ============================================================
+       Base — 纯黑 / 纯白
+       ============================================================ */
+    --color-base-01: #000000;
+    --color-base-02: #ffffff;
+
+    /* ============================================================
+       Semantic — Success（结果反馈专用，非交互）
+       ============================================================ */
+    --color-success-100: #bef8fa;
+    --color-success-300: #66dade;
+    --color-success-500: #11c5ca;
+    --color-success-700: #00a6ab;
+    --color-success-900: #008a8f;
+
+    /* ============================================================
+       Semantic — Error
+       ============================================================ */
+    --color-error-100: #ffece8;
+    --color-error-300: #fdcdc5;
+    --color-error-500: #fbaca3;
+    --color-error-700: #f53f3f;
+    --color-error-900: #cb2634;
+
+    /* ============================================================
+       Semantic — Warning
+       ============================================================ */
+    --color-warning-100: #fff7e8;
+    --color-warning-300: #ffe4ba;
+    --color-warning-500: #ffcf8b;
+    --color-warning-700: #ff7d00;
+    --color-warning-900: #d25f00;
+
+    /* ============================================================
+       Semantic — Info
+       ============================================================ */
+    --color-info-100: #e4f0fb;
+    --color-info-300: #97c4f1;
+    --color-info-500: #3089e3;
+    --color-info-700: #2675c4;
+    --color-info-900: #185695;
+
+    /* ============================================================
+       Accent — 分类/图表专用（禁止用于按钮/链接/交互）
+       ============================================================ */
+    --color-accent-1-50:  #d2f0e1;
+    --color-accent-1-400: #a7eaca;
+    --color-accent-1-600: #5ad0a3;
+    --color-accent-1-800: #049d75;
+
+    --color-accent-2-50:  #fff1f7;
+    --color-accent-2-400: #fbcde4;
+    --color-accent-2-600: #ff86c8;
+    --color-accent-2-800: #d14692;
+
+    --color-accent-3-50:  #f3f1ff;
+    --color-accent-3-400: #cfc6ff;
+    --color-accent-3-600: #8b6ff2;
+    --color-accent-3-800: #5936b1;
+
+    --color-accent-4-50:  #fff9e7;
+    --color-accent-4-400: #ffeeb6;
+    --color-accent-4-600: #f9b932;
+    --color-accent-4-800: #c27b00;
+
+    /* ============================================================
+       Overlay alpha-2 — 黑底半透明（弹窗遮罩、深色叠层）
+       ============================================================ */
+    --color-overlay-alpha-2-05: rgba(19,19,21,0.05);
+    --color-overlay-alpha-2-10: rgba(19,19,21,0.10);
+    --color-overlay-alpha-2-20: rgba(19,19,21,0.20);
+    --color-overlay-alpha-2-30: rgba(19,19,21,0.30);
+    --color-overlay-alpha-2-40: rgba(19,19,21,0.40);
+    --color-overlay-alpha-2-50: rgba(19,19,21,0.50);
+    --color-overlay-alpha-2-60: rgba(19,19,21,0.60);
+
+    /* ============================================================
+       Overlay alpha-1 — 白底半透明（玻璃/高光叠层）
+       ============================================================ */
+    --color-overlay-alpha-1-05: rgba(255,255,255,0.05);
+    --color-overlay-alpha-1-08: rgba(255,255,255,0.08);
+    --color-overlay-alpha-1-10: rgba(255,255,255,0.10);
+    --color-overlay-alpha-1-14: rgba(255,255,255,0.14);
+    --color-overlay-alpha-1-16: rgba(255,255,255,0.16);
+    --color-overlay-alpha-1-18: rgba(255,255,255,0.18);
+    --color-overlay-alpha-1-22: rgba(255,255,255,0.22);
+    --color-overlay-alpha-1-30: rgba(255,255,255,0.30);
+    --color-overlay-alpha-1-40: rgba(255,255,255,0.40);
+    --color-overlay-alpha-1-50: rgba(255,255,255,0.50);
+    --color-overlay-alpha-1-60: rgba(255,255,255,0.60);
+    --color-overlay-alpha-1-65: rgba(255,255,255,0.65);
+    --color-overlay-alpha-1-75: rgba(255,255,255,0.75);
+    --color-overlay-alpha-1-80: rgba(255,255,255,0.80);
+
+    /* ============================================================
+       Border-radius tokens
+       ============================================================ */
+    --radius-sm:   6px;
+    --radius-md:   8px;
+    --radius-lg:   10px;
+    --radius-xl:   28px;
+    --radius-full: 9999px;
+
+    /* ============================================================
+       Legacy aliases — 映射到新 token，保证旧代码兼容
+       ============================================================ */
+    --accent:       var(--color-primary-700);
+    --accent-dark:  var(--color-primary-950);
+    --accent-light: var(--color-primary-50);
+    --accent-glow:  var(--color-overlay-alpha-2-10);
+    --bg-primary:   var(--color-gray-50);
+    --bg-card:      var(--color-base-02);
+    --bg-header:    var(--color-primary-950);
+    --bg-select-card: var(--color-base-02);
+    --text-primary:   var(--color-gray-900);
+    --text-secondary: var(--color-gray-500);
+    --text-muted:     var(--color-gray-400);
+    --border:         var(--color-gray-100);
+    --border-active:  var(--color-primary-700);
+    --success:        var(--color-success-500);
+    --success-bg:     var(--color-success-100);
+    --warning:        var(--color-warning-500);
+    --warning-bg:     var(--color-warning-100);
+    --danger:         var(--color-error-700);
+
+    /* ============================================================
+       Shadows — 全部走 overlay-alpha-2
+       ============================================================ */
+    --shadow-sm: 0 1px 2px var(--color-overlay-alpha-2-05);
+    --shadow:    0 1px 3px var(--color-overlay-alpha-2-05), 0 1px 2px var(--color-overlay-alpha-2-05);
+    --shadow-md: 0 4px 12px var(--color-overlay-alpha-2-05), 0 2px 4px var(--color-overlay-alpha-2-05);
+    --shadow-lg: 0 12px 32px var(--color-overlay-alpha-2-10), 0 4px 8px var(--color-overlay-alpha-2-05);
+
+    /* ============================================================
+       Typography & motion
+       ============================================================ */
+    --font-display: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    --font-body:    'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    --transition:      180ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-gray-50);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* === Application Window === */
+  .app-window {
+    width: 1500px;
+    max-width: 100%;
+    background: var(--color-base-02);
+    border-radius: var(--radius-xl);
+    box-shadow:
+      0 0 0 1px var(--color-overlay-alpha-2-05),
+      0 24px 64px var(--color-overlay-alpha-2-10),
+      0 8px 24px var(--color-overlay-alpha-2-10);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* === Title Bar (window chrome) === */
+  .title-bar {
+    height: 32px;
+    background: var(--color-primary-950);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .title-bar__dots {
+    display: flex;
+    gap: 7px;
+  }
+  .title-bar__dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    opacity: 0.85;
+  }
+  .title-bar__dot--close  { background: var(--color-gray-500); }
+  .title-bar__dot--min   { background: var(--color-gray-400); }
+  .title-bar__dot--max   { background: var(--color-gray-300); }
+  .title-bar__title {
+    flex: 1;
+    text-align: center;
+    color: var(--color-overlay-alpha-1-65);
+    font-size: 12px;
+    font-family: var(--font-body);
+    letter-spacing: 0.3px;
+  }
+
+  /* === Header (white nav, per spec) === */
+  .header {
+    background: var(--color-base-02);
+    padding: 0 32px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+      var(--color-primary-950) 0%,
+      var(--color-primary-700) 50%,
+      var(--color-primary-500) 100%);
+  }
+  .header__back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-gray-500);
+    font-size: 13px;
+    cursor: pointer;
+    transition: color var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    margin-left: -8px;
+  }
+  .header__back:hover {
+    color: var(--color-primary-700);
+    background: var(--color-primary-50);
+  }
+  .header__back svg { width: 16px; height: 16px; opacity: 0.8; }
+  .header__breadcrumb { color: var(--color-gray-400); font-size: 13px; margin: 0 2px; }
+  .header__page-title {
+    color: var(--color-gray-900);
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
+    flex: 1;
+    margin-left: 4px;
+  }
+  .header__meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* Scanner Selector */
+  .scanner-select {
+    position: relative;
+  }
+  .scanner-select__trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-md);
+    color: var(--color-gray-900);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: var(--font-body);
+    min-width: 180px;
+  }
+  .scanner-select__trigger:hover {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-200);
+  }
+  .scanner-select__icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+  .scanner-select__device-name {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .scanner-select__chevron {
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+    transition: transform var(--transition);
+    flex-shrink: 0;
+  }
+  .scanner-select--open .scanner-select__chevron { transform: rotate(180deg); }
+  .scanner-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 280px;
+    background: var(--color-base-02);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-gray-100);
+    z-index: 100;
+    display: none;
+    overflow: hidden;
+  }
+  .scanner-dropdown--visible { display: block; animation: fadeSlideIn 160ms ease-out; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .scanner-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background var(--transition);
+    border-bottom: 1px solid var(--color-gray-50);
+    font-size: 13px;
+    color: var(--color-gray-900);
+  }
+  .scanner-dropdown__item:last-child { border-bottom: none; }
+  .scanner-dropdown__item:hover { background: var(--color-gray-50); }
+  .scanner-dropdown__item--active {
+    background: var(--color-primary-50);
+    color: var(--color-primary-700);
+  }
+  .scanner-dropdown__item--active:hover { background: var(--color-primary-100); }
+  .scanner-dropdown__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .scanner-dropdown__status-dot--online {
+    background: var(--color-success-500);
+    box-shadow: 0 0 6px var(--color-overlay-alpha-2-20);
+  }
+  .scanner-dropdown__status-dot--offline { background: var(--color-gray-400); }
+
+  /* Status text inside dropdown items (overrides inline hex) */
+  .scanner-dropdown__item .status-label--online  { color: var(--color-success-500); }
+  .scanner-dropdown__item .status-label--offline { color: var(--color-gray-400); }
+
+  /* Settings Button */
+  .settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-100);
+    border-radius: var(--radius-md);
+    color: var(--color-gray-500);
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .settings-btn:hover {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-200);
+    color: var(--color-primary-700);
+  }
+  .settings-btn svg { width: 18px; height: 18px; }
+  .settings-btn--active {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-700);
+    color: var(--color-primary-700);
+  }
+  .settings-btn__badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 9px;
+    height: 9px;
+    background: var(--color-primary-700);
+    border-radius: 50%;
+    border: 1.5px solid var(--color-base-02);
+  }
+
+  /* === Main Content === */
+  .main-content {
+    display: flex;
+    gap: 0;
+    flex: 1;
+    min-height: 480px;
+  }
+
+  /* === Left Panel — Class Selection === */
+  .left-panel {
+    flex: 1;
+    padding: 32px 24px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--color-gray-400);
+    margin-bottom: 6px;
+    font-family: var(--font-body);
+  }
+  .selection-group {
+    background: var(--color-base-02);
+    border-radius: var(--radius-lg);
+    padding: 16px 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-100);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .selection-group__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    font-family: var(--font-display);
+  }
+  .selection-group__header .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-primary-700);
+    flex-shrink: 0;
+  }
+  .selection-group__header .step-dot--done {
+    background: var(--color-success-500);
+  }
+  .selection-cards {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .selection-card {
+    padding: 12px 16px;
+    background: var(--color-base-02);
+    border: 1.5px solid var(--color-gray-100);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-slow);
+    font-size: 14px;
+    color: var(--color-gray-900);
+    font-family: var(--font-body);
+    user-select: none;
+    position: relative;
+    min-width: 72px;
+    text-align: center;
+    font-weight: 500;
+  }
+  .selection-card:hover {
+    border-color: var(--color-primary-200);
+    background: var(--color-primary-50);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .selection-card:active { transform: scale(0.97); }
+  .selection-card--selected {
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-700);
+    color: var(--color-primary-700);
+    font-weight: 600;
+    box-shadow: 0 0 0 3px var(--color-overlay-alpha-2-05);
+  }
+  .selection-card--selected::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 20px;
+    height: 20px;
+    background: var(--color-primary-700);
+    border-radius: 0 var(--radius-md) 0 var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .selection-card--selected::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    width: 8px;
+    height: 4px;
+    border-left: 2px solid var(--color-base-02);
+    border-bottom: 2px solid var(--color-base-02);
+    transform: rotate(-45deg);
+    z-index: 1;
+  }
+  .selection-card--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--color-gray-50);
+  }
+
+  /* Auto-selected badge */
+  .auto-selected-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--color-primary-50);
+    border: 1px solid var(--color-primary-200);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: var(--color-primary-950);
+    font-weight: 500;
+  }
+  .auto-selected-badge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary-700);
+  }
+
+  /* === Right Panel === */
+  .right-panel {
+    width: 420px;
+    padding: 32px 28px 24px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .info-card {
+    background: var(--color-base-02);
+    border-radius: var(--radius-lg);
+    padding: 16px 24px;
+    border: 1px solid var(--color-gray-100);
+    box-shadow: var(--shadow-sm);
+  }
+  .info-card__title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--color-gray-400);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-card__title svg { width: 14px; height: 14px; opacity: 0.7; }
+
+  /* Device Status */
+  .device-status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .device-status-row__icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .device-status-row__info { flex: 1; }
+  .device-status-row__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+  }
+  .device-status-row__status {
+    font-size: 11px;
+    color: var(--color-success-500);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-success-500);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.2); }
+  }
+
+  /* Scan Settings */
+  .settings-panel {
+    overflow: hidden;
+    transition: max-height var(--transition-slow), opacity var(--transition-slow);
+    max-height: 0;
+    opacity: 0;
+  }
+  .settings-panel--expanded {
+    max-height: 300px;
+    opacity: 1;
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 12px;
+    color: var(--color-gray-500);
+  }
+  .settings-row label {
+    font-weight: 500;
+    color: var(--color-gray-900);
+  }
+  .settings-row input[type="range"] {
+    width: 110px;
+    accent-color: var(--color-primary-700);
+    height: 4px;
+  }
+  .settings-row .value-tag {
+    font-size: 11px;
+    color: var(--color-gray-400);
+    background: var(--color-gray-50);
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 38px;
+    text-align: center;
+  }
+
+  /* Summary */
+  .summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--color-gray-100);
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row__label { color: var(--color-gray-500); }
+  .summary-row__value { color: var(--color-gray-900); font-weight: 600; }
+  .summary-row__value--pending {
+    color: var(--color-gray-400);
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  /* === Footer === */
+  .footer {
+    background: var(--color-base-02);
+    border-top: 1px solid var(--color-gray-100);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition);
+    border: none;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+  .btn-secondary {
+    background: var(--color-base-02);
+    color: var(--color-gray-500);
+    border: 1.5px solid var(--color-gray-100);
+  }
+  .btn-secondary:hover {
+    border-color: var(--color-gray-200);
+    color: var(--color-gray-900);
+    background: var(--color-gray-50);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-950) 100%);
+    color: var(--color-base-02);
+    box-shadow: 0 2px 8px var(--color-overlay-alpha-2-30);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-overlay-alpha-1-14) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+    box-shadow: 0 4px 16px var(--color-overlay-alpha-2-40);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .footer__hint {
+    font-size: 11px;
+    color: var(--color-gray-400);
+  }
+  .btn-start-scan {
+    padding: 16px 40px;
+    font-size: 16px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-950) 100%);
+    box-shadow: 0 4px 20px var(--color-overlay-alpha-2-40);
+    animation: scanPulse 2.4s ease-in-out infinite;
+  }
+  .btn-start-scan:hover {
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+    box-shadow: 0 6px 28px var(--color-overlay-alpha-2-50);
+    transform: translateY(-2px);
+  }
+  .btn-start-scan:disabled {
+    animation: none;
+    opacity: 0.5;
+    box-shadow: 0 2px 8px var(--color-overlay-alpha-2-20);
+  }
+  @keyframes scanPulse {
+    0%, 100% { box-shadow: 0 4px 20px var(--color-overlay-alpha-2-40); }
+    50%      { box-shadow: 0 4px 32px var(--color-overlay-alpha-2-60); }
+  }
+
+  /* === Settings Overlay === */
+  .settings-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--color-overlay-alpha-2-30);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .settings-overlay--visible { display: flex; }
+  .settings-overlay__content {
+    background: var(--color-base-02);
+    border-radius: var(--radius-xl);
+    padding: 24px 32px;
+    width: 400px;
+    box-shadow: var(--shadow-lg);
+    animation: fadeSlideIn 200ms ease-out;
+  }
+  .settings-overlay__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+  }
+  .settings-overlay__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-gray-50);
+  }
+  .settings-overlay__row:last-child { border-bottom: none; }
+  .settings-overlay__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-gray-900);
+  }
+  .settings-overlay__controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .settings-overlay__controls input[type="range"] {
+    width: 120px;
+    accent-color: var(--color-primary-700);
+  }
+  .settings-overlay__controls .value-display {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    min-width: 32px;
+    text-align: right;
+  }
+  .settings-overlay__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  .btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    border: none;
+    font-family: var(--font-body);
+    transition: all var(--transition);
+  }
+  .btn-sm--primary {
+    background: var(--color-primary-700);
+    color: var(--color-base-02);
+  }
+  .btn-sm--primary:hover { background: var(--color-primary-950); }
+  .btn-sm--ghost {
+    background: transparent;
+    color: var(--color-gray-500);
+  }
+  .btn-sm--ghost:hover {
+    background: var(--color-gray-50);
+    color: var(--color-gray-900);
+  }
+
+  /* Radio card (for settings) */
+  .radio-card {
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 500;
+    border: 1.5px solid var(--color-gray-100);
+    background: var(--color-base-02);
+    color: var(--color-gray-900);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: var(--font-body);
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .radio-card:hover {
+    border-color: var(--color-primary-700);
+    background: var(--color-primary-50);
+  }
+  .radio-card--checked {
+    border-color: var(--color-primary-700);
+    background: var(--color-primary-50);
+    color: var(--color-primary-950);
+    font-weight: 600;
+  }
+  .radio-card--sm { padding: 4px 10px; font-size: 11px; border-radius: var(--radius-full); }
+
+  .multi-toggle{font-size:11px;font-weight:400;color:var(--color-gray-400);cursor:pointer;padding:2px 8px;border-radius:var(--radius-full);border:1px solid var(--color-gray-100);transition:all var(--transition);user-select:none;white-space:nowrap;margin-left:4px;}
+  .multi-toggle:hover{color:var(--accent);border-color:var(--accent);}
+  .multi-toggle--active{color:var(--color-base-02);background:var(--accent);border-color:var(--accent);font-weight:600;}
+  .multi-toggle--active:hover{color:var(--color-base-02);background:var(--color-primary-950);}
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-gray-900);
+    color: var(--color-base-02);
+    padding: 10px 24px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-family: var(--font-body);
+    z-index: 999;
+    animation: toastIn 300ms ease-out;
+    pointer-events: none;
+    box-shadow: var(--shadow-lg);
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  .toast--out { animation: toastOut 200ms ease-in forwards; }
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  }
+
+  /* === Responsive === */
+  @media (max-width: 900px) {
+    .main-content { flex-direction: column; }
+    .right-panel { width: 100%; padding: 4px 24px 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <!-- Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar__dots">
+      <div class="title-bar__dot title-bar__dot--close"></div>
+      <div class="title-bar__dot title-bar__dot--min"></div>
+      <div class="title-bar__dot title-bar__dot--max"></div>
+    </div>
+    <span class="title-bar__title">校园智能扫描打印系统</span>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="index.html" class="header__back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      首页
+    </a>
+    <span class="header__breadcrumb">&gt;</span>
+    <span class="header__page-title">扫描前选择班级</span>
+
+    <div class="header__meta">
+      <!-- Scanner Device Selector -->
+      <div class="scanner-select" id="scannerSelect">
+        <button class="scanner-select__trigger" onclick="toggleScannerDropdown()">
+          <svg class="scanner-select__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10"/><circle cx="12" cy="17" r="1"/>
+          </svg>
+          <span class="scanner-select__device-name" id="currentDeviceName">EPSON L3150 Series</span>
+          <svg class="scanner-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="scanner-dropdown" id="scannerDropdown">
+          <div class="scanner-dropdown__item scanner-dropdown__item--active" data-device="EPSON L3150 Series" data-online="true" onclick="selectDevice(this)">
+            <span class="scanner-dropdown__status-dot scanner-dropdown__status-dot--online"></span>
+            <span>EPSON L3150 Series</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--color-success-500);">已连接</span>
+          </div>
+          <div class="scanner-dropdown__item" data-device="Canon LiDE 400" data-online="true" onclick="selectDevice(this)">
+            <span class="scanner-dropdown__status-dot scanner-dropdown__status-dot--online"></span>
+            <span>Canon LiDE 400</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--color-success-500);">就绪</span>
+          </div>
+          <div class="scanner-dropdown__item" data-device="HP ScanJet Pro 2500" data-online="false" onclick="selectDevice(this)">
+            <span class="scanner-dropdown__status-dot scanner-dropdown__status-dot--offline"></span>
+            <span>HP ScanJet Pro 2500</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--color-gray-400);">离线</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scanner Driver Settings Button -->
+      <button class="settings-btn" onclick="openDriverSettings()" title="扫描仪驱动设置">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Left: Class Selection -->
+    <div class="left-panel">
+      <div>
+        <div class="section-label">选择授课班级</div>
+        <!-- 学段 — auto-selected (only 高中) -->
+        <div style="margin-bottom:14px;">
+          <div class="auto-selected-badge">
+            <span class="auto-selected-badge__dot"></span>
+            学段：<strong>高中</strong>（自动识别）
+          </div>
+        </div>
+
+        <!-- 年级 Selection -->
+        <div class="selection-group" id="gradeGroup">
+          <div class="selection-group__header">
+            <span class="step-dot"></span>选择年级
+          </div>
+          <div class="selection-cards" id="gradeCards">
+            <div class="selection-card" data-value="grade-10" data-label="高一" onclick="selectGrade(this)">
+              高一
+            </div>
+            <div class="selection-card" data-value="grade-11" data-label="高二" onclick="selectGrade(this)">
+              高二
+            </div>
+          </div>
+        </div>
+
+        <!-- 班级 Selection -->
+        <div class="selection-group" id="classGroup" style="display:none;">
+          <div class="selection-group__header">
+            <span class="step-dot"></span>选择班级
+            <span class="multi-toggle" id="multiToggle" onclick="toggleMultiMode()" title="开启后可同时选择多个班级">🔗 多班级扫描</span>
+          </div>
+          <div class="selection-cards" id="classCards">
+            <!-- dynamically populated -->
+          </div>
+        </div>
+
+        <!-- 科目 Selection -->
+        <div class="selection-group" id="subjectGroup" style="display:none;">
+          <div class="selection-group__header">
+            <span class="step-dot"></span>选择科目
+          </div>
+          <div class="selection-cards" id="subjectCards">
+            <!-- dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Reset & legacy link -->
+        <div style="margin-top:4px;display:flex;align-items:center;justify-content:space-between;" id="resetArea" hidden>
+          <a href="#" onclick="event.preventDefault();showToast('旧版不指定班级混扫功能已迁移至新版，如需使用请联系管理员');" style="font-size:12px;color:var(--color-gray-400);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:color var(--transition);" onmouseenter="this.style.color='var(--color-primary-700)'" onmouseleave="this.style.color='var(--color-gray-400)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            返回旧版（不指定班级混扫）
+          </a>
+          <a href="#" onclick="resetSelection(event)" style="font-size:12px;color:var(--color-gray-400);text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            重新选择
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Info Panel -->
+    <div class="right-panel">
+      <!-- Device Status Card -->
+      <div class="info-card">
+        <div class="info-card__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10"/><circle cx="12" cy="17" r="1"/></svg>
+          扫描设备
+        </div>
+        <div class="device-status-row">
+          <div class="device-status-row__icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+          </div>
+          <div class="device-status-row__info">
+            <div class="device-status-row__name" id="sidebarDeviceName">EPSON L3150 Series</div>
+            <div class="device-status-row__status">
+              <span class="pulse-dot"></span> 已连接 · 就绪
+            </div>
+          </div>
+        </div>
+        <div class="settings-panel" id="inlineSettingsPanel">
+          <div class="settings-row" style="flex-wrap:wrap;gap:8px;">
+            <label style="width:100%;">纸张类型</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <label class="radio-card radio-card--sm" onclick="selectRadio(this)">
+                <input type="radio" name="inlinePaperType" value="normal" checked hidden>常规答题卡
+              </label>
+              <label class="radio-card radio-card--sm" onclick="selectRadio(this)">
+                <input type="radio" name="inlinePaperType" value="red" hidden>红色答题卡
+              </label>
+              <label class="radio-card radio-card--sm" onclick="selectRadio(this)">
+                <input type="radio" name="inlinePaperType" value="eco" hidden>环保纸
+              </label>
+            </div>
+          </div>
+          <div class="settings-row" style="flex-wrap:wrap;gap:8px;">
+            <label style="width:100%;">纸张尺寸</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <label class="radio-card radio-card--sm" onclick="selectRadio(this)">
+                <input type="radio" name="inlinePaperSize" value="auto" checked hidden>自动检测
+              </label>
+              <label class="radio-card radio-card--sm" onclick="selectRadio(this)">
+                <input type="radio" name="inlinePaperSize" value="A3" hidden>A3
+              </label>
+              <label class="radio-card radio-card--sm" onclick="selectRadio(this)">
+                <input type="radio" name="inlinePaperSize" value="A4" hidden>A4
+              </label>
+            </div>
+          </div>
+          <div class="settings-row">
+            <label>亮度</label>
+            <input type="range" min="-1000" max="1000" value="0" oninput="this.nextElementSibling.textContent=this.value">
+            <span class="value-tag">0</span>
+          </div>
+          <div class="settings-row">
+            <label>对比度</label>
+            <input type="range" min="-1000" max="1000" value="100" oninput="this.nextElementSibling.textContent=this.value">
+            <span class="value-tag">100</span>
+          </div>
+        </div>
+        <button style="margin-top:10px;font-size:11px;color:var(--color-primary-700);background:none;border:none;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:4px;font-family:var(--font-body);" onclick="toggleInlineSettings()" id="settingsToggleBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          展开高级设置
+        </button>
+      </div>
+
+      <!-- Selection Summary Card — removed per user request -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="footer__hint" id="footerHint">请先选择年级、班级和科目</span>
+    <button class="btn btn-primary btn-start-scan" id="startScanBtn" disabled onclick="startScan()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+      开始扫描
+    </button>
+  </div>
+</div>
+
+<!-- Scan settings are now fully editable inline (expand device card). Gear button opens scanner driver settings. -->
+
+<script>
+  // ===== Data Model =====
+  // Teacher: 张建国 — teaches 高中 > 高一 (1班, 2班) > 数学
+  // Also teaches 高二 (3班) > 数学 (for demo purposes, to show multi-grade)
+  const teacherPermissions = {
+    stages: ['高中'],           // only one → auto-selected
+    grades: {
+      'grade-10': { label: '高一', classes: ['class-1', 'class-2'] },
+      'grade-11': { label: '高二', classes: ['class-3'] }
+    },
+    classes: {
+      'class-1': { label: '1班', subjects: ['math'] },
+      'class-2': { label: '2班', subjects: ['math'] },
+      'class-3': { label: '3班', subjects: ['math'] }
+    },
+    subjects: {
+      'math': { label: '数学' }
+      // only one subject → auto-selected when class is chosen
+    }
+  };
+
+  // ===== State =====
+  let state = {
+    selectedGrade: null,
+    selectedClasses: [],        // single-select by default, multi when toggled
+    selectedSubject: null,
+    currentDevice: 'EPSON L3150 Series',
+    settingsVisible: false
+  };
+  let multiMode = false;
+
+  function toggleMultiMode() {
+    multiMode = !multiMode;
+    const toggle = document.getElementById('multiToggle');
+    if (multiMode) {
+      toggle.classList.add('multi-toggle--active');
+      toggle.textContent = '🔗 多班级扫描（已开启）';
+      toggle.title = '点击恢复单选';
+    } else {
+      toggle.classList.remove('multi-toggle--active');
+      toggle.textContent = '🔗 多班级扫描';
+      toggle.title = '开启后可同时选择多个班级';
+      if (state.selectedClasses.length > 1) {
+        state.selectedClasses = [state.selectedClasses[state.selectedClasses.length - 1]];
+        document.querySelectorAll('#classCards .selection-card').forEach(c => {
+          c.classList.toggle('selection-card--selected', state.selectedClasses.includes(c.dataset.value));
+        });
+      }
+    }
+  }
+
+  // ===== Functions =====
+
+  function selectGrade(el) {
+    document.querySelectorAll('#gradeCards .selection-card').forEach(c => c.classList.remove('selection-card--selected'));
+    el.classList.add('selection-card--selected');
+
+    const value = el.dataset.value;
+    state.selectedGrade = value;
+    state.selectedClasses = [];
+    state.selectedSubject = null;
+
+    const gradeData = teacherPermissions.grades[value];
+    const classGroup = document.getElementById('classGroup');
+    const classCards = document.getElementById('classCards');
+    const subjectGroup = document.getElementById('subjectGroup');
+
+    classCards.innerHTML = '';
+    gradeData.classes.forEach(clsId => {
+      const cls = teacherPermissions.classes[clsId];
+      const card = document.createElement('div');
+      card.className = 'selection-card';
+      card.dataset.value = clsId;
+      card.dataset.label = cls.label;
+      card.textContent = cls.label;
+      card.onclick = function() { toggleClassSelection(this); };
+      classCards.appendChild(card);
+    });
+
+    classGroup.style.display = 'block';
+    subjectGroup.style.display = 'none';
+    document.getElementById('startScanBtn').disabled = true;
+    document.getElementById('footerHint').textContent = '请选择班级';
+    document.getElementById('resetArea').hidden = false;
+
+    classGroup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function toggleClassSelection(el) {
+    const value = el.dataset.value;
+
+    if (!multiMode) {
+      // Single-select: deselect all, select only this one
+      state.selectedClasses = [value];
+      document.querySelectorAll('#classCards .selection-card').forEach(c => {
+        c.classList.toggle('selection-card--selected', c.dataset.value === value);
+      });
+    } else {
+      // Multi-select: toggle individual
+      const idx = state.selectedClasses.indexOf(value);
+      if (idx >= 0) {
+        state.selectedClasses.splice(idx, 1);
+        el.classList.remove('selection-card--selected');
+      } else {
+        state.selectedClasses.push(value);
+        el.classList.add('selection-card--selected');
+      }
+    }
+
+    // Auto-select subject (only math) if at least one class selected
+    const subjectGroup = document.getElementById('subjectGroup');
+    if (state.selectedClasses.length > 0) {
+      // Only one subject → auto-select
+      const subjId = 'math';
+      state.selectedSubject = subjId;
+      subjectGroup.style.display = 'none';
+      onAllSelected();
+    } else {
+      state.selectedSubject = null;
+      subjectGroup.style.display = 'none';
+      document.getElementById('startScanBtn').disabled = true;
+      document.getElementById('footerHint').textContent = '请选择班级';
+    }
+  }
+
+  function selectSubject(el) {
+    document.querySelectorAll('#subjectCards .selection-card').forEach(c => c.classList.remove('selection-card--selected'));
+    el.classList.add('selection-card--selected');
+    state.selectedSubject = el.dataset.value;
+    onAllSelected();
+  }
+
+  function onAllSelected() {
+    const classLabels = state.selectedClasses.map(id => teacherPermissions.classes[id].label).join('、');
+    document.getElementById('startScanBtn').disabled = false;
+    document.getElementById('footerHint').textContent = `已选班级：${classLabels}  ｜ 准备就绪，请点击开始扫描`;
+    document.getElementById('resetArea').hidden = false;
+    document.querySelectorAll('.step-dot').forEach(d => d.classList.add('step-dot--done'));
+  }
+
+  function resetSelection(e) {
+    if (e) e.preventDefault();
+    state.selectedGrade = null;
+    state.selectedClasses = [];
+    state.selectedSubject = null;
+
+    document.querySelectorAll('.selection-card--selected').forEach(c => c.classList.remove('selection-card--selected'));
+    document.getElementById('classGroup').style.display = 'none';
+    document.getElementById('subjectGroup').style.display = 'none';
+    document.getElementById('startScanBtn').disabled = true;
+    document.getElementById('footerHint').textContent = '请先选择年级、班级和科目';
+    document.getElementById('resetArea').hidden = true;
+    document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('step-dot--done'));
+  }
+
+  // ===== Scanner Dropdown =====
+  function toggleScannerDropdown() {
+    const dd = document.getElementById('scannerDropdown');
+    const wrap = document.getElementById('scannerSelect');
+    dd.classList.toggle('scanner-dropdown--visible');
+    wrap.classList.toggle('scanner-select--open');
+  }
+
+  function selectDevice(el) {
+    if (el.dataset.online === 'false') {
+      showToast('该设备当前离线，无法使用');
+      return;
+    }
+    const name = el.dataset.device;
+    state.currentDevice = name;
+    document.getElementById('currentDeviceName').textContent = name;
+    document.getElementById('sidebarDeviceName').textContent = name;
+
+    document.querySelectorAll('.scanner-dropdown__item').forEach(i => i.classList.remove('scanner-dropdown__item--active'));
+    el.classList.add('scanner-dropdown__item--active');
+
+    document.getElementById('scannerDropdown').classList.remove('scanner-dropdown--visible');
+    document.getElementById('scannerSelect').classList.remove('scanner-select--open');
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('scannerSelect');
+    if (!wrap.contains(e.target)) {
+      document.getElementById('scannerDropdown').classList.remove('scanner-dropdown--visible');
+      wrap.classList.remove('scanner-select--open');
+    }
+  });
+
+  // ===== Settings =====
+  function toggleInlineSettings() {
+    const panel = document.getElementById('inlineSettingsPanel');
+    const btn = document.getElementById('settingsToggleBtn');
+    const expanded = panel.classList.toggle('settings-panel--expanded');
+    btn.innerHTML = expanded
+      ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> 收起高级设置'
+      : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> 展开高级设置';
+  }
+
+  function openDriverSettings() {
+    showToast('正在打开扫描仪驱动设置页面…');
+  }
+
+  function selectRadio(label) {
+    const name = label.querySelector('input').name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.parentElement.classList.remove('radio-card--checked');
+    });
+    label.classList.add('radio-card--checked');
+  }
+
+  // ===== Actions =====
+  function startScan() {
+    if (!state.selectedGrade || state.selectedClasses.length === 0 || !state.selectedSubject) return;
+    window.location.href = 'scan-progress.html?first=1';
+  }
+
+  function handleBack(e) {
+    if (e) e.preventDefault();
+    showToast('返回首页');
+  }
+
+  // ===== Toast =====
+  function showToast(msg) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('toast--out');
+      setTimeout(() => toast.remove(), 200);
+    }, 2200);
+  }
+
+  // ===== Initial auto-select: 学段 (only 高中) =====
+  // Already shown as auto-selected badge in HTML
+
+  // ===== Initialize radio cards =====
+  document.querySelectorAll('input[name="inlinePaperType"][checked]').forEach(r => r.parentElement.classList.add('radio-card--checked'));
+  document.querySelectorAll('input[name="inlinePaperSize"][checked]').forEach(r => r.parentElement.classList.add('radio-card--checked'));
+
+  // ===== Keyboard support =====
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('scannerDropdown').classList.remove('scanner-dropdown--visible');
+      document.getElementById('scannerSelect').classList.remove('scanner-select--open');
+    }
+    if (e.key === 'Enter' && !state.selectedGrade) {
+      // Auto-select first grade on Enter if nothing selected
+      const firstGrade = document.querySelector('#gradeCards .selection-card');
+      if (firstGrade && document.activeElement === document.body) {
+        selectGrade(firstGrade);
+      }
+    }
+  });
+</script>
+</body>
+</html>

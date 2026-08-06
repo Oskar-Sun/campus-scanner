@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫描打印系统 — 操作指南</title>
+<style>
+  :root {
+    --c-teal-50: #effafa; --c-teal-100: #def8f9; --c-teal-200: #b2f1f2;
+    --c-teal-500: #50d8dc; --c-teal-700: #00a6ab; --c-teal-950: #007a7e;
+    --c-gray-50: #f8f8fc; --c-gray-100: #d2d3de; --c-gray-200: #bcbdc0;
+    --c-gray-300: #a2a3a6; --c-gray-400: #88898c; --c-gray-500: #6e6f71;
+    --c-gray-700: #3a3b3d; --c-gray-900: #212123;
+    --c-white: #ffffff;
+    --c-red-100: #ffece8; --c-red-300: #fdcdc5; --c-red-700: #f53f3f;
+    --c-warn-100: #fff7e8; --c-warn-500: #ffcf8b; --c-warn-700: #ff7d00;
+    --c-green-600: #5ad0a3; --c-green-800: #049d75;
+    --c-purple-600: #8b6ff2; --c-yellow-600: #f9b932; --c-pink-600: #ff86c8;
+    --radius: 8px; --radius-lg: 14px; --radius-xl: 20px;
+    --shadow-sm: 0 1px 2px rgba(19,19,21,0.06);
+    --shadow-md: 0 4px 16px rgba(19,19,21,0.10);
+    --shadow-lg: 0 12px 40px rgba(19,19,21,0.12);
+    --font: 'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--font);background:var(--c-gray-50);color:var(--c-gray-900);-webkit-font-smoothing:antialiased;}
+
+  /* ===== Layout ===== */
+  .layout{display:flex;min-height:100vh;}
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    width:240px;flex-shrink:0;background:var(--c-white);
+    border-right:1px solid var(--c-gray-100);position:fixed;top:0;left:0;bottom:0;
+    overflow-y:auto;z-index:100;padding:20px 0;
+  }
+  .sidebar__logo{padding:0 20px 16px;border-bottom:1px solid var(--c-gray-50);margin-bottom:8px;}
+  .sidebar__logo h2{font-size:15px;color:var(--c-teal-950);display:flex;align-items:center;gap:8px;}
+  .sidebar__logo h2 span{font-size:11px;color:var(--c-gray-400);font-weight:400;}
+  .sidebar__nav{padding:4px 12px;}
+  .sidebar__section{margin-bottom:2px;}
+  .sidebar__section-title{
+    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+    color:var(--c-gray-400);padding:10px 8px 4px;
+  }
+  .sidebar__link{
+    display:flex;align-items:center;gap:8px;padding:8px 10px;
+    font-size:13px;color:var(--c-gray-700);text-decoration:none;
+    border-radius:var(--radius);transition:all 150ms ease;font-weight:500;
+  }
+  .sidebar__link:hover{background:var(--c-teal-50);color:var(--c-teal-950);}
+  .sidebar__link--active{background:var(--c-teal-100);color:var(--c-teal-950);font-weight:600;}
+  .sidebar__link .num{
+    width:20px;height:20px;border-radius:50%;background:var(--c-teal-100);
+    color:var(--c-teal-700);font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .sidebar__footer{
+    margin-top:16px;padding:12px 20px;border-top:1px solid var(--c-gray-50);
+    font-size:10px;color:var(--c-gray-400);
+  }
+
+  /* ===== Main Content ===== */
+  .main{margin-left:240px;flex:1;padding:32px 40px;max-width:1000px;}
+
+  /* ===== Hero ===== */
+  .hero{
+    background:linear-gradient(135deg,var(--c-teal-950) 0%,var(--c-teal-700) 60%,var(--c-teal-500) 100%);
+    border-radius:var(--radius-xl);padding:36px 40px;margin-bottom:32px;
+    color:var(--c-white);position:relative;overflow:hidden;
+  }
+  .hero::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,0.12) 0%,transparent 60%);pointer-events:none;}
+  .hero h1{font-size:26px;font-weight:700;margin-bottom:8px;position:relative;z-index:1;}
+  .hero p{font-size:14px;opacity:0.85;line-height:1.7;position:relative;z-index:1;max-width:600px;}
+
+  /* ===== Section ===== */
+  .section{margin-bottom:40px;}
+  .section__anchor{display:block;position:relative;top:-100px;visibility:hidden;}
+  .section__title{
+    font-size:22px;font-weight:700;color:var(--c-gray-900);margin-bottom:6px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .section__title .icon{
+    width:34px;height:34px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;
+    font-size:18px;flex-shrink:0;
+  }
+  .section__subtitle{font-size:13px;color:var(--c-gray-400);margin-bottom:20px;}
+
+  /* ===== Step Cards ===== */
+  .step-list{display:flex;flex-direction:column;gap:16px;}
+  .step{
+    background:var(--c-white);border-radius:var(--radius-lg);padding:22px 26px;
+    box-shadow:var(--shadow-sm);border:1px solid var(--c-gray-50);
+    display:flex;gap:18px;transition:all 150ms ease;
+  }
+  .step:hover{box-shadow:var(--shadow-md);}
+  .step__num{
+    width:36px;height:36px;border-radius:50%;background:var(--c-teal-100);
+    color:var(--c-teal-700);font-size:16px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    margin-top:2px;
+  }
+  .step__body{flex:1;}
+  .step__title{font-size:15px;font-weight:600;color:var(--c-gray-900);margin-bottom:4px;}
+  .step__desc{font-size:13px;color:var(--c-gray-500);line-height:1.7;}
+  .step__desc strong{color:var(--c-gray-700);}
+  .step__note{
+    margin-top:8px;padding:8px 14px;border-radius:var(--radius);
+    font-size:12px;line-height:1.6;
+  }
+  .step__note--tip{background:var(--c-teal-50);color:var(--c-teal-950);border-left:3px solid var(--c-teal-700);}
+  .step__note--warn{background:var(--c-warn-100);color:var(--c-warn-700);border-left:3px solid var(--c-warn-700);}
+  .step__note--danger{background:var(--c-red-100);color:var(--c-red-700);border-left:3px solid var(--c-red-700);}
+
+  /* ===== Animated Demo Panel ===== */
+  .demo{
+    background:var(--c-white);border-radius:var(--radius-lg);overflow:hidden;
+    box-shadow:var(--shadow-sm);border:1px solid var(--c-gray-50);margin-top:16px;
+  }
+  .demo__header{
+    background:var(--c-gray-50);padding:10px 16px;font-size:11px;font-weight:600;
+    color:var(--c-gray-400);display:flex;align-items:center;gap:8px;
+  }
+  .demo__header::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c-teal-500);}
+  .demo__body{padding:20px;}
+  .demo__label{font-size:11px;color:var(--c-gray-400);text-align:center;margin-top:8px;}
+
+  /* ===== Mini Scan Demo ===== */
+  .scan-demo{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:10px 0;}
+  .scan-demo__card{
+    width:80px;height:36px;border-radius:6px;border:1.5px solid var(--c-gray-100);
+    background:var(--c-white);display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:500;color:var(--c-gray-900);
+    position:relative;overflow:hidden;animation:cardAppear 0.5s ease-out both;
+  }
+  .scan-demo__card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+  .scan-demo__card--math::before{background:var(--c-green-600);}
+  .scan-demo__card--eng::before{background:var(--c-purple-600);}
+  .scan-demo__card--chinese::before{background:var(--c-yellow-600);}
+  .scan-demo__card--physics::before{background:var(--c-pink-600);}
+  .scan-demo__card--scanning{
+    border-color:var(--c-teal-500);background:var(--c-teal-50);animation:cardPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes cardAppear{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
+  @keyframes cardPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,166,171,0.2);}50%{box-shadow:0 0 0 6px rgba(0,166,171,0);}}
+
+  /* ===== Progress Bar Demo ===== */
+  .progress-demo{
+    background:var(--c-gray-50);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;
+    position:relative;
+  }
+  .progress-demo__fill{
+    height:100%;background:linear-gradient(90deg,var(--c-teal-700),var(--c-teal-500));
+    border-radius:20px;transition:width 0.4s ease;
+    animation:progressFill 2s ease-in-out infinite;
+  }
+  @keyframes progressFill{
+    0%{width:5%;} 30%{width:30%;} 60%{width:65%;} 85%{width:92%;} 100%{width:100%;}
+  }
+  .progress-demo__label{font-size:11px;color:var(--c-gray-500);text-align:center;margin-top:4px;}
+
+  /* ===== Filter Demo ===== */
+  .filter-demo{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;}
+  .filter-demo__chip{
+    padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;
+    border:1.5px solid;cursor:pointer;transition:all 0.3s ease;user-select:none;
+  }
+  .filter-demo__chip--active{
+    background:var(--c-teal-50);border-color:var(--c-teal-200);color:var(--c-teal-950);
+  }
+  .filter-demo__chip--inactive{
+    background:var(--c-gray-50);border-color:var(--c-gray-100);color:var(--c-gray-400);
+    animation:chipFade 2s ease-in-out infinite alternate;
+  }
+  @keyframes chipFade{from{opacity:1;}to{opacity:0.5;}}
+
+  /* ===== Anomaly Type Cards ===== */
+  .anomaly-types{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;}
+  @media(max-width:700px){.anomaly-types{grid-template-columns:1fr;}}
+  .anomaly-type{
+    padding:16px 18px;border-radius:var(--radius-lg);border:1.5px solid var(--c-gray-100);
+    background:var(--c-white);transition:all 150ms ease;
+  }
+  .anomaly-type:hover{box-shadow:var(--shadow-sm);}
+  .anomaly-type__header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .anomaly-type__icon{
+    width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:14px;flex-shrink:0;
+  }
+  .anomaly-type__name{font-size:14px;font-weight:600;color:var(--c-gray-900);}
+  .anomaly-type__desc{font-size:11px;color:var(--c-gray-400);line-height:1.6;}
+  .anomaly-type__action{font-size:11px;font-weight:600;color:var(--c-teal-700);margin-top:6px;display:flex;align-items:center;gap:4px;}
+
+  /* ===== Flow Chart ===== */
+  .flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap;padding:16px 0;}
+  .flow__node{
+    padding:10px 18px;border-radius:var(--radius);font-size:12px;font-weight:600;
+    text-align:center;white-space:nowrap;
+  }
+  .flow__arrow{font-size:16px;color:var(--c-gray-200);margin:0 4px;flex-shrink:0;}
+
+  /* ===== FAQ ===== */
+  .faq-item{
+    background:var(--c-white);border-radius:var(--radius);padding:16px 20px;
+    border:1px solid var(--c-gray-50);margin-bottom:8px;cursor:pointer;
+    transition:all 150ms ease;
+  }
+  .faq-item:hover{border-color:var(--c-teal-200);}
+  .faq-item__q{font-size:14px;font-weight:600;color:var(--c-gray-900);display:flex;gap:8px;align-items:flex-start;}
+  .faq-item__q::before{content:'Q';font-size:11px;color:var(--c-teal-700);font-weight:700;flex-shrink:0;}
+  .faq-item__a{font-size:13px;color:var(--c-gray-500);line-height:1.7;margin-top:8px;display:none;padding-left:20px;}
+  .faq-item--open .faq-item__a{display:block;}
+  .faq-item--open{border-color:var(--c-teal-200);box-shadow:var(--shadow-sm);}
+
+  /* ===== Tags ===== */
+  .tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
+  .tag--new{background:var(--c-green-800);color:var(--c-white);}
+  .tag--important{background:var(--c-warn-100);color:var(--c-warn-700);}
+
+  /* ===== Print button ===== */
+  .print-btn{
+    position:fixed;bottom:24px;right:24px;z-index:200;
+    width:48px;height:48px;border-radius:50%;border:none;
+    background:var(--c-teal-700);color:var(--c-white);cursor:pointer;
+    box-shadow:var(--shadow-lg);font-size:18px;transition:all 150ms ease;
+  }
+  .print-btn:hover{background:var(--c-teal-950);transform:translateY(-2px);}
+
+  /* ===== Edit Mode ===== */
+  .edit-toolbar{
+    display:none;position:fixed;top:0;left:0;right:0;z-index:999;
+    background:var(--c-warn-100);border-bottom:2px solid var(--c-warn-500);
+    padding:8px 16px;align-items:center;gap:12px;font-size:12px;
+  }
+  body.edit-mode .edit-toolbar{display:flex;}
+  .edit-toolbar__badge{
+    background:var(--c-warn-700);color:#fff;font-weight:700;padding:3px 10px;
+    border-radius:10px;font-size:10px;letter-spacing:1px;
+  }
+  .edit-toolbar__status{color:var(--c-warn-900);font-weight:500;flex:1;}
+  .edit-toolbar__btn{
+    padding:5px 14px;border-radius:14px;border:1.5px solid var(--c-warn-500);
+    background:#fff;color:var(--c-warn-700);font-size:11px;font-weight:600;
+    cursor:pointer;transition:all 150ms ease;font-family:var(--font);
+  }
+  .edit-toolbar__btn:hover{background:var(--c-warn-500);color:#fff;}
+  .edit-toolbar__btn--save{background:var(--c-warn-700);color:#fff;border-color:var(--c-warn-700);}
+  .edit-toolbar__btn--save:hover{background:var(--c-warn-900);}
+
+  /* Sidebar offset in edit mode */
+  body.edit-mode .sidebar{top:42px;}
+
+  /* Editable element highlight */
+  body.edit-mode [data-editable]{
+    outline:2px dashed var(--c-warn-300);outline-offset:3px;
+    border-radius:4px;cursor:text;transition:outline-color 150ms ease;
+  }
+  body.edit-mode [data-editable]:hover{outline-color:var(--c-warn-700);}
+  body.edit-mode [data-editable]:focus{
+    outline:2px solid var(--c-warn-700);background:rgba(255,247,232,0.5);
+  }
+  body.edit-mode [data-editable]:focus-visible{outline:2px solid var(--c-warn-700);}
+
+  /* Editable demo labels */
+  body.edit-mode .demo__label[data-editable]{outline:2px dashed var(--c-warn-300);outline-offset:2px;}
+
+  /* Show all FAQ answers in edit mode for editing */
+  body.edit-mode .faq-item__a{display:block !important;}
+  body.edit-mode .faq-item{border-color:var(--c-gray-100);}
+</style>
+</head>
+<body>
+
+<!-- ===== Edit Mode Toolbar (hidden unless ?e=1) ===== -->
+<div class="edit-toolbar" id="editToolbar">
+  <span class="edit-toolbar__badge">✏️ 编辑模式</span>
+  <span class="edit-toolbar__status" id="editStatus">点击页面中任意带虚线框的文字即可修改</span>
+  <button class="edit-toolbar__btn edit-toolbar__btn--save" onclick="saveAllEdits()" title="保存修改到本地浏览器">💾 保存修改</button>
+  <button class="edit-toolbar__btn" onclick="exportEdits()" title="导出修改为文件备份">📤 导出备份</button>
+  <button class="edit-toolbar__btn" onclick="importEditsPrompt()" title="从备份文件恢复">📥 导入备份</button>
+  <button class="edit-toolbar__btn" onclick="exitEditMode()" title="退出编辑模式（修改仍保留在本地）">🚪 退出编辑</button>
+</div>
+
+<!-- ===== Sidebar Navigation ===== -->
+<aside class="sidebar">
+  <div class="sidebar__logo">
+    <h2>📋 操作指南 <span>v1.0</span></h2>
+  </div>
+  <nav class="sidebar__nav">
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">快速入门</div>
+      <a href="#overview" class="sidebar__link sidebar__link--active" onclick="setActive(this)"><span class="num">1</span> 系统概览</a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">扫描操作</div>
+      <a href="#scan-first" class="sidebar__link" onclick="setActive(this)"><span class="num">2</span> 首次扫描</a>
+      <a href="#scan-continue" class="sidebar__link" onclick="setActive(this)"><span class="num">3</span> 补扫学生</a>
+      <a href="#scan-filter" class="sidebar__link" onclick="setActive(this)"><span class="num">4</span> 筛选班级/作业</a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">批改与异常</div>
+      <a href="#answer-config" class="sidebar__link" onclick="setActive(this)"><span class="num">5</span> 设置答案</a>
+      <a href="#anomaly" class="sidebar__link" onclick="setActive(this)"><span class="num">6</span> 处理异常</a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">输出与记录</div>
+      <a href="#print" class="sidebar__link" onclick="setActive(this)"><span class="num">7</span> 打印试卷</a>
+      <a href="#report" class="sidebar__link" onclick="setActive(this)"><span class="num">8</span> 查看报告</a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">其他</div>
+      <a href="#faq" class="sidebar__link" onclick="setActive(this)">❓ 常见问题</a>
+    </div>
+  </nav>
+  <div class="sidebar__footer">校园智能扫描打印系统<br>最后更新：2026年6月</div>
+</aside>
+
+<!-- ===== Main Content ===== -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>📋 校园智能扫描打印系统 — 操作指南</h1>
+    <p>本指南面向一线售后人员和学校老师，用最简单的语言和图示，带您快速上手扫描、批改、打印的全流程。</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 1: Overview -->
+  <!-- ================================================================ -->
+  <div class="section" id="overview">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">🏠</span>1. 系统概览</div>
+    <div class="section__subtitle">这个系统能做什么？适合哪些场景？</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">📖</div>
+        <div class="step__body">
+          <div class="step__title">系统能做什么？</div>
+          <div class="step__desc">
+            这是一套<strong>试卷扫描 → 智能批改 → 批量打印</strong>的一体化系统。老师把学生试卷放进扫描仪，
+            系统自动完成：<strong>识别考号</strong> → <strong>匹配学生</strong> → <strong>智能批改</strong> → <strong>成绩统计</strong>。
+            批改完成后，老师可以选择学生，一键批量打印批改结果。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">🎯</div>
+        <div class="step__body">
+          <div class="step__title">适用场景</div>
+          <div class="step__desc">
+            <strong>智慧作业扫描</strong>：当前系统制作的答题卡，有明显的二维码标识<br>
+            <strong>指定作业扫描</strong>：校本练习册、教辅资料，后台已经完成加工，无二维码<br>
+            <strong>自由作业</strong>：老师自编题、临时作业 — 灵活创建任务，不限制格式。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">🔄</div>
+        <div class="step__body">
+          <div class="step__title">工作流程一览</div>
+          <div class="step__desc">
+            <div class="flow">
+              <div class="flow__node" style="background:var(--c-teal-50);color:var(--c-teal-700);">选择班级</div>
+              <span class="flow__arrow">→</span>
+              <div class="flow__node" style="background:var(--c-teal-100);color:var(--c-teal-950);">放置试卷扫描</div>
+              <span class="flow__arrow">→</span>
+              <div class="flow__node" style="background:var(--c-teal-50);color:var(--c-teal-700);">处理异常</div>
+              <span class="flow__arrow">→</span>
+              <div class="flow__node" style="background:var(--c-teal-100);color:var(--c-teal-950);">设置答案</div>
+              <span class="flow__arrow">→</span>
+              <div class="flow__node" style="background:var(--c-teal-50);color:var(--c-teal-700);">选择并打印</div>
+              <span class="flow__arrow">→</span>
+              <div class="flow__node" style="background:var(--c-teal-100);color:var(--c-teal-950);">查看报告</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 2: First Scan -->
+  <!-- ================================================================ -->
+  <div class="section" id="scan-first">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">🖨️</span>2. 如何进行首次扫描</div>
+    <div class="section__subtitle">第一次使用系统？按以下步骤操作即可</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__body">
+          <div class="step__title">选择扫描模式</div>
+          <div class="step__desc">
+            在首页选择<strong>"智慧作业扫描"</strong>（最常用）。系统会进入班级选择页面。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__body">
+          <div class="step__title">选择班级和科目</div>
+          <div class="step__desc">
+            勾选需要扫描的<strong>班级</strong>（可多选），然后选择<strong>作业科目</strong>（如"数学周练卷（五）"）。
+            系统会自动显示该班级的学生总数。
+          </div>
+          <div class="step__note step__note--tip">
+            💡 <strong>提示：</strong>可以同时选择多个班级一起扫描，比如高一·1班和高一·2班都有数学作业。系统会用不同颜色区分不同作业类型。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div class="step__body">
+          <div class="step__title">开始扫描</div>
+          <div class="step__desc">
+            点击<strong>"开始扫描"</strong>按钮，将试卷放入扫描仪。系统会逐张扫描，并在屏幕上实时显示：
+          </div>
+          <div class="demo" style="margin-top:10px;">
+            <div class="demo__header">📺 动画演示：卡片逐个出现</div>
+            <div class="demo__body">
+              <div class="scan-demo">
+                <div class="scan-demo__card scan-demo__card--math" style="animation-delay:0s">张三</div>
+                <div class="scan-demo__card scan-demo__card--math" style="animation-delay:0.3s">李四</div>
+                <div class="scan-demo__card scan-demo__card--scanning" style="animation-delay:0.6s">识别中 30%</div>
+                <div class="scan-demo__card scan-demo__card--math" style="animation-delay:0.9s">赵六</div>
+                <div class="scan-demo__card scan-demo__card--eng" style="animation-delay:1.2s">吴十</div>
+                <div class="scan-demo__card scan-demo__card--math" style="animation-delay:1.5s">钱七</div>
+                <div class="scan-demo__card scan-demo__card--eng" style="animation-delay:1.8s">王小明</div>
+              </div>
+              <div class="demo__label">▲ 每张试卷扫描后卡片逐个出现，"识别中"状态显示进度百分比</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">4</div>
+        <div class="step__body">
+          <div class="step__title">理解卡片状态</div>
+          <div class="step__desc">
+            扫描过程中每张卡片会经历三个阶段：
+          </div>
+          <div class="demo" style="margin-top:10px;">
+            <div class="demo__body" style="display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;">
+              <div style="text-align:center;">
+                <div style="width:120px;height:40px;border-radius:8px;border:1.5px solid var(--c-teal-500);background:var(--c-teal-50);display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:500;margin-bottom:6px;">
+                  <span style="width:12px;height:12px;border:2px solid var(--c-gray-100);border-top-color:var(--c-teal-700);border-radius:50%;animation:spin 800ms linear infinite;"></span>
+                  上传中...
+                </div>
+                <div style="font-size:11px;color:var(--c-gray-400);">阶段一：上传中</div>
+              </div>
+              <span style="color:var(--c-gray-200);">→</span>
+              <div style="text-align:center;">
+                <div style="width:120px;height:40px;border-radius:8px;border:1.5px solid var(--c-teal-500);background:var(--c-teal-50);display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:500;margin-bottom:6px;">
+                  <span style="width:12px;height:12px;border:2px solid var(--c-gray-100);border-top-color:var(--c-teal-700);border-radius:50%;animation:spin 800ms linear infinite;"></span>
+                  识别中 70%
+                </div>
+                <div style="font-size:11px;color:var(--c-gray-400);">阶段二：识别中<br><span style="font-size:10px;">显示百分比进度</span></div>
+              </div>
+              <span style="color:var(--c-gray-200);">→</span>
+              <div style="text-align:center;">
+                <div style="width:120px;height:40px;border-radius:8px;border:1.5px solid var(--c-teal-700);background:var(--c-teal-50);display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;margin-bottom:6px;">
+                  <span style="width:14px;height:14px;border-radius:50%;background:var(--c-teal-700);position:relative;"></span>
+                  张三
+                </div>
+                <div style="font-size:11px;color:var(--c-gray-400);">阶段三：已完成<br><span style="font-size:10px;">可选中/可打印</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="step__note step__note--tip">
+            💡 <strong>提示：</strong>识别到 100% 后卡片自动变为"已完成"状态。默认所有正常卡片自动选中，出现异常的卡片不会自动选中。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 3: Continue Scan -->
+  <!-- ================================================================ -->
+  <div class="section" id="scan-continue">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">➕</span>3. 补扫剩余学生</div>
+    <div class="section__subtitle">第一次扫描没扫完？或者有学生补交试卷？</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__body">
+          <div class="step__title">什么时候需要补扫？</div>
+          <div class="step__desc">
+            扫描页面的 <strong>"未扫描学生"</strong> 区域会列出尚未扫描到的学生名单。这些同学可能是：
+            <br>• 试卷还没放进去（分批扫描）
+            <br>• 迟到或补交的试卷
+            <br>• 之前放错顺序需要重新扫的
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__body">
+          <div class="step__title">如何操作？</div>
+          <div class="step__desc">
+            在扫描页面<strong>右侧操作面板</strong>，点击<strong>"补扫剩余学生"</strong>按钮。
+            系统会继续从扫描仪读取试卷，每次补扫 5 张。
+          </div>
+          <div class="step__note step__note--tip">
+            💡 <strong>提示：</strong>补扫的试卷会自动分配一个作业类型。如果分配不正确，可以在扫描完成后手动调整。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div class="step__body">
+          <div class="step__title">新建扫描任务</div>
+          <div class="step__desc">
+            如果需要扫描<strong>全新的作业</strong>（换了一个科目或作业本），点击<strong>"新建扫描任务"</strong>，返回班级选择页面重新开始。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 4: Filter -->
+  <!-- ================================================================ -->
+  <div class="section" id="scan-filter">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">🔍</span>4. 筛选班级和作业</div>
+    <div class="section__subtitle">多个班级一起扫描时，快速筛选想看的内容</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__body">
+          <div class="step__title">顶部筛选栏</div>
+          <div class="step__desc">
+            扫描页面顶部有两组筛选按钮：
+            <br>• <strong>班级徽章</strong>（蓝色圆角标签）— 点击可排除某个班级
+            <br>• <strong>作业颜色标识</strong>（彩色圆角标签）— 点击可排除某个作业类型
+          </div>
+          <div class="demo" style="margin-top:10px;">
+            <div class="demo__body">
+              <div class="filter-demo">
+                <span class="filter-demo__chip filter-demo__chip--active">● 高一·1班（12/50人）</span>
+                <span class="filter-demo__chip filter-demo__chip--inactive">● 高一·2班（3/35人）</span>
+                <span style="color:var(--c-gray-200);margin:0 8px;">|</span>
+                <span class="filter-demo__chip filter-demo__chip--active" style="background:#d2f0e1;border-color:#a7eaca;">🟢 数学周练卷（五）</span>
+                <span class="filter-demo__chip filter-demo__chip--active" style="background:#f3f1ff;border-color:#cfc6ff;">🟣 英语单元测试</span>
+              </div>
+              <div class="demo__label">▲ 点击"高一·2班"后它变灰，下方该班学生卡片全部置灰不可选</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__body">
+          <div class="step__title">筛选规则</div>
+          <div class="step__desc">
+            <strong>排除模式：</strong>默认全部显示。点击 = 排除该类（变灰），再点 = 恢复。
+            <br>• 被排除的班级/作业 → 对应卡片<strong>置灰、不可点击、不可选中</strong>
+            <br>• 至少保留 1 个班级和 1 个作业，防止全部排除
+            <br>• 点击<strong>"↺ 重置筛选"</strong>可一键恢复全部显示
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 5: Answer Config -->
+  <!-- ================================================================ -->
+  <div class="section" id="answer-config">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">📝</span>5. 设置答案与批改</div>
+    <div class="section__subtitle">扫描完成后，设置正确答案，系统自动批改</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__body">
+          <div class="step__title">进入答案设置</div>
+          <div class="step__desc">
+            在扫描页面右侧面板，点击<strong>"设置答案"</strong>按钮。系统会显示该作业的答题卡模板。
+          </div>
+          <div class="step__note step__note--warn">
+            ⚠️ <strong>注意：</strong>如果未设置答案就去打印，系统无法批改，只会打印原始扫描图像。建议扫描完成后第一时间设置答案。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__body">
+          <div class="step__title">填写正确答案</div>
+          <div class="step__desc">
+            在答案配置页面，逐题输入<strong>正确答案</strong>和<strong>分值</strong>。支持：
+            <br>• 选择题（单选/多选）
+            <br>• 填空题
+            <br>• 解答题（手动批改或设置关键步骤得分点）
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div class="step__body">
+          <div class="step__title">自动批改</div>
+          <div class="step__desc">
+            保存答案后，系统自动对所有已扫描试卷进行批改，生成分数和错题统计。
+            批改结果可以在<strong>"数据分析报告"</strong>中查看。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 6: Anomaly Handling -->
+  <!-- ================================================================ -->
+  <div class="section" id="anomaly">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-red-100);color:var(--c-red-700);">⚠️</span>6. 处理扫描异常</div>
+    <div class="section__subtitle">扫描过程中可能出现以下四种异常，每种都有对应的处理方法</div>
+
+    <div class="anomaly-types">
+      <div class="anomaly-type">
+        <div class="anomaly-type__header">
+          <div class="anomaly-type__icon" style="background:var(--c-red-100);color:var(--c-red-700);">⚠</div>
+          <div class="anomaly-type__name">扫描异常</div>
+        </div>
+        <div class="anomaly-type__desc">扫描仪出现故障，图像数据不完整或损坏。无法识别任何内容。<br>卡片显示为<strong>"识别失败"</strong>而不是学生姓名。</div>
+        <div class="anomaly-type__action">👉 处理方法：检查扫描仪连接 → 重新扫描 → 或手动录入</div>
+      </div>
+      <div class="anomaly-type">
+        <div class="anomaly-type__header">
+          <div class="anomaly-type__icon" style="background:var(--c-warn-100);color:var(--c-warn-700);">⊞</div>
+          <div class="anomaly-type__name">二维码异常</div>
+        </div>
+        <div class="anomaly-type__desc">试卷上的二维码污损、折叠或打印不清晰，无法正常识别。</div>
+        <div class="anomaly-type__action">👉 处理方法：手动核对考号 → 在异常处理页面输入正确考号</div>
+      </div>
+      <div class="anomaly-type">
+        <div class="anomaly-type__header">
+          <div class="anomaly-type__icon" style="background:var(--c-warn-100);color:var(--c-warn-700);">🔗</div>
+          <div class="anomaly-type__name">考号关联异常</div>
+        </div>
+        <div class="anomaly-type__desc">考号识别出来了，但在系统中找不到对应学生。可能是考号写错或学生未录入。<br>卡片显示为<strong>"未关联学生"</strong>。</div>
+        <div class="anomaly-type__action">👉 处理方法：手动关联学生 → 选择正确的班级和学生姓名</div>
+      </div>
+      <div class="anomaly-type">
+        <div class="anomaly-type__header">
+          <div class="anomaly-type__icon" style="background:var(--c-warn-100);color:var(--c-warn-700);">🔄</div>
+          <div class="anomaly-type__name">重复扫描</div>
+        </div>
+        <div class="anomaly-type__desc">同一份试卷被扫描了两次，系统中已有相同考号的记录。</div>
+        <div class="anomaly-type__action">👉 处理方法：对比两张图像 → 选择保留哪一张 → 或关联到不同学生</div>
+      </div>
+    </div>
+
+    <div class="step-list" style="margin-top:16px;">
+      <div class="step">
+        <div class="step__num">🛠</div>
+        <div class="step__body">
+          <div class="step__title">如何进入异常处理？</div>
+          <div class="step__desc">
+            <strong>方式一：</strong>点击扫描页面上<strong>带红色边框的异常卡片</strong>，自动跳转到异常处理页面。<br>
+            <strong>方式二：</strong>点击底部<strong>"批量处理异常"</strong>按钮，一次性查看所有异常试卷。<br>
+            <strong>方式三：</strong>在弹出的异常弹窗中选择处理方式（重新识别/手动录入/跳过/重新扫描）。
+          </div>
+          <div class="step__note step__note--danger">
+            ⚠️ <strong>重要：</strong>异常卡片不会被自动选中用于打印。处理完异常后，卡片恢复正常，可以手动勾选。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 7: Print -->
+  <!-- ================================================================ -->
+  <div class="section" id="print">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">🖨️</span>7. 打印试卷</div>
+    <div class="section__subtitle">选择需要打印的学生，一键批量打印</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__body">
+          <div class="step__title">选择学生</div>
+          <div class="step__desc">
+            在扫描页面的卡片区，<strong>点击卡片左侧的圆形勾选框</strong>来选中/取消学生。
+            <br>• 点击<strong>"全选"</strong> → 选中所有已完成且未被筛选掉的学生
+            <br>• 使用<strong>班级/作业筛选</strong> → 排除不需要打印的班级或科目
+            <br>• 已打印的学生会显示<strong>"已打印"</strong>标签，默认不选中
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__body">
+          <div class="step__title">开始打印</div>
+          <div class="step__desc">
+            确认底部状态栏的<strong>已选择 X 份</strong>数量正确后，点击<strong>"打印所选学生"</strong>按钮。
+            系统跳转到打印设置页面，可以调整打印参数。
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div class="step__body">
+          <div class="step__title">查看打印状态</div>
+          <div class="step__desc">
+            打印完成后，卡片上会出现<strong>"已打印"</strong>标签（灰色小标签）。
+            底部状态栏会实时更新已打印人数。
+          </div>
+          <div class="step__note step__note--tip">
+            💡 <strong>提示：</strong>已打印的学生仍然可以再次选中并打印（如需要重新打印）。已打印只是一个状态标记，不影响任何操作。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Section 8: Reports -->
+  <!-- ================================================================ -->
+  <div class="section" id="report">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">📊</span>8. 查看报告</div>
+    <div class="section__subtitle">批改完成后，查看成绩统计和数据分析</div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step__num">📈</div>
+        <div class="step__body">
+          <div class="step__title">数据分析报告</div>
+          <div class="step__desc">
+            点击右侧面板或底部的<strong>"数据分析报告"</strong>，查看：
+            <br>• 班级整体成绩分布（平均分、最高分、最低分）
+            <br>• 每题得分率统计（哪些题错得多）
+            <br>• 学生个人成绩单（可单独打印）
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">📋</div>
+        <div class="step__body">
+          <div class="step__title">历史扫描记录</div>
+          <div class="step__desc">
+            点击<strong>"历史扫描记录"</strong>可以查看所有历史任务。包括：
+            <br>• 每次扫描的时间、班级、作业类型
+            <br>• 当时的异常处理记录
+            <br>• 可以重新进入历史任务进行查看或补打
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- FAQ -->
+  <!-- ================================================================ -->
+  <div class="section" id="faq">
+    <span class="section__anchor"></span>
+    <div class="section__title"><span class="icon" style="background:var(--c-teal-50);">❓</span>常见问题</div>
+    <div class="section__subtitle">一线售后和老师最常遇到的问题</div>
+
+    <div class="faq-item" onclick="this.classList.toggle('faq-item--open')">
+      <div class="faq-item__q">扫描仪没有反应怎么办？</div>
+      <div class="faq-item__a">
+        ① 检查扫描仪电源线和USB线是否插紧。<br>
+        ② 检查扫描仪驱动是否安装正确（设备管理器中查看）。<br>
+        ③ 尝试重启扫描仪和电脑。<br>
+        ④ 如果仍然不行，联系售后技术支持。
+      </div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('faq-item--open')">
+      <div class="faq-item__q">识别出来的学生名字和实际不对怎么办？</div>
+      <div class="faq-item__a">
+        这种情况通常是<strong>考号关联异常</strong>。点击该卡片进入异常处理页面，手动选择正确的学生。如果考号识别本身有误（二维码异常），需要手动输入正确的考号。
+      </div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('faq-item--open')">
+      <div class="faq-item__q">已经打印过的学生还能再打印吗？</div>
+      <div class="faq-item__a">
+        可以。"已打印"只是一个状态标记，不影响任何操作。如果需要重新打印，只需再次勾选该学生，点击打印即可。
+      </div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('faq-item--open')">
+      <div class="faq-item__q">一次最多能扫描多少张试卷？</div>
+      <div class="faq-item__a">
+        系统没有硬性限制。建议每次放入 30-50 张，分批扫描。扫描过程中可以随时使用"补扫"功能添加更多试卷。
+      </div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('faq-item--open')">
+      <div class="faq-item__q">换了新的作业科目，怎么开始新的扫描？</div>
+      <div class="faq-item__a">
+        点击右侧面板的<strong>"新建扫描任务"</strong>按钮，返回班级选择页面。重新选择班级和新的作业科目即可开始全新的扫描任务。
+      </div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('faq-item--open')">
+      <div class="faq-item__q">自由作业和智慧作业有什么区别？</div>
+      <div class="faq-item__a">
+        <strong>智慧作业：</strong>系统预设了答题卡模板和批改规则，适合常规周练、单元测试。<br>
+        <strong>自由作业：</strong>老师可以自编题目，灵活设置答案和分值，适合临时作业、手工批改等场景。
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:60px 0 40px;color:var(--c-gray-300);font-size:12px;">
+    —— 文档结束 ——<br>
+    如有其他问题，请联系售后技术支持团队
+  </div>
+
+</main>
+
+<script>
+function setActive(el) {
+  document.querySelectorAll('.sidebar__link').forEach(l => l.classList.remove('sidebar__link--active'));
+  el.classList.add('sidebar__link--active');
+}
+
+// Highlight current section on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      document.querySelectorAll('.sidebar__link').forEach(l => {
+        l.classList.remove('sidebar__link--active');
+        if (l.getAttribute('href') === '#' + id) l.classList.add('sidebar__link--active');
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+document.querySelectorAll('.section__anchor').forEach(el => {
+  observer.observe(el.parentElement);
+});
+
+// ===== Edit Mode =====
+// Activate via URL: help-guide.html?e=1
+// Edits are saved to localStorage under 'helpguide_edits'
+
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const isEditMode = params.get('e') === '1';
+  if (!isEditMode) return;
+
+  document.body.classList.add('edit-mode');
+
+  // Elements that should become editable
+  const editableSelectors = [
+    '.hero h1', '.hero p',
+    '.section__title', '.section__subtitle',
+    '.step__title', '.step__desc',
+    '.step__note',
+    '.anomaly-type__name', '.anomaly-type__desc', '.anomaly-type__action',
+    '.faq-item__q', '.faq-item__a',
+    '.demo__label',
+    '.demo__header',
+    '.flow__node',
+    '.sidebar__section-title',
+  ];
+
+  const editStoreKey = 'helpguide_edits';
+
+  function initEditMode() {
+    // Mark all editable elements
+    editableSelectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach((el, i) => {
+        // Skip elements that are inside the sidebar or toolbar
+        if (el.closest('.sidebar') && !el.closest('.sidebar__section-title')) return;
+        if (el.closest('.edit-toolbar')) return;
+
+        // Assign unique ID for saving if not present
+        if (!el.dataset.editId) {
+          const tag = el.tagName.toLowerCase();
+          const classes = Array.from(el.classList).slice(0, 3).join('-');
+          const parent = el.closest('[id]');
+          const parentId = parent ? parent.id : 'root';
+          el.dataset.editId = `${parentId}__${tag}__${classes}__${i}`;
+        }
+        el.dataset.editable = '';
+        el.contentEditable = 'true';
+
+        // Prevent links from navigating while editing
+        el.addEventListener('click', function(e) {
+          if (document.body.classList.contains('edit-mode') && el.isContentEditable) {
+            // Allow normal click for FAQ toggle
+            if (el.closest('.faq-item')) return;
+          }
+        });
+      });
+    });
+
+    // Also make FAQ answers editable (they start display:none)
+    document.querySelectorAll('.faq-item__a').forEach(el => {
+      if (!el.dataset.editId) {
+        el.dataset.editId = 'faq-a-' + Math.random().toString(36).slice(2, 8);
+      }
+      el.dataset.editable = '';
+      el.contentEditable = 'true';
+    });
+
+    // Load saved edits
+    loadEdits();
+
+    // Auto-save on input (debounced)
+    let saveTimer;
+    document.addEventListener('input', function(e) {
+      if (!e.target.dataset.editable) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        saveAllEdits(true);
+      }, 800);
+    });
+
+    document.getElementById('editStatus').textContent = '点击虚线框文字即可修改 · 自动保存中…';
+  }
+
+  function loadEdits() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(editStoreKey) || '{}');
+      let restored = 0;
+      Object.entries(saved).forEach(([id, content]) => {
+        const el = document.querySelector(`[data-edit-id="${id}"]`);
+        if (el) { el.innerHTML = content; restored++; }
+      });
+      if (restored > 0) {
+        document.getElementById('editStatus').textContent = `已从本地恢复 ${restored} 处修改 · 可继续编辑`;
+      }
+    } catch(e) { /* ignore */ }
+  }
+
+  window.saveAllEdits = function(silent) {
+    const edits = {};
+    document.querySelectorAll('[data-editable]').forEach(el => {
+      if (el.dataset.editId) {
+        edits[el.dataset.editId] = el.innerHTML;
+      }
+    });
+    try {
+      localStorage.setItem(editStoreKey, JSON.stringify(edits));
+      const count = Object.keys(edits).length;
+      if (!silent) {
+        document.getElementById('editStatus').textContent = `✅ 已保存 ${count} 处修改到本地浏览器`;
+        setTimeout(() => {
+          document.getElementById('editStatus').textContent = '点击虚线框文字即可修改 · 自动保存中…';
+        }, 2500);
+      }
+    } catch(e) {
+      document.getElementById('editStatus').textContent = '❌ 保存失败，请检查浏览器存储空间';
+    }
+  };
+
+  window.exportEdits = function() {
+    const edits = {};
+    document.querySelectorAll('[data-editable]').forEach(el => {
+      if (el.dataset.editId) edits[el.dataset.editId] = el.innerHTML;
+    });
+    const blob = new Blob([JSON.stringify(edits, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'help-guide-edits-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    document.getElementById('editStatus').textContent = '✅ 备份文件已下载';
+    setTimeout(() => {
+      document.getElementById('editStatus').textContent = '点击虚线框文字即可修改 · 自动保存中…';
+    }, 2000);
+  };
+
+  window.importEditsPrompt = function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const edits = JSON.parse(e.target.result);
+          if (typeof edits !== 'object') throw new Error('Invalid format');
+          localStorage.setItem(editStoreKey, JSON.stringify(edits));
+          loadEdits();
+          document.getElementById('editStatus').textContent = '✅ 备份已导入，共 ' + Object.keys(edits).length + ' 处修改';
+          setTimeout(() => {
+            document.getElementById('editStatus').textContent = '点击虚线框文字即可修改 · 自动保存中…';
+          }, 2500);
+        } catch(err) {
+          document.getElementById('editStatus').textContent = '❌ 导入失败，文件格式不正确';
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
+  window.exitEditMode = function() {
+    // Save before exit
+    saveAllEdits(true);
+    // Remove edit mode but keep URL so they can come back
+    document.body.classList.remove('edit-mode');
+    document.querySelectorAll('[data-editable]').forEach(el => {
+      el.contentEditable = 'false';
+    });
+    document.getElementById('editStatus').textContent = '已退出编辑模式（修改已保存）';
+    // Show a small toast-like notification
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--c-gray-900);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);';
+    toast.textContent = '已退出编辑模式 | 刷新页面并添加 ?e=1 可重新进入';
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 3000);
+    setTimeout(() => toast.remove(), 3500);
+  };
+
+  initEditMode();
+})();
+</script>
+
+<style>
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+
+</body>
+</html>
