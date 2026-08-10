@@ -172,24 +172,9 @@
   // 加载 annotations.js（通过 <script> 标签引入，file:// 和 https:// 都可用）
   // ============================================================
   function loadAnnotations() {
-    // 1. 尝试从 localStorage 恢复（实时持久化）
-    var saved = false;
-    try {
-      var old = localStorage.getItem('pa_data');
-      if (old) {
-        var parsed = JSON.parse(old);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          _annotations = parsed;
-          saved = true;
-        }
-      }
-    } catch(e) {}
-
-    // 2. 首次打开用 annotations.js 作为种子
-    if (!saved && window.__pa_data && Array.isArray(window.__pa_data) && window.__pa_data.length > 0) {
+    // 直接从 annotations.js 加载，不使用 localStorage
+    if (window.__pa_data && Array.isArray(window.__pa_data) && window.__pa_data.length > 0) {
       _annotations = JSON.parse(JSON.stringify(window.__pa_data));
-      // 自动保存到 localStorage，以后刷新直接读
-      try { localStorage.setItem('pa_data', JSON.stringify(_annotations)); } catch(e) {}
     }
 
     _jsonLoaded = true;
@@ -252,9 +237,7 @@
   function saveReqs(arr) { _annotations = arr; }
   function syncPaData() {
     try {
-      var data = JSON.parse(JSON.stringify(_annotations));
-      window.__pa_data = data;
-      localStorage.setItem('pa_data', JSON.stringify(data));
+      window.__pa_data = JSON.parse(JSON.stringify(_annotations));
     } catch(e) {}
   }
   // 迁移旧数据格式（只处理坐标格式，不修改 view 归属）
@@ -310,17 +293,87 @@
       p.style.top = top + 'px';
       p.style.left = left + 'px';
 
-      p.onclick = function () {
-        for (var i = 0; i < _annotations.length; i++) {
-          if (_annotations[i].id === r.id) {
-            if (editMode) openEdit(_annotations[i]); else openView(_annotations[i]);
-            return;
-          }
-        }
-      };
+      p.setAttribute('data-pa-id', r.id);
+      p.style.cursor = editMode ? 'grab' : 'pointer';
       parent.appendChild(p);
     });
   }
+
+  // ============================================================
+  // Pin drag support
+  // ============================================================
+  var _pinDrag = null; // {id, pinEl, startX, startY, origLeft, origTop, moved}
+
+  // Global mousedown for pins (delegated, capture phase)
+  document.addEventListener('mousedown', function(e) {
+    var pin = e.target.closest('.pa-pin');
+    if (!pin) return;
+    var id = pin.getAttribute('data-pa-id');
+    if (!id) return;
+    e.stopPropagation();
+    var req = findReq(id);
+    if (!req) return;
+
+    // Non-edit mode: just view the annotation
+    if (!editMode) {
+      openView(req);
+      return;
+    }
+
+    // Edit mode: start drag tracking
+    _pinDrag = {
+      id: id,
+      pinEl: pin,
+      startX: e.clientX,
+      startY: e.clientY,
+      origLeft: req.offsetX || 0,
+      origTop: req.offsetY || 0,
+      moved: false
+    };
+    pin.style.cursor = 'grabbing';
+    pin.style.zIndex = '1001';
+    e.preventDefault();
+  }, true);
+
+  // Global mousemove for pin dragging
+  document.addEventListener('mousemove', function(e) {
+    if (!_pinDrag) return;
+    var dx = e.clientX - _pinDrag.startX;
+    var dy = e.clientY - _pinDrag.startY;
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+      _pinDrag.moved = true;
+    }
+    if (_pinDrag.moved) {
+      _pinDrag.pinEl.style.left = (_pinDrag.origLeft + dx) + 'px';
+      _pinDrag.pinEl.style.top = (_pinDrag.origTop + dy) + 'px';
+    }
+  });
+
+  // Global mouseup for pin dragging
+  document.addEventListener('mouseup', function(e) {
+    if (!_pinDrag) return;
+    var pinEl = _pinDrag.pinEl;
+    pinEl.style.cursor = editMode ? 'grab' : 'pointer';
+    pinEl.style.zIndex = '999';
+    if (_pinDrag.moved) {
+      var req = findReq(_pinDrag.id);
+      if (req) {
+        var dx = e.clientX - _pinDrag.startX;
+        var dy = e.clientY - _pinDrag.startY;
+        req.offsetX = Math.round(_pinDrag.origLeft + dx);
+        req.offsetY = Math.round(_pinDrag.origTop + dy);
+        req.sectionIdx = -1; // Dragged pins become page-level
+        syncPaData();
+        renderSidebar();
+      }
+    } else {
+      var req2 = findReq(_pinDrag.id);
+      if (req2) {
+        if (editMode) openEdit(req2); else openView(req2);
+      }
+    }
+    _pinDrag = null;
+  });
 
   // ============================================================
   // Sidebar
@@ -418,6 +471,8 @@
     toggle.textContent = '📝 添加';
     indicator.classList.remove('show');
     sidebar.classList.remove('open');
+    // Update pin cursors for non-edit mode
+    document.querySelectorAll('.pa-pin').forEach(function(p){ p.style.cursor = 'pointer'; });
   }
 
   // ============================================================
@@ -450,6 +505,7 @@
   }
   window.__pa_enable = enableEdit;
   window.__pa_disable = disableEdit;
+  window.__pa_refresh = function(){ renderSidebar(); };
 
   // ============================================================
   // Click to add pin

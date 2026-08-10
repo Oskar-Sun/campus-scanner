@@ -65,55 +65,10 @@
 
   .main-content{flex:1;display:flex;overflow:hidden;}
 
-  /* Tabs */
-  .tab-panel{width:200px;border-right:1px solid var(--border);background:var(--color-gray-50);flex-shrink:0;padding:16px 0;display:flex;flex-direction:column;gap:2px;}
-  .tab-item{padding:12px 16px;cursor:pointer;transition:all var(--transition);font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:8px;border-left:3px solid transparent;}
-  .tab-item:hover{background:var(--color-base-02);color:var(--text-primary);}
-  .tab-item--active{background:var(--color-base-02);border-left-color:var(--accent);color:var(--accent);font-weight:600;}
-  .tab-item__icon{font-size:18px;flex-shrink:0;}
-
-  /* Content */
+  /* Content area */
   .tab-content{flex:1;overflow-y:auto;padding:24px;transition:all var(--transition);}
-  .tab-pane{display:none;}
-  .tab-pane--active{display:block;}
 
-  /* Tab panel hidden state — after scan complete */
-  .tab-panel--hidden{display:none;}
-
-  /* Scan trigger area */
-  .scan-trigger{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;border:2.5px dashed var(--color-primary-300);border-radius:var(--radius-lg);text-align:center;gap:16px;cursor:pointer;transition:all 300ms ease;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,166,171,.18);background:linear-gradient(180deg,var(--color-primary-50) 0%,var(--color-base-02) 30%);}
-  .scan-trigger:hover{border-color:var(--accent);background:var(--accent-light);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,166,171,.35);border-style:solid;border-width:3px;}
-  .scan-trigger:hover .scan-trigger__icon{transform:scale(1.08);}
-  .scan-trigger__icon{width:72px;height:72px;background:var(--color-primary-50);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform 300ms ease;flex-shrink:0;}
-  .scan-trigger__icon svg{width:36px;height:36px;color:var(--accent);}
-  .scan-trigger__badge{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:5px 16px;border-radius:var(--radius-full);letter-spacing:.5px;animation:pulseBadge 2s ease-in-out infinite;box-shadow:0 2px 8px rgba(0,166,171,.4);}
-  @keyframes pulseBadge{0%,100%{opacity:0.85;transform:translateX(-50%) scale(1);}50%{opacity:1;transform:translateX(-50%) scale(1.05);}}
-  .scan-trigger__title{font-size:16px;font-weight:700;color:var(--text-primary);}
-  .scan-trigger__desc{font-size:12px;color:var(--text-muted);max-width:380px;line-height:1.6;}
-  .scan-trigger__hint{font-size:11px;color:var(--color-info-700);background:var(--color-info-100);padding:4px 14px;border-radius:var(--radius-full);font-weight:600;}
-
-  /* Scan line animation overlay */
-  .scan-trigger--scanning .scan-line{display:block;}
-  .scan-line{display:none;position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--accent) 20%,var(--color-primary-300) 50%,var(--accent) 80%,transparent 100%);animation:scanSweep 1.8s ease-in-out infinite;box-shadow:0 0 20px rgba(0,166,171,.4);pointer-events:none;}
-  @keyframes scanSweep{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
-
-  /* Answer table */
-  .answer-section{margin-top:16px;}
-  .answer-section__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-  .answer-section__title{font-size:13px;font-weight:600;color:var(--text-primary);}
-  .answer-table{width:100%;border-collapse:collapse;font-size:12px;}
-  .answer-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);}
-  .answer-table td{padding:6px 12px;border-bottom:1px solid var(--color-gray-50);}
-  .answer-table__num{width:40px;color:var(--text-muted);font-weight:600;}
-  .answer-table__word{width:200px;}
-  .answer-table__word input{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 8px;font-size:12px;font-family:var(--font-body);width:100%;outline:none;}
-  .answer-table__word input:focus{border-color:var(--accent);}
-  .answer-table__actions{width:50px;text-align:right;}
-  .answer-table__actions button{background:none;border:none;color:var(--color-gray-400);cursor:pointer;font-size:16px;padding:0 4px;}
-  .answer-table__actions button:hover{color:var(--color-error-700);}
-
-  /* Result layout: left = scan image + overlays, right = answer list */
-  .result-layout{display:flex;gap:16px;align-items:stretch;}
+  /* Scan preview */
   .scan-preview{flex:1;min-width:0;position:relative;background:var(--color-gray-50);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;min-height:calc(100vh - 320px);max-height:calc(100vh - 320px);display:flex;align-items:center;justify-content:center;}
   .scan-preview__img{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);font-size:12px;gap:6px;position:relative;}
   .scan-preview__img svg{width:80px;height:80px;opacity:0.12;}
@@ -122,6 +77,10 @@
   .scan-zone__num{position:absolute;top:1px;left:1px;width:16px;height:16px;border-radius:50%;background:var(--accent);color:var(--color-base-02);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:1;}
   .scan-zone__label{position:absolute;bottom:1px;left:2px;font-size:9px;color:var(--accent);font-weight:600;white-space:nowrap;background:var(--color-base-02);padding:0 2px;border-radius:2px;text-overflow:ellipsis;overflow:hidden;max-width:calc(100% - 4px);}
 
+  /* Result layout */
+  .result-layout{display:flex;gap:16px;align-items:stretch;}
+
+  /* Answer panel */
   .answer-panel{width:390px;flex-shrink:0;display:flex;flex-direction:column;}
   .answer-panel--wide{width:540px;}
   .answer-panel__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0;}
@@ -143,6 +102,23 @@
   .answer-row__delete:hover{color:var(--color-error-700);}
 
   .answer-empty{text-align:center;padding:40px 0;color:var(--text-muted);font-size:12px;}
+
+  /* Answer section */
+  .answer-section{margin-top:16px;}
+  .answer-section__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .answer-section__title{font-size:13px;font-weight:600;color:var(--text-primary);}
+
+  /* Answer table */
+  .answer-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .answer-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);}
+  .answer-table td{padding:6px 12px;border-bottom:1px solid var(--color-gray-50);}
+  .answer-table__num{width:40px;color:var(--text-muted);font-weight:600;}
+  .answer-table__word{width:200px;}
+  .answer-table__word input{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:4px 8px;font-size:12px;font-family:var(--font-body);width:100%;outline:none;}
+  .answer-table__word input:focus{border-color:var(--accent);}
+  .answer-table__actions{width:50px;text-align:right;}
+  .answer-table__actions button{background:none;border:none;color:var(--color-gray-400);cursor:pointer;font-size:16px;padding:0 4px;}
+  .answer-table__actions button:hover{color:var(--color-error-700);}
 
   .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;font-size:14px;font-weight:600;font-family:var(--font-body);border-radius:var(--radius-full);cursor:pointer;transition:all var(--transition);border:none;text-decoration:none;}
   .btn-outline{background:var(--color-base-02);color:var(--accent);border:1.5px solid var(--accent);}
@@ -240,43 +216,7 @@
   .answer-row--highlighted{background:var(--color-accent-3-50) !important;border-color:var(--color-accent-3-600) !important;box-shadow:inset 0 0 0 1px var(--color-accent-3-400);transition:all 180ms ease;}
   .scan-zone--highlighted{border-width:3px !important;box-shadow:0 0 12px rgba(139,111,242,.45);z-index:8;transition:all 180ms ease;}
 
-  /* === Flow Illustration === */
-  .flow-section{flex:1;display:flex;flex-direction:column;align-items:center;gap:28px;padding:24px 32px 32px;overflow-y:auto;position:relative;}
-  .flow-section--hidden{display:none;}
-
-  /* === Scanner Selector === */
-  .scanner-select{display:flex;align-items:center;gap:10px;padding:10px 18px;background:var(--color-base-02);border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);box-shadow:var(--shadow-sm);}
-  .scanner-select__label{font-weight:600;white-space:nowrap;color:var(--text-primary);}
-  .scanner-select select{padding:6px 28px 6px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:var(--font-body);background:var(--color-gray-50);color:var(--text-primary);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'10'%20height%3D'6'%3E%3Cpath%20d%3D'M0%200l5%206%205-6z'%20fill%3D'%252388898c'%2F%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:right 8px center;min-width:200px;}
-  .scanner-select select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--color-primary-50);}
-  .scanner-select__status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-success-700);}
-  .scanner-select__status-dot{width:6px;height:6px;border-radius:50%;background:var(--color-success-700);}
-
-
-  .flow-steps{display:flex;align-items:flex-start;justify-content:center;gap:0;width:100%;max-width:900px;position:relative;}
-  .flow-step{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;text-align:center;position:relative;z-index:1;}
-  .flow-step__icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;position:relative;}
-  .flow-step__icon::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;animation:pulseRing 2.2s ease-in-out infinite;}
-  .flow-step--1 .flow-step__icon{background:var(--color-primary-50);color:var(--accent);}
-  .flow-step--1 .flow-step__icon::after{border-color:var(--color-primary-200);animation-delay:0s;}
-  .flow-step--2 .flow-step__icon{background:var(--color-accent-3-50);color:var(--color-accent-3-600);}
-  .flow-step--2 .flow-step__icon::after{border-color:var(--color-accent-3-400);animation-delay:0.55s;}
-  .flow-step--3 .flow-step__icon{background:var(--color-warning-100);color:var(--color-warning-700);}
-  .flow-step--3 .flow-step__icon::after{border-color:var(--color-warning-300);animation-delay:1.1s;}
-  .flow-step--4 .flow-step__icon{background:var(--color-success-100);color:var(--color-success-700);}
-  .flow-step--4 .flow-step__icon::after{border-color:var(--color-success-300);animation-delay:1.65s;}
-  @keyframes pulseRing{0%,100%{transform:scale(1);opacity:0.4;}50%{transform:scale(1.15);opacity:1;}}
-  .flow-step__label{font-size:13px;font-weight:600;color:var(--text-primary);}
-  .flow-step__desc{font-size:10px;color:var(--text-muted);line-height:1.5;max-width:140px;}
-
-  .flow-connector{position:absolute;top:28px;height:2px;background:var(--color-gray-100);z-index:0;}
-  .flow-connector--1{left:calc(12.5% + 28px);right:calc(87.5% + 28px);}
-  .flow-connector--2{left:calc(37.5% + 28px);right:calc(62.5% + 28px);}
-  .flow-connector--3{left:calc(62.5% + 28px);right:calc(37.5% + 28px);}
-
-  .flow-note{display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--color-accent-3-50);border:1px solid var(--color-accent-3-400);border-radius:var(--radius-md);font-size:12px;color:var(--color-accent-3-800);max-width:700px;}
-  .flow-note svg{width:20px;height:20px;flex-shrink:0;color:var(--color-accent-3-600);}
-</style>
+  </style>
 </head>
 <body>
 
@@ -287,21 +227,11 @@
   </div>
 
   <header class="header">
-    <a href="free-task-create.html" class="header__back">
+    <a href="free-answer-input.html" class="header__back" id="backToScanBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> 上一步
     </a>
     <span class="header__breadcrumb">&gt;</span>
-    <span class="header__page-title" id="pageTitle">自由作业 · 扫描答案卷</span>
-    <div class="scanner-select" style="margin-left:auto;flex-shrink:0;">
-  <span class="scanner-select__label" style="font-size:10px;">🖨️</span>
-  <select id="scannerDevice" onchange="onScannerChange(this.value)" style="font-size:10px;min-width:160px;padding:4px 24px 4px 6px;">
-    <option value="canon-c230">Canon DR-C230</option>
-    <option value="epson-ds870">Epson DS-870</option>
-    <option value="fujitsu-fi8170">Fujitsu fi-8170</option>
-    <option value="hp-scanjet">HP ScanJet Pro 4500</option>
-  </select>
-  <span class="scanner-select__status" id="scannerStatus"><span class="scanner-select__status-dot"></span>就绪</span>
-</div>
+    <span class="header__page-title" id="pageTitle">自由作业 · 核对答案</span>
   </header>
 
   <div class="steps-bar" id="stepsBar">
@@ -309,11 +239,11 @@
       <span class="step-item__num">✓</span><span class="step-item__label">创建任务</span>
       <div class="step-item__line"></div>
     </div>
-    <div class="step-item step-item--active">
-      <span class="step-item__num">2</span><span class="step-item__label">扫描答案卷</span>
+    <div class="step-item step-item--done">
+      <span class="step-item__num">✓</span><span class="step-item__label">扫描答案卷</span>
       <div class="step-item__line"></div>
     </div>
-    <div class="step-item">
+    <div class="step-item step-item--active">
       <span class="step-item__num">3</span><span class="step-item__label">核对答案</span>
       <div class="step-item__line"></div>
     </div>
@@ -324,244 +254,102 @@
   </div>
 
   <div class="main-content">
-    <!-- Left tabs -->
-    <div class="tab-panel">
-      <div class="tab-item tab-item--active" data-tab="handwrite" onclick="switchTab(this)">
-        <span class="tab-item__icon">✍️</span>
-        <div>
-          <div style="font-size:12px;font-weight:600;line-height:1.3;">教师答案卷录入</div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:400;">放入标准答案纸扫描</div>
-        </div>
-      </div>
-      <div class="tab-item" data-tab="student" onclick="switchTab(this)">
-        <span class="tab-item__icon">⭐</span>
-        <div>
-          <div style="font-size:12px;font-weight:600;line-height:1.3;">满分学生答卷</div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:400;">选全对学生，免重复扫描</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Content area -->
     <div class="tab-content">
-      <!-- Shared scan trigger + flow illustration (before scan) -->
-      <div class="flow-section" id="flowSection">
-        
-        <div class="scan-trigger" id="scanTrigger" onclick="simulateScan(activeTab)">
-          <div class="scan-trigger__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
-          </div>
-          <div class="scan-trigger__title" id="scanTriggerTitle">📄 放入答案纸，点击此处扫描</div>
-          <div class="scan-trigger__desc" id="scanTriggerDesc">系统将自动识别：题目位置 → 切题 → 手写答案OCR → 生成答案列表</div>
-          <div class="scan-trigger__hint" id="scanTriggerHint">✍️ 支持普通纸张，无需二维码</div>
-          <div class="scan-trigger__badge">🖱️ 点击此处开始扫描</div>
-          <div class="scan-line"></div>
-        </div>
-
-        <!-- Flow illustration -->
-        <div style="position:relative;width:100%;max-width:900px;">
-          <div class="flow-steps">
-            <div class="flow-step flow-step--1">
-              <div class="flow-step__icon">📥</div>
-              <div class="flow-step__label">放入试卷</div>
-              <div class="flow-step__desc">将标准答案纸放入扫描仪</div>
-            </div>
-            <div class="flow-step flow-step--2">
-              <div class="flow-step__icon">🔍</div>
-              <div class="flow-step__label">智能切题</div>
-              <div class="flow-step__desc">识别标题方向、切分每道题区域</div>
-            </div>
-            <div class="flow-step flow-step--3">
-              <div class="flow-step__icon">✏️</div>
-              <div class="flow-step__label">OCR识别</div>
-              <div class="flow-step__desc">提取手写答案，标记置信度</div>
-            </div>
-            <div class="flow-step flow-step--4">
-              <div class="flow-step__icon">✅</div>
-              <div class="flow-step__label">校对确认</div>
-              <div class="flow-step__desc">检查修正后确认，开始批改</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Context hint -->
-        <div class="flow-note" id="flowNote">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span id="flowNoteText">教师答案卷录入：请手写一份标准答案并扫描。系统将自动切题并识别手写答案为标准答案。</span>
-        </div>
-      </div>
-
       <!-- Answer section (after scan) — shared across both tabs, appended here -->
-      <div class="answer-section" id="answerSection" style="display:none;"></div>
+      <div class="answer-section" id="answerSection" style="display:block;"></div>
     </div>
   </div>
 
   <div class="footer">
     <div style="display:flex;align-items:center;gap:10px;">
-      <button class="btn btn-outline btn-sm" id="resetScanBtn" onclick="resetToScan()" style="display:none;font-size:11px;padding:5px 12px;" title="重新扫描或重新上传答案">
+      <button class="btn btn-outline btn-sm" id="resetScanBtn" onclick="resetToScan()" style="font-size:11px;padding:5px 12px;" title="重新扫描或重新上传答案">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;"><polyline points="15 18 9 12 15 6"/></svg>
         返回重扫
       </button>
-      <span class="footer__hint" id="footerHint">请放入答案纸，点击上方区域开始扫描</span>
+      <span class="footer__hint" id="footerHint">已识别 0 题</span>
     </div>
-    <button class="btn btn-primary" id="confirmBtn" style="display:none;" disabled onclick="confirmAndGo()">
+    <button class="btn btn-primary" id="confirmBtn" onclick="confirmAndGo()">
       确认答案，开始扫描学生作业 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
   </div>
 </div>
 
 <script>
-  let answers = [];
-  let activeTab = 'handwrite';
-  let zonePositions = [];    // {left,top,width,height} as % numbers per answer
-  let titleZone = null;      // {left,top,width,height,text} for detected title region
-  let rotation = 0;          // 0|90|180|270 — image rotation tracking
-  let dragState = null;      // {type:'drag'|'resize', idx, handle, startX, startY, origL, origT, origW, origH}
-  let dragMoved = false;     // true if mouse moved >3px during drag (distinguishes click from drag)
-  let highlightIdx = -1;     // currently cross-highlighted question index (-1 = none)
-
-  // ===== Subject-aware demo data =====
+  // ===== Load scan data from sessionStorage =====
   var urlParams = new URLSearchParams(window.location.search);
   var pageSubject = urlParams.get('subject') || 'english';
   var pageType = urlParams.get('type') || 'word-dictation';
 
-  var demoData = {
-    'english': {
-      'word-dictation': ['apple','beautiful','classroom','dictionary','elephant','family','garden','hospital','important','journey','kitchen','library','mountain','notebook','orange','picture','question','restaurant','student','teacher']
-    },
-    'math': {
-      'objective': ['x=3','42','±5','y=2x+1','-7','3/4','√2','a²+b²=c²','S=πr²','log₂8=3'],
-      'solution': [
-        '解：由题意得\n设直线方程为 y=kx+b\n代入点(1,2)得 2=k+b ①\n代入点(3,8)得 8=3k+b ②\n②-①得 6=2k\n∴ k=3, b=-1\n∴ 直线方程为 y=3x-1',
-        '解：\n(1) f\'(x)=3x²-6x\n令 f\'(x)=0 得 x=0 或 x=2\n(2) 当x<0时 f\'(x)>0，f(x)↗\n当0<x<2时 f\'(x)<0，f(x)↘\n当x>2时 f\'(x)>0，f(x)↗\n∴ 极大值 f(0)=2，极小值 f(2)=-2'
-      ],
-      'proof': [
-        '证明：\n(1) ∵ AB=AC，D为BC中点\n∴ AD⊥BC（等腰三角形三线合一）\n(2) 在△ABD和△ACD中\nAB=AC, BD=CD, AD=AD\n∴ △ABD≌△ACD (SSS)\n(3) ∴ ∠B=∠C',
-        '证明（反证法）：\n假设√2是有理数，则存在互质的正整数p,q\n使√2=p/q，即 p²=2q²\n∴ p²是偶数 ⇒ p是偶数\n设p=2k，代入得 4k²=2q² ⇒ q²=2k²\n∴ q也是偶数，与p,q互质矛盾\n∴ √2是无理数'
-      ]
-    },
-    'chinese': {
-      'dictation': ['春风又绿江南岸','明月几时有','把酒问青天','大漠孤烟直','长河落日圆','日照香炉生紫烟','遥看瀑布挂前川','飞流直下三千尺','疑是银河落九天','床前明月光']
+  var stored = sessionStorage.getItem('pa_scan_data');
+  var answers, zonePositions, titleZone, rotation, activeTab;
+  if (stored) {
+    var scanData = JSON.parse(stored);
+    answers = scanData.answers || [];
+    zonePositions = scanData.zonePositions || [];
+    titleZone = scanData.titleZone || null;
+    rotation = scanData.rotation || 0;
+    activeTab = scanData.activeTab || 'handwrite';
+  } else {
+    // Fallback: generate demo data
+    var demoData = {
+      'english': {'word-dictation': ['apple','beautiful','classroom','dictionary','elephant','family','garden','hospital','important','journey','kitchen','library','mountain','notebook','orange','picture','question','restaurant','student','teacher']},
+      'math': {
+        'objective': ['x=3','42','±5','y=2x+1','-7','3/4','√2','a²+b²=c²','S=πr²','log₂8=3'],
+        'solution': ['解：由题意得\n设直线方程为 y=kx+b\n代入点(1,2)得 2=k+b ①\n代入点(3,8)得 8=3k+b ②\n②-①得 6=2k\n∴ k=3, b=-1\n∴ 直线方程为 y=3x-1'],
+        'proof': ['证明：\n(1) ∵ AB=AC，D为BC中点\n∴ AD⊥BC（等腰三角形三线合一）\n(2) 在△ABD和△ACD中\nAB=AC, BD=CD, AD=AD\n∴ △ABD≌△ACD (SSS)\n(3) ∴ ∠B=∠C']
+      },
+      'chinese': {'dictation': ['春风又绿江南岸','明月几时有','把酒问青天','大漠孤烟直','长河落日圆','日照香炉生紫烟','遥看瀑布挂前川','飞流直下三千尺','疑是银河落九天','床前明月光']}
+    };
+    function getDemoAnswers() {
+      var subjectData = demoData[pageSubject] || demoData['english'];
+      var typeData = subjectData[pageType] || subjectData[Object.keys(subjectData)[0]];
+      var count = pageSubject === 'math' && (pageType === 'solution' || pageType === 'proof') ? 4 : 20;
+      var result = [];
+      for (var i = 0; i < count; i++) { result.push(typeData[i % typeData.length]); }
+      return result;
     }
-  };
-
-  function getDemoAnswers() {
-    var subjectData = demoData[pageSubject] || demoData['english'];
-    var typeData = subjectData[pageType] || subjectData[Object.keys(subjectData)[0]];
-    // Mix in enough data: cycle through if fewer items than needed
-    var count = pageSubject === 'math' && (pageType === 'solution' || pageType === 'proof') ? 4 : 20;
-    var result = [];
-    for (var i = 0; i < count; i++) {
-      result.push(typeData[i % typeData.length]);
+    activeTab = 'handwrite';
+    var items = getDemoAnswers();
+    answers = items.map(function(w,i){ return {index:i+1, word:w, confidence: i%7===3?0.45:0.85, gradingMode: i<10?'auto':'manual'}; });
+    var isLong = pageSubject === 'math' && (pageType === 'solution' || pageType === 'proof');
+    if (isLong) {
+      zonePositions = answers.map(function(a,i){ return {left:8, top:10+i*22, width:84, height:18}; });
+    } else {
+      zonePositions = answers.map(function(a,i){ var col=i%5, row=Math.floor(i/5); return {left:8+col*18.4, top:12+row*22, width:16, height:9}; });
     }
-    return result;
+    titleZone = {left:5, top:2, width:90, height:5, text:'📌 标题校准区'};
+    rotation = 0;
   }
+  let dragState = null;
+  let dragMoved = false;
+  let highlightIdx = -1;
+     // currently cross-highlighted question index (-1 = none)
+
 
   function isLongAnswer() {
     return pageSubject === 'math' && (pageType === 'solution' || pageType === 'proof');
   }
 
-  var demoAnswers = getDemoAnswers();
 
   // ===== Dynamic steps bar & header =====
   // states: array of 'done'|'active'|'pending' for each of the 4 steps
-  function setStepState(states) {
-    var items = document.querySelectorAll('#stepsBar .step-item');
-    for (var i = 0; i < 4; i++) {
-      items[i].className = 'step-item';
-      if (states[i] === 'done') items[i].classList.add('step-item--done');
-      if (states[i] === 'active') items[i].classList.add('step-item--active');
-      var numEl = items[i].querySelector('.step-item__num');
-      numEl.textContent = states[i] === 'done' ? '✓' : (i + 1);
-    }
+
+  function enterReviewMode() {
+    // Steps are hardcoded in HTML for review page
+    document.getElementById('pageTitle').textContent = '自由作业 · 核对答案';
+    document.getElementById('resetScanBtn').style.display = 'inline-flex';
+    document.getElementById('confirmBtn').disabled = false;
   }
 
-  function enterScanMode() {
-    setStepState(['done','active','pending','pending']);
-    document.getElementById('pageTitle').textContent = '自由作业 · 扫描答案卷';
-    document.getElementById('resetScanBtn').style.display = 'none';
-    document.getElementById('footerHint').textContent = '请放入答案纸，点击上方区域开始扫描';
-  }
 
-  function switchTab(el) {
-    document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('tab-item--active');});
-    el.classList.add('tab-item--active');
-    activeTab = el.dataset.tab;
-    // Update flow illustration context text
-    updateFlowContext();
-  }
 
-  function updateFlowContext() {
-    var isTeacher = activeTab === 'handwrite';
-    var isLong = isLongAnswer();
-    var subjLabel = {'english':'英语','math':'数学','chinese':'语文'}[pageSubject] || '英语';
-    document.getElementById('scanTriggerTitle').textContent = isTeacher
-      ? '放入' + subjLabel + '标准答案纸，点击扫描'
-      : '放入满分学生答卷，点击扫描';
-    document.getElementById('scanTriggerDesc').textContent = isTeacher
-      ? '老师手写一份标准答案，系统自动切题并识别手写答案为标准答案' + (isLong ? '（支持长答案：解答题、证明题等）' : '')
-      : '扫描已知全对的学生答卷，系统自动提取答案，该学生无需重复扫描';
-    document.getElementById('scanTriggerHint').textContent = isTeacher ? '✍️ 支持普通纸张，无需二维码' : '⚠️ 请确保该学生答卷完全正确';
-    document.getElementById('flowNoteText').textContent = isTeacher
-      ? '教师答案卷录入：请手写一份' + subjLabel + '标准答案并扫描。系统将自动切题并识别手写答案为标准答案。'
-      : '满分学生答卷：请选择一位已知成绩全对的学生，将其答卷放入扫描仪。系统自动提取为标准答案，且该学生在批改环节无需重新扫描。';
-    document.getElementById('flowNote').style.borderColor = isTeacher ? 'var(--color-accent-3-400)' : 'var(--color-warning-300)';
-    document.getElementById('flowNote').style.background = isTeacher ? 'var(--color-accent-3-50)' : 'var(--color-warning-100)';
-  }
 
-  function simulateScan(source) {
-    var trigger = document.getElementById('scanTrigger');
-    trigger.classList.add('scan-trigger--scanning');
-    showToast('正在扫描识别答案…');
-
-    setTimeout(function(){
-      var items = getDemoAnswers();
-      answers = items.map(function(w,i){
-        return {
-          index:i+1, word:w,
-          confidence: (i===3||i===11||i===17) ? 0.35+Math.random()*0.25 : 0.78+Math.random()*0.18,
-          gradingMode: i<Math.min(10,items.length/2)?'auto':'manual'
-        };
-      });
-
-      if (isLongAnswer()) {
-        zonePositions = answers.map(function(a,i){
-          return {left:8, top:10+i*22, width:84, height:18};
-        });
-      } else {
-        zonePositions = answers.map(function(a,i){
-          var col=i%5, row=Math.floor(i/5);
-          return {left:8+col*18.4, top:12+row*22, width:16, height:9};
-        });
-      }
-      titleZone = {left:5, top:2, width:90, height:5, text:'📌 标题校准区'};
-      rotation = 0;
-
-      // Save to sessionStorage and redirect to review page
-      var scanData = {
-        answers: answers,
-        zonePositions: zonePositions,
-        titleZone: titleZone,
-        rotation: rotation,
-        activeTab: activeTab,
-        subject: pageSubject,
-        type: pageType
-      };
-      sessionStorage.setItem('pa_scan_data', JSON.stringify(scanData));
-
-      var urlParams = new URLSearchParams(window.location.search);
-      window.location.href = 'free-answer-review.html?' + urlParams.toString();
-
-      trigger.classList.remove('scan-trigger--scanning');
-    }, 1800);
-  }
 
   function renderAnswerTable(sourceLabel) {
     var section = document.getElementById('answerSection');
 
     // Hide flow section, hide tab panel
-    document.getElementById('flowSection').classList.add('flow-section--hidden');
-    document.querySelector('.tab-panel').classList.add('tab-panel--hidden');
     section.style.display = 'block';
 
     var autoCount = answers.filter(function(a){return a.gradingMode==='auto';}).length;
@@ -893,12 +681,9 @@
   // ===== Back / Reset to re-scan =====
   function resetToScan() {
     if (answers.length > 0 && !confirm('返回后将丢失当前的识别结果，确定要继续吗？')) return;
-    answers = []; zonePositions = []; titleZone = null; rotation = 0; dragState = null;
-    // Restore tab panel and flow section
-    document.querySelector('.tab-panel').classList.remove('tab-panel--hidden');
-    document.getElementById('flowSection').classList.remove('flow-section--hidden');
-    document.getElementById('answerSection').style.display = 'none';
-    enterScanMode();
+    sessionStorage.removeItem('pa_scan_data');
+    var params = new URLSearchParams(window.location.search);
+    window.location.href = 'free-answer-input.html?' + params.toString();
   }
 
   function confirmAndGo() {
@@ -910,24 +695,20 @@
     window.location.href = 'scan-progress.html?mode=free&first=1&taskName=' + encodeURIComponent(taskName) + '&subject=' + subject + '&type=' + type;
   }
 
-  function onScannerChange(val) {
-    var sel = document.getElementById('scannerDevice');
-    var name = sel ? sel.options[sel.selectedIndex].text : val;
-    document.getElementById('scannerStatus').innerHTML = '<span class="scanner-select__status-dot" style="background:var(--color-warning-700);"></span>已切换：' + name.split('—')[0].trim();
-    setTimeout(function(){
-      document.getElementById('scannerStatus').innerHTML = '<span class="scanner-select__status-dot"></span>就绪';
-    }, 2000);
-    console.log('Scanner selected:', val);
-  }
 
 function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);}
+
+  // ===== Init =====
+  var sourceLabel = activeTab === 'handwrite' ? '教师手写答案' : '满分学生答卷';
+  enterReviewMode();
+  renderAnswerTable(sourceLabel);
 </script>
 
 <!-- ========== 标注工具配置 ========== -->
 <script>
 window.__pa_config = {
-  views: { 'answer-scan': '.app-window' },
-  sectionSelector: '.tab-item, .scan-trigger, .scanner-select, .flow-step, .flow-note',
+  views: { 'answer-review': '.app-window' },
+  sectionSelector: '.scan-preview, .answer-panel, .answer-row',
   scrollContainer: '.app-window'
 };
 </script>
