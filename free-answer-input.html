@@ -120,14 +120,23 @@
   .scan-zone__num{position:absolute;top:1px;left:1px;width:16px;height:16px;border-radius:50%;background:var(--accent);color:var(--color-base-02);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:1;}
   .scan-zone__label{position:absolute;bottom:1px;left:2px;font-size:9px;color:var(--accent);font-weight:600;white-space:nowrap;background:var(--color-base-02);padding:0 2px;border-radius:2px;text-overflow:ellipsis;overflow:hidden;max-width:calc(100% - 4px);}
 
-  .answer-panel{width:390px;flex-shrink:0;}
-  .answer-panel__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .answer-panel{width:390px;flex-shrink:0;display:flex;flex-direction:column;}
+  .answer-panel--wide{width:540px;}
+  .answer-panel__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0;}
   .answer-panel__title{font-size:12px;font-weight:600;color:var(--text-primary);}
-  .answer-list{max-height:540px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;}
-  .answer-row{display:flex;align-items:center;gap:4px;padding:3px 6px;background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;}
+  .answer-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px;min-height:0;}
+  .answer-list--long{gap:8px;}
+  .answer-row{display:flex;align-items:center;gap:4px;padding:3px 6px;background:var(--color-base-02);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;min-height:30px;}
   .answer-row__num{width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
-  .answer-row input{border:none;outline:none;flex:1;font-size:11px;font-family:var(--font-body);color:var(--text-primary);background:transparent;min-width:0;}
-  .answer-row input:focus{color:var(--accent);}
+  .answer-row textarea{border:none;outline:none;flex:1;font-size:11px;font-family:var(--font-body);color:var(--text-primary);background:transparent;min-width:0;resize:none;overflow:hidden;padding:3px 0;line-height:1.55;min-height:22px;align-self:stretch;}
+  .answer-row textarea:focus{color:var(--accent);}
+  .answer-row--long{align-items:flex-start !important;padding:10px 12px !important;border-radius:var(--radius-md) !important;box-shadow:var(--shadow-sm);min-height:auto !important;}
+  .answer-row--long .answer-row__num{margin-top:3px;}
+  .answer-row--long .answer-row__confidence{margin-top:3px;}
+  .answer-row--long .answer-row__num-input{margin-top:3px;}
+  .answer-row--long .grading-mode-switch{margin-top:3px;}
+  .answer-row--long .answer-row__delete{margin-top:3px;}
+  .answer-row--long textarea{font-size:13px !important;line-height:1.7 !important;min-height:80px !important;padding:4px 0 !important;}
   .answer-row__delete{color:var(--color-gray-300);cursor:pointer;font-size:14px;flex-shrink:0;line-height:1;}
   .answer-row__delete:hover{color:var(--color-error-700);}
 
@@ -270,19 +279,19 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> 上一步
     </a>
     <span class="header__breadcrumb">&gt;</span>
-    <span class="header__page-title">自由作业 · 核对答案</span>
+    <span class="header__page-title" id="pageTitle">自由作业 · 扫描答案卷</span>
   </header>
 
-  <div class="steps-bar">
+  <div class="steps-bar" id="stepsBar">
     <div class="step-item step-item--done">
       <span class="step-item__num">✓</span><span class="step-item__label">创建任务</span>
       <div class="step-item__line"></div>
     </div>
-    <div class="step-item step-item--done">
-      <span class="step-item__num">✓</span><span class="step-item__label">扫描答案卷</span>
+    <div class="step-item step-item--active">
+      <span class="step-item__num">2</span><span class="step-item__label">扫描答案卷</span>
       <div class="step-item__line"></div>
     </div>
-    <div class="step-item step-item--active">
+    <div class="step-item">
       <span class="step-item__num">3</span><span class="step-item__label">核对答案</span>
       <div class="step-item__line"></div>
     </div>
@@ -365,11 +374,11 @@
 
   <div class="footer">
     <div style="display:flex;align-items:center;gap:10px;">
-      <button class="btn btn-outline btn-sm" onclick="resetToScan()" style="font-size:11px;padding:5px 12px;" title="重新扫描或重新上传答案">
+      <button class="btn btn-outline btn-sm" id="resetScanBtn" onclick="resetToScan()" style="display:none;font-size:11px;padding:5px 12px;" title="重新扫描或重新上传答案">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;"><polyline points="15 18 9 12 15 6"/></svg>
         返回重扫
       </button>
-      <span class="footer__hint" id="footerHint">请先扫描答案卷</span>
+      <span class="footer__hint" id="footerHint">请放入答案纸，点击上方区域开始扫描</span>
     </div>
     <button class="btn btn-primary" id="confirmBtn" disabled onclick="confirmAndGo()">
       确认答案，开始扫描学生作业 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -387,7 +396,78 @@
   let dragMoved = false;     // true if mouse moved >3px during drag (distinguishes click from drag)
   let highlightIdx = -1;     // currently cross-highlighted question index (-1 = none)
 
-  const demoWords = ['apple','beautiful','classroom','dictionary','elephant','family','garden','hospital','important','journey','kitchen','library','mountain','notebook','orange','picture','question','restaurant','student','teacher'];
+  // ===== Subject-aware demo data =====
+  var urlParams = new URLSearchParams(window.location.search);
+  var pageSubject = urlParams.get('subject') || 'english';
+  var pageType = urlParams.get('type') || 'word-dictation';
+
+  var demoData = {
+    'english': {
+      'word-dictation': ['apple','beautiful','classroom','dictionary','elephant','family','garden','hospital','important','journey','kitchen','library','mountain','notebook','orange','picture','question','restaurant','student','teacher']
+    },
+    'math': {
+      'objective': ['x=3','42','±5','y=2x+1','-7','3/4','√2','a²+b²=c²','S=πr²','log₂8=3'],
+      'solution': [
+        '解：由题意得\n设直线方程为 y=kx+b\n代入点(1,2)得 2=k+b ①\n代入点(3,8)得 8=3k+b ②\n②-①得 6=2k\n∴ k=3, b=-1\n∴ 直线方程为 y=3x-1',
+        '解：\n(1) f\'(x)=3x²-6x\n令 f\'(x)=0 得 x=0 或 x=2\n(2) 当x<0时 f\'(x)>0，f(x)↗\n当0<x<2时 f\'(x)<0，f(x)↘\n当x>2时 f\'(x)>0，f(x)↗\n∴ 极大值 f(0)=2，极小值 f(2)=-2'
+      ],
+      'proof': [
+        '证明：\n(1) ∵ AB=AC，D为BC中点\n∴ AD⊥BC（等腰三角形三线合一）\n(2) 在△ABD和△ACD中\nAB=AC, BD=CD, AD=AD\n∴ △ABD≌△ACD (SSS)\n(3) ∴ ∠B=∠C',
+        '证明（反证法）：\n假设√2是有理数，则存在互质的正整数p,q\n使√2=p/q，即 p²=2q²\n∴ p²是偶数 ⇒ p是偶数\n设p=2k，代入得 4k²=2q² ⇒ q²=2k²\n∴ q也是偶数，与p,q互质矛盾\n∴ √2是无理数'
+      ]
+    },
+    'chinese': {
+      'dictation': ['春风又绿江南岸','明月几时有','把酒问青天','大漠孤烟直','长河落日圆','日照香炉生紫烟','遥看瀑布挂前川','飞流直下三千尺','疑是银河落九天','床前明月光']
+    }
+  };
+
+  function getDemoAnswers() {
+    var subjectData = demoData[pageSubject] || demoData['english'];
+    var typeData = subjectData[pageType] || subjectData[Object.keys(subjectData)[0]];
+    // Mix in enough data: cycle through if fewer items than needed
+    var count = pageSubject === 'math' && (pageType === 'solution' || pageType === 'proof') ? 4 : 20;
+    var result = [];
+    for (var i = 0; i < count; i++) {
+      result.push(typeData[i % typeData.length]);
+    }
+    return result;
+  }
+
+  function isLongAnswer() {
+    return pageSubject === 'math' && (pageType === 'solution' || pageType === 'proof');
+  }
+
+  var demoAnswers = getDemoAnswers();
+
+  // ===== Dynamic steps bar & header =====
+  // states: array of 'done'|'active'|'pending' for each of the 4 steps
+  function setStepState(states) {
+    var items = document.querySelectorAll('#stepsBar .step-item');
+    for (var i = 0; i < 4; i++) {
+      items[i].className = 'step-item';
+      if (states[i] === 'done') items[i].classList.add('step-item--done');
+      if (states[i] === 'active') items[i].classList.add('step-item--active');
+      var numEl = items[i].querySelector('.step-item__num');
+      numEl.textContent = states[i] === 'done' ? '✓' : (i + 1);
+    }
+  }
+
+  function enterReviewMode() {
+    // After scan complete: steps 1-2 done, step 3 active
+    setStepState(['done','done','active','pending']);
+    document.getElementById('pageTitle').textContent = '自由作业 · 核对答案';
+    document.getElementById('resetScanBtn').style.display = 'inline-flex';
+    document.getElementById('confirmBtn').disabled = false;
+  }
+
+  function enterScanMode() {
+    // Back to pre-scan: step 1 done, step 2 active
+    setStepState(['done','active','pending','pending']);
+    document.getElementById('pageTitle').textContent = '自由作业 · 扫描答案卷';
+    document.getElementById('resetScanBtn').style.display = 'none';
+    document.getElementById('confirmBtn').disabled = true;
+    document.getElementById('footerHint').textContent = '请放入答案纸，点击上方区域开始扫描';
+  }
 
   function switchTab(el) {
     document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('tab-item--active');});
@@ -399,13 +479,17 @@
 
   function updateFlowContext() {
     var isTeacher = activeTab === 'handwrite';
-    document.getElementById('scanTriggerTitle').textContent = isTeacher ? '放入标准答案纸，点击扫描' : '放入满分学生答卷，点击扫描';
+    var isLong = isLongAnswer();
+    var subjLabel = {'english':'英语','math':'数学','chinese':'语文'}[pageSubject] || '英语';
+    document.getElementById('scanTriggerTitle').textContent = isTeacher
+      ? '放入' + subjLabel + '标准答案纸，点击扫描'
+      : '放入满分学生答卷，点击扫描';
     document.getElementById('scanTriggerDesc').textContent = isTeacher
-      ? '老师手写一份标准答案，系统自动切题并识别手写答案为标准答案'
+      ? '老师手写一份标准答案，系统自动切题并识别手写答案为标准答案' + (isLong ? '（支持长答案：解答题、证明题等）' : '')
       : '扫描已知全对的学生答卷，系统自动提取答案，该学生无需重复扫描';
     document.getElementById('scanTriggerHint').textContent = isTeacher ? '✍️ 支持普通纸张，无需二维码' : '⚠️ 请确保该学生答卷完全正确';
     document.getElementById('flowNoteText').textContent = isTeacher
-      ? '教师答案卷录入：请手写一份标准答案并扫描。系统将自动切题并识别手写答案为标准答案。'
+      ? '教师答案卷录入：请手写一份' + subjLabel + '标准答案并扫描。系统将自动切题并识别手写答案为标准答案。'
       : '满分学生答卷：请选择一位已知成绩全对的学生，将其答卷放入扫描仪。系统自动提取为标准答案，且该学生在批改环节无需重新扫描。';
     document.getElementById('flowNote').style.borderColor = isTeacher ? 'var(--color-accent-3-400)' : 'var(--color-warning-300)';
     document.getElementById('flowNote').style.background = isTeacher ? 'var(--color-accent-3-50)' : 'var(--color-warning-100)';
@@ -417,27 +501,37 @@
     showToast('正在扫描识别答案…');
 
     setTimeout(function(){
-      // Build label from active tab
       var sourceLabel = activeTab === 'handwrite' ? '教师手写答案' : '满分学生答卷';
-      // Simulate: add confidence + grading mode
-      answers = demoWords.map(function(w,i){
+      var isLong = isLongAnswer();
+      var items = getDemoAnswers();
+      answers = items.map(function(w,i){
         return {
           index:i+1, word:w,
           confidence: (i===3||i===11||i===17) ? 0.35+Math.random()*0.25 : 0.78+Math.random()*0.18,
-          gradingMode: i<10?'auto':'manual'
+          gradingMode: i<Math.min(10,items.length/2)?'auto':'manual'
         };
       });
-      zonePositions = answers.map(function(a,i){
-        var col=i%5, row=Math.floor(i/5);
-        return {left:10+col*18, top:14+row*22, width:15, height:8};
-      });
-      titleZone = {left:5, top:2, width:90, height:6, text:'📌 标题校准区 · 学生卷方向比对依据'};
+
+      // Zone sizes vary by answer type
+      if (isLong) {
+        // Math solution/proof: larger zones, stacked vertically
+        zonePositions = answers.map(function(a,i){
+          return {left:8, top:10+i*22, width:84, height:18};
+        });
+      } else {
+        // Short answers: grid layout
+        zonePositions = answers.map(function(a,i){
+          var col=i%5, row=Math.floor(i/5);
+          return {left:8+col*18.4, top:12+row*22, width:16, height:9};
+        });
+      }
+      titleZone = {left:5, top:2, width:90, height:5, text:'📌 标题校准区 · 学生卷方向比对依据'};
       rotation = 0; dragState = null; highlightIdx = -1;
 
       renderAnswerTable(sourceLabel);
       trigger.classList.remove('scan-trigger--scanning');
-      document.getElementById('confirmBtn').disabled = false;
-      showToast('识别完成，共 '+answers.length+' 个单词');
+      enterReviewMode();
+      showToast('识别完成，共 '+answers.length+' 题');
     }, 1800);
   }
 
@@ -486,14 +580,15 @@
             }).join('')+
           '</div>'+
         '</div>'+
-        '<div class="answer-panel">'+
+        '<div class="answer-panel'+(isLongAnswer()?' answer-panel--wide':'')+'">'+
           '<div class="answer-panel__header">'+
             '<div style="display:flex;align-items:center;gap:6px;">'+
               '<span class="answer-panel__title" style="margin-right:4px;">答案校对</span>'+
+              (isLongAnswer() ? '' :
               '<span class="mode-legend" title="两种批改方式">'+
                 '<span class="mode-legend__dot mode-legend__dot--auto"></span>智能批改'+
                 '<span class="mode-legend__dot mode-legend__dot--manual"></span>非智能批改'+
-              '</span>'+
+              '</span>')+
             '</div>'+
             '<div style="display:flex;align-items:center;gap:6px;">'+
               '<button class="btn btn-outline btn-sm" onclick="addRow()">+ 添加</button>'+
@@ -506,16 +601,17 @@
               '</div>'+
             '</div>'+
           '</div>'+
-          '<div class="answer-list">'+
+          '<div class="answer-list'+(isLongAnswer()?' answer-list--long':'')+'">'+
             answers.map(function(a,i){
               var isLow=a.confidence<0.7, m=a.gradingMode||'auto';
-              return '<div class="answer-row" style="'+(isLow?'background:var(--color-error-100);border-color:var(--color-error-300);':'')+'" onclick="highlightZone('+i+',event)">'+
+              var isLong=isLongAnswer();
+              return '<div class="answer-row'+(isLong?' answer-row--long':'')+'" style="'+(isLow?'background:var(--color-error-100);border-color:var(--color-error-300);':'')+'" onclick="highlightZone('+i+',event)">'+
                 '<span class="answer-row__confidence '+(isLow?'answer-row__confidence--low':'answer-row__confidence--high')+'" title="'+(isLow?'⚠ 识别置信度低，请人工核对':'✓ 识别置信度高')+'">'+
                   (isLow?'‼':'✓')+
                   '<span class="answer-row__confidence__tip">'+(isLow?'⚠ 手写笔迹识别置信度低<br>可点击原图区域查看原始笔迹':'✓ 手写识别置信度高')+'</span>'+
                 '</span>'+
                 '<input class="answer-row__num-input" type="text" inputmode="numeric" value="'+a.index+'" onchange="updateIndex('+i+',this.value)" title="编辑题号">'+
-                '<input value="'+a.word+'" onchange="updateWord('+i+',this.value)" style="flex:1;min-width:0;">'+
+                '<textarea onchange="updateWord('+i+',this.value)" oninput="autoResizeTextarea(this)" rows="'+(isLong?'5':'1')+'">'+a.word+'</textarea>'+
                 '<div class="grading-mode-switch">'+
                   '<button class="grading-mode-switch__pill grading-mode-switch__pill--auto'+(m==='auto'?' active':'')+'" onclick="setGradingMode('+i+',\'auto\')" title="智能批改：机器自动评分（适合选择/填空题）">🤖 智能</button>'+
                   '<button class="grading-mode-switch__pill grading-mode-switch__pill--manual'+(m==='manual'?' active':'')+'" onclick="setGradingMode('+i+',\'manual\')" title="非智能批改：检测老师手写分数，未找到则网阅打分">✋ 非智能</button>'+
@@ -528,6 +624,7 @@
       '</div>';
 
     initZoneDrag('main');
+    autoResizeAllTextareas();
     setTimeout(function(){ document.addEventListener('click', closeBulkMenuOutside); }, 0);
 
     document.getElementById('footerHint').innerHTML =
@@ -543,7 +640,11 @@
   }
   function addRow() {
     answers.push({index:answers.length+1, word:'', confidence:1, gradingMode:'auto'});
-    zonePositions.push({left:50, top:50, width:15, height:8});
+    if (isLongAnswer()) {
+      zonePositions.push({left:8, top:90, width:84, height:18});
+    } else {
+      zonePositions.push({left:50, top:50, width:16, height:9});
+    }
     renderAnswerTable(activeTab);
   }
 
@@ -624,9 +725,21 @@
     }
   }
 
+  // ===== Auto-resize textarea as user types =====
+  function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  function autoResizeAllTextareas() {
+    setTimeout(function(){
+      document.querySelectorAll('.answer-row textarea').forEach(function(ta){ autoResizeTextarea(ta); });
+    }, 50);
+  }
+
   function highlightZone(idx, e) {
     // Ignore clicks on interactive child elements
-    if (e && (e.target.closest('input')||e.target.closest('button')||e.target.closest('.answer-row__confidence')||e.target.closest('.answer-row__delete'))) return;
+    if (e && (e.target.closest('input')||e.target.closest('textarea')||e.target.closest('button')||e.target.closest('.answer-row__confidence')||e.target.closest('.answer-row__delete'))) return;
     // Toggle: if already highlighted, clear
     if (highlightIdx === idx) { clearHighlights(); return; }
     highlightIdx = idx;
@@ -728,16 +841,29 @@
     var label = document.getElementById('rotationLabel');
     if (label) label.textContent = rotation + '°';
     showToast('图片已旋转 '+rotation+'°');
+    var isLong = isLongAnswer();
     if (rotation % 180 === 0) {
-      zonePositions = answers.map(function(a,i){
-        var col=i%5, row=Math.floor(i/5);
-        return {left:10+col*18, top:14+row*22, width:15, height:8};
-      });
+      if (isLong) {
+        zonePositions = answers.map(function(a,i){
+          return {left:8, top:10+i*22, width:84, height:18};
+        });
+      } else {
+        zonePositions = answers.map(function(a,i){
+          var col=i%5, row=Math.floor(i/5);
+          return {left:8+col*18.4, top:12+row*22, width:16, height:9};
+        });
+      }
     } else {
-      zonePositions = answers.map(function(a,i){
-        var col=Math.floor(i/4), row=i%4;
-        return {left:10+col*22, top:10+row*20, width:20, height:10};
-      });
+      if (isLong) {
+        zonePositions = answers.map(function(a,i){
+          return {left:10, top:8+i*18, width:80, height:22};
+        });
+      } else {
+        zonePositions = answers.map(function(a,i){
+          var col=Math.floor(i/4), row=i%4;
+          return {left:8+col*22, top:10+row*20, width:20, height:10};
+        });
+      }
     }
     var sourceLabel = activeTab === 'handwrite' ? '教师手写答案' : '满分学生答卷';
     renderAnswerTable(sourceLabel);
@@ -751,18 +877,30 @@
     document.querySelector('.tab-panel').classList.remove('tab-panel--hidden');
     document.getElementById('flowSection').classList.remove('flow-section--hidden');
     document.getElementById('answerSection').style.display = 'none';
-    document.getElementById('confirmBtn').disabled = true;
-    document.getElementById('footerHint').textContent = '请先扫描答案卷';
+    enterScanMode();
   }
 
   function confirmAndGo() {
     if (answers.length === 0) return;
-    const urlParams = new URLSearchParams(window.location.search);
-    const taskName = urlParams.get('name') || '自由作业';
-    window.location.href = `scan-progress.html?mode=free&first=1&taskName=${encodeURIComponent(taskName)}`;
+    var urlParams = new URLSearchParams(window.location.search);
+    var taskName = urlParams.get('name') || '自由作业';
+    var subject = urlParams.get('subject') || 'english';
+    var type = urlParams.get('type') || 'word-dictation';
+    window.location.href = 'scan-progress.html?mode=free&first=1&taskName=' + encodeURIComponent(taskName) + '&subject=' + subject + '&type=' + type;
   }
 
   function showToast(msg){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.classList.add('toast--out');setTimeout(()=>t.remove(),200);},2400);}
 </script>
+
+<!-- ========== 标注工具配置 ========== -->
+<script>
+window.__pa_config = {
+  views: { main: '.app-window' },
+  sectionSelector: '.tab-panel, .flow-section, .scan-preview-wrap, .answer-panel, .scan-preview',
+  scrollContainer: '.app-window'
+};
+</script>
+<script src="annotations.js"></script>
+<script src="prototype-annotator.js"></script>
 </body>
 </html>
