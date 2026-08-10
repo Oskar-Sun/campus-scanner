@@ -2,7 +2,7 @@ var __pa_data = [
   {
     "id": "p1786343751315",
     "num": 1,
-    "view": "main",
+    "view": "task-create",
     "sectionIdx": 2,
     "offsetX": 335,
     "offsetY": 21,
@@ -14,13 +14,25 @@ var __pa_data = [
   {
     "id": "p1786343844283",
     "num": 2,
-    "view": "main",
+    "view": "task-create",
     "sectionIdx": 6,
     "offsetX": 333,
     "offsetY": 35,
     "text": "任务名称规则为：年级+学科+日期（月日）+作业，根据用户选择的自动生成，生成后支持修改，字数最长50个字，不支持为空",
     "createdAt": "2026/8/10 14:37:24",
     "updatedAt": "2026/8/10 14:40:48",
+    "done": true
+  },
+  {
+    "id": "p1786347119495",
+    "num": 3,
+    "view": "task-create",
+    "sectionIdx": 7,
+    "offsetX": 213,
+    "offsetY": 18,
+    "text": "-支持用户选择历史已经创建过的自由作业记录，可选择的历史记录为同学校同年级同学科的自由作业，按创建时间由近到远排序",
+    "createdAt": "2026/8/10 15:31:59",
+    "updatedAt": "2026/8/10 15:33:41",
     "done": true
   }
 ];
