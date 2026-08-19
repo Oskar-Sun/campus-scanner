@@ -194,7 +194,7 @@
         choiceAnswers: [{index:1,answer:'B'},{index:2,answer:'C'},{index:3,answer:'A'},{index:4,answer:'D'},{index:5,answer:'C'},{index:6,answer:'B'},{index:7,answer:'A'},{index:8,answer:'D'},{index:9,answer:'B'},{index:10,answer:'C'}],
         fillAnswers: [{index:11,answer:'光合作用'},{index:12,answer:'线粒体'},{index:13,answer:'细胞膜'},{index:14,answer:'DNA'},{index:15,answer:'RNA'}],
         shortAnswers: [{index:16,answer:'参考答案详见教师用书第22页'},{index:17,answer:'详见教师用书第23页'},{index:18,answer:'详见教师用书第24页'},{index:19,answer:'详见教师用书第25页'},{index:20,answer:'详见教师用书第26页'}],
-        essayConfig:{type:'chinese',title:'以「人工智能与未来教育」为题，写一篇议论文。',materials:'近年来人工智能技术快速发展……',requirements:['观点明确，能围绕主题展开论述','至少引用一个具体案例或数据支撑论点','结构清晰，层次分明，逻辑严谨'],difficulty:'medium',wordCount:800,hasMarginArea:true},
+        essayConfig:{type:'chinese',title:'以「人工智能与未来教育」为题，写一篇议论文。',materials:'近年来人工智能技术快速发展……',requirements:['观点明确，能围绕主题展开论述','至少引用一个具体案例或数据支撑论点','结构清晰，层次分明，逻辑严谨'],difficulty:'medium',wordCount:800,hasMarginArea:true,genContent:'score_report'},
       }
     },
     {
@@ -204,7 +204,7 @@
         choiceAnswers: [{index:1,answer:'A'},{index:2,answer:'B'},{index:3,answer:'C'},{index:4,answer:'D'},{index:5,answer:'A'},{index:6,answer:'B'},{index:7,answer:'C'},{index:8,answer:''},{index:9,answer:''},{index:10,answer:''}],
         fillAnswers: [{index:11,answer:'had been waiting'},{index:12,answer:''},{index:13,answer:''},{index:14,answer:''},{index:15,answer:''}],
         shortAnswers: [{index:16,answer:'待设置'},{index:17,answer:'待设置'},{index:18,answer:'待设置'},{index:19,answer:'待设置'},{index:20,answer:'待设置'}],
-        essayConfig:{type:'english',title:'Write an email to your friend about your summer plan.',materials:'',requirements:['不少于120词','包含所有要点','格式正确'],difficulty:'easy',wordCount:120,hasMarginArea:false},
+        essayConfig:{type:'english',title:'Write an email to your friend about your summer plan.',materials:'',requirements:['不少于120词','包含所有要点','格式正确'],difficulty:'easy',wordCount:120,hasMarginArea:false,genContent:'score_report'},
       }
     },
     {
@@ -214,7 +214,7 @@
         choiceAnswers: [{index:1,answer:''},{index:2,answer:''},{index:3,answer:''},{index:4,answer:''},{index:5,answer:''},{index:6,answer:''},{index:7,answer:''},{index:8,answer:''},{index:9,answer:''},{index:10,answer:''}],
         fillAnswers: [{index:11,answer:''},{index:12,answer:''},{index:13,answer:''},{index:14,answer:''},{index:15,answer:''}],
         shortAnswers: [{index:16,answer:''},{index:17,answer:''},{index:18,answer:''},{index:19,answer:''},{index:20,answer:''}],
-        essayConfig:{type:'physics',title:'',materials:'',requirements:[],difficulty:'medium',wordCount:0,hasMarginArea:false},
+        essayConfig:{type:'physics',title:'',materials:'',requirements:[],difficulty:'medium',wordCount:0,hasMarginArea:false,genContent:'score_report'},
       }
     },
   ];
@@ -352,6 +352,7 @@
   // ===== Essay Tab =====
   function renderEssayTab() {
     const ec=currentConfig().essayConfig;
+    const gc=ec.genContent||'score_report';
     const typeLabels={chinese:'📖 语文作文',english:'🔤 英语作文',physics:'⚛️ 物理实验'};
     return `<div>
       <div class="essay-header">
@@ -373,11 +374,25 @@
         </div>
       </div>
       <div class="form-group"><label class="form-group__label">🔢 字数要求</label><input class="form-input form-input--sm" id="essayWordCount" value="${ec.wordCount}" type="number" min="0"> 字</div>
+      <div class="form-group"><label class="form-group__label">⚙️ 生成内容</label>
+        <div class="diff-chips" id="genContentChips">
+          <span class="diff-chip${gc==='score_report'?' diff-chip--active':''}" data-val="score_report" onclick="selectGenContent(this)">评分 + 报告</span>
+          <span class="diff-chip${gc==='score_only'?' diff-chip--active':''}" data-val="score_only" onclick="selectGenContent(this)">仅评分</span>
+          <span class="diff-chip${gc==='report_only'?' diff-chip--active':''}" data-val="report_only" onclick="selectGenContent(this)">仅报告</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.5;" id="genContentDesc">${genContentDescriptions[gc]||''}</div>
+      </div>
       <div style="display:flex;gap:8px;margin-top:16px;"><button class="btn btn-primary" onclick="saveEssay()">保存作文设置</button><button class="btn btn-ghost" onclick="showToast('已重置为二维码默认值')">重置为默认</button></div>
     </div>`;
   }
 
   function selectDiff(el){document.querySelectorAll('#diffChips .diff-chip').forEach(c=>c.classList.remove('diff-chip--active'));el.classList.add('diff-chip--active');currentConfig().essayConfig.difficulty=el.dataset.val;}
+  const genContentDescriptions={
+    'score_report':'既产生AI评分，也会生成作文分析报告',
+    'score_only':'仅进行AI评分，不产生作文分析报告',
+    'report_only':'不产生AI评分，仅生成作文分析报告，作文报告评分以人工打分为准',
+  };
+  function selectGenContent(el){document.querySelectorAll('#genContentChips .diff-chip').forEach(c=>c.classList.remove('diff-chip--active'));el.classList.add('diff-chip--active');currentConfig().essayConfig.genContent=el.dataset.val;const desc=document.getElementById('genContentDesc');if(desc)desc.textContent=genContentDescriptions[el.dataset.val]||'';}
   function addReq(){if(currentConfig().essayConfig.requirements.length>=5)return;currentConfig().essayConfig.requirements.push('');renderTab();}
   function delReq(el){const idx=Array.from(el.parentElement.parentElement.children).indexOf(el.parentElement);currentConfig().essayConfig.requirements.splice(idx,1);renderTab();}
   function saveEssay(){

@@ -180,6 +180,9 @@
 
   .link-btn{font-size:11px;color:var(--accent);cursor:pointer;font-weight:500;text-decoration:none;padding:4px 10px;border:1px solid var(--accent);border-radius:var(--radius-full);transition:all var(--transition);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
   .link-btn:hover{background:var(--accent);color:var(--color-base-02);}
+
+  /* Essay report iframe (作文报告 tab) */
+  .essay-frame{width:100%;height:calc(100vh - 250px);min-height:480px;border:none;border-radius:var(--radius-lg);background:var(--color-base-02);display:block;}
 </style>
 </head>
 <body>
@@ -219,6 +222,7 @@
     <div class="tab-nav__item tab-nav__item--active" data-tab="overview" onclick="switchTab('overview')">📊 作业总览</div>
     <div class="tab-nav__item" data-tab="analysis" onclick="switchTab('analysis')">📈 成绩分析</div>
     <div class="tab-nav__item" data-tab="review" onclick="switchTab('review')">🎯 试题讲评</div>
+    <div class="tab-nav__item" data-tab="essay" onclick="switchTab('essay')">✏️ 作文报告</div>
     <div class="tab-nav__item" data-tab="knowledge" onclick="switchTab('knowledge')">📚 知识点分析</div>
   </div>
 
@@ -318,7 +322,7 @@ function onRoleChange(){currentRole=document.getElementById('roleSelect').value;
 function onClassFilter(){currentClassFilter=document.getElementById('classFilter').value;renderCurrentTab();}
 function renderCurrentTab(){
   const mc=document.getElementById('mainContent');
-  switch(currentTab){case'overview':mc.innerHTML=renderOverview();break;case'analysis':mc.innerHTML=renderAnalysis();break;case'review':mc.innerHTML=renderReview();break;case'knowledge':mc.innerHTML=renderKnowledge();break;}
+  switch(currentTab){case'overview':mc.innerHTML=renderOverview();break;case'analysis':mc.innerHTML=renderAnalysis();break;case'review':mc.innerHTML=renderReview();break;case'essay':mc.innerHTML=renderEssayReport();break;case'knowledge':mc.innerHTML=renderKnowledge();break;}
 }
 
 // ===== Tab 1: 作业总览 =====
@@ -572,6 +576,11 @@ function renderReview(){
   return h;
 }
 
+// ===== Tab 5: 作文报告（嵌入 AI 作文批改报告原型） =====
+function renderEssayReport(){
+  return `<iframe class="essay-frame" src="../语文作文报告/index.html" title="作文报告"></iframe>`;
+}
+
 // ===== Tab 4: 知识点分析 =====
 function renderKnowledge(){
   const students=getFilteredStudents();const gradeStudents=getGradeStudents();
@@ -597,7 +606,7 @@ function renderKnowledge(){
 // ===== Init =====
 renderAll();
 document.addEventListener('keydown',function(e){
-  const tabs=['overview','analysis','review','knowledge'];const idx=tabs.indexOf(currentTab);
+  const tabs=['overview','analysis','review','essay','knowledge'];const idx=tabs.indexOf(currentTab);
   if(e.key==='ArrowRight'&&e.ctrlKey&&idx<tabs.length-1)switchTab(tabs[idx+1]);
   if(e.key==='ArrowLeft'&&e.ctrlKey&&idx>0)switchTab(tabs[idx-1]);
   if(e.key==='Escape')window.location.href='scan-progress.html';
