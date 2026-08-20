@@ -206,13 +206,7 @@
       </div>
     </div>
 
-    <!-- Step 4: 题型 — dynamic per subject -->
-    <div class="form-group">
-      <label class="form-group__label">📌 选择题型</label>
-      <div class="chip-row" id="typeChips"></div>
-    </div>
-
-    <!-- Step 5: 任务名称 — auto-generated, editable -->
+    <!-- Step 4: 任务名称 — auto-generated, editable -->
     <div class="form-group">
       <label class="form-group__label">📝 任务名称 <span class="auto-badge" id="taskNameBadge">✨ 自动生成</span></label>
       <input class="form-input" id="taskName" placeholder="选择年级和科目后自动生成…" oninput="onTaskNameInput()">
@@ -241,49 +235,11 @@
   // ===== Data =====
   var SUBJECT_LABELS = {'english':'英语','math':'数学','chinese':'语文'};
   var GRADE_LABELS = {'grade-10':'高一','grade-11':'高二','grade-12':'高三'};
-  var TYPE_LABELS = {
-    'word-dictation':'单词听写','sentence-dictation':'句子默写','oral-math':'口算题',
-    'objective':'客观题','solution':'解答题','proof':'证明题',
-    'dictation':'默写填空','reading':'阅读理解','essay':'作文'
-  };
-
-  // Question types available per subject (first one is default)
-  var SUBJECT_TYPES = {
-    'english': [
-      {value:'word-dictation', label:'🔤 单词听写', enabled:true},
-      {value:'sentence-dictation', label:'📝 句子默写', enabled:false}
-    ],
-    'math': [
-      {value:'objective', label:'📐 客观题', enabled:true},
-      {value:'solution', label:'📝 解答题', enabled:true},
-      {value:'proof', label:'🔷 证明题', enabled:true}
-    ],
-    'chinese': [
-      {value:'dictation', label:'📝 默写填空', enabled:true},
-      {value:'reading', label:'📖 阅读理解', enabled:false},
-      {value:'essay', label:'✍️ 作文', enabled:false}
-    ]
-  };
 
   // ===== State =====
-  var state = { taskName:'', subject:'english', type:'word-dictation', grade:'grade-11', classes:['class-3'] };
+  var state = { taskName:'', subject:'english', grade:'grade-11', classes:['class-3'] };
   var multiMode = false;
   var taskNameIsAuto = true;
-
-  // ===== Render type chips based on current subject =====
-  function renderTypeChips() {
-    var types = SUBJECT_TYPES[state.subject] || [];
-    var html = '';
-    for (var i = 0; i < types.length; i++) {
-      var t = types[i];
-      var isActive = (state.type === t.value);
-      var disabledClass = t.enabled ? '' : ' chip--disabled';
-      var titleAttr = t.enabled ? '' : ' title="即将支持"';
-      var suffix = t.enabled ? '' : ' · 即将支持';
-      html += '<span class="chip' + (isActive ? ' chip--active' : '') + disabledClass + '" data-value="' + t.value + '" onclick="selectChip(this,\'type\')"' + titleAttr + '>' + t.label + suffix + '</span>';
-    }
-    document.getElementById('typeChips').innerHTML = html;
-  }
 
   // ===== Auto-generate task name =====
   function autoGenerateTaskName() {
@@ -349,15 +305,8 @@
     el.classList.add('chip--active');
     state[group] = el.dataset.value;
 
-    // When subject changes, reset type to first available for that subject
+    // When subject changes, refresh info card and task name
     if (group === 'subject') {
-      var types = SUBJECT_TYPES[state.subject] || [];
-      var firstEnabled = null;
-      for (var i = 0; i < types.length; i++) {
-        if (types[i].enabled) { firstEnabled = types[i].value; break; }
-      }
-      state.type = firstEnabled || types[0].value;
-      renderTypeChips();
       if (taskNameIsAuto) generateAndFillTaskName();
       updateInfoCard();
     }
@@ -387,11 +336,11 @@
   function updateInfoCard() {
     var text = '';
     if (state.subject === 'english') {
-      text = '英语自由作业。教师手写标准答案纸扫描录入，系统自动切题并识别手写单词。首期支持 <strong>单词听写</strong> 场景，适合课前/课后快速测验。';
+      text = '英语自由作业。教师手写标准答案纸扫描录入，系统自动切题并识别手写内容，AI 自动批改。';
     } else if (state.subject === 'math') {
-      text = '数学自由作业。支持 <strong>客观题、解答题、证明题</strong> 等多种题型。教师手写标准答案，系统自动切题并识别，支持长答案区域。';
+      text = '数学自由作业。教师手写标准答案纸扫描录入，系统自动切题并识别，支持长答案区域，AI 自动批改。';
     } else if (state.subject === 'chinese') {
-      text = '语文自由作业。支持 <strong>默写填空</strong> 等场景。教师手写标准答案纸扫描录入，系统自动切题识别。';
+      text = '语文自由作业。教师手写标准答案纸扫描录入，系统自动切题识别，AI 自动批改。';
     }
     document.getElementById('infoCardText').innerHTML = text;
   }
@@ -403,9 +352,8 @@
     var classList = state.classes.map(function(c){return c.replace('class-','')+'班';}).join('、');
     var gradeLabel = GRADE_LABELS[state.grade] || '';
     var subjLabel = SUBJECT_LABELS[state.subject] || '';
-    var typeLabel = TYPE_LABELS[state.type] || '';
     document.getElementById('footerHint').textContent = valid
-      ? (isHistory ? '沿用历史任务 · ' : '') + '「' + state.taskName + '」｜ ' + gradeLabel + ' · ' + classList + ' ｜ ' + subjLabel + ' · ' + typeLabel
+      ? (isHistory ? '沿用历史任务 · ' : '') + '「' + state.taskName + '」｜ ' + gradeLabel + ' · ' + classList + ' ｜ ' + subjLabel
       : (isHistory ? '请选择要扫描的班级' : '请选择年级、班级 — 任务名称将自动生成');
   }
 
@@ -415,7 +363,7 @@
     if (continueMode || selectedHistoryId !== null) {
       window.location.href = 'scan-progress.html?mode=free&first=1&taskName=' + encodeURIComponent(state.taskName) + '&classes=' + state.classes.join(',');
     } else {
-      var params = new URLSearchParams({name:state.taskName, subject:state.subject, type:state.type, grade:state.grade, classes:state.classes.join(',')});
+      var params = new URLSearchParams({name:state.taskName, subject:state.subject, grade:state.grade, classes:state.classes.join(',')});
       window.location.href = 'free-answer-input.html?' + params.toString();
     }
   }
@@ -429,11 +377,11 @@
 
   // ===== History Records =====
   var historyRecords = [
-    { id:1, taskName:'Unit 2 单词听写', date:'2025-12-03', classes:['3班','4班'], subject:'english', type:'word-dictation', grade:'grade-11' },
-    { id:2, taskName:'Unit 1 单词听写', date:'2025-11-28', classes:['2班'], subject:'english', type:'word-dictation', grade:'grade-11' },
-    { id:3, taskName:'期中单词复习', date:'2025-11-20', classes:['1班','3班','5班'], subject:'english', type:'word-dictation', grade:'grade-11' },
-    { id:4, taskName:'高一单词摸底', date:'2025-10-15', classes:['1班','2班'], subject:'english', type:'word-dictation', grade:'grade-10' },
-    { id:5, taskName:'高三词汇冲刺', date:'2025-09-22', classes:['4班','5班'], subject:'english', type:'word-dictation', grade:'grade-12' },
+    { id:1, taskName:'Unit 2 单词听写', date:'2025-12-03', classes:['3班','4班'], subject:'english', grade:'grade-11' },
+    { id:2, taskName:'Unit 1 单词听写', date:'2025-11-28', classes:['2班'], subject:'english', grade:'grade-11' },
+    { id:3, taskName:'期中单词复习', date:'2025-11-20', classes:['1班','3班','5班'], subject:'english', grade:'grade-11' },
+    { id:4, taskName:'高一单词摸底', date:'2025-10-15', classes:['1班','2班'], subject:'english', grade:'grade-10' },
+    { id:5, taskName:'高三词汇冲刺', date:'2025-09-22', classes:['4班','5班'], subject:'english', grade:'grade-12' },
   ];
   var selectedHistoryId = null;
 
@@ -461,7 +409,6 @@
     selectedHistoryId = record.id;
     state.taskName = record.taskName;
     state.subject = record.subject;
-    state.type = record.type;
     state.grade = record.grade;
     state.classes = [];
     taskNameIsAuto = false;
@@ -476,10 +423,6 @@
     // Lock subject chips
     var subjLabel = SUBJECT_LABELS[record.subject] || '英语';
     document.getElementById('subjectChips').innerHTML = '<span class="auto-selected-badge"><span class="dot"></span>科目：<strong>' + subjLabel + '</strong>（沿用历史任务）</span>';
-
-    // Lock type chips
-    var typeLabel = TYPE_LABELS[record.type] || '';
-    document.getElementById('typeChips').innerHTML = '<span class="auto-selected-badge"><span class="dot"></span>题型：<strong>' + typeLabel + '</strong>（沿用历史任务）</span>';
 
     // Lock grade chips
     document.getElementById('gradeChips').innerHTML = '<span class="auto-selected-badge"><span class="dot"></span>年级：<strong>' + GRADE_LABELS[record.grade] + '</strong>（沿用历史任务）</span>';
@@ -499,7 +442,6 @@
     selectedHistoryId = null;
     state.taskName = autoGenerateTaskName();
     state.subject = 'english';
-    state.type = 'word-dictation';
     state.grade = 'grade-11';
     state.classes = ['class-3'];
     taskNameIsAuto = true;
@@ -513,9 +455,6 @@
 
     // Restore subject chips (all enabled)
     document.getElementById('subjectChips').innerHTML = '<span class="chip chip--active" data-value="english" onclick="selectChip(this,\'subject\')">📖 英语</span><span class="chip" data-value="math" onclick="selectChip(this,\'subject\')">📐 数学</span><span class="chip" data-value="chinese" onclick="selectChip(this,\'subject\')">📝 语文</span>';
-
-    // Restore type chips
-    renderTypeChips();
 
     // Restore grade chips
     document.getElementById('gradeChips').innerHTML = '<span class="chip" data-value="grade-10" onclick="selectChip(this,\'grade\')">高一</span><span class="chip chip--active" data-value="grade-11" onclick="selectChip(this,\'grade\')">高二</span><span class="chip" data-value="grade-12" onclick="selectChip(this,\'grade\')">高三</span>';
@@ -580,9 +519,7 @@
       document.getElementById('taskNameBadge').classList.add('auto-badge--edited');
 
       var subjLabel = SUBJECT_LABELS[state.subject] || '英语';
-      var typeLabel = TYPE_LABELS[state.type] || '';
       document.getElementById('subjectChips').innerHTML = '<span class="auto-selected-badge"><span class="dot"></span>科目：<strong>' + subjLabel + '</strong>（已有任务）</span>';
-      document.getElementById('typeChips').innerHTML = '<span class="auto-selected-badge"><span class="dot"></span>题型：<strong>' + typeLabel + '</strong>（已有任务）</span>';
       document.getElementById('gradeChips').innerHTML = '<span class="auto-selected-badge"><span class="dot"></span>年级：<strong>' + (GRADE_LABELS[state.grade] || '高二') + '</strong>（已有任务）</span>';
 
       document.querySelector('.header__page-title').textContent = '自由作业 · 新班级扫描';
@@ -594,7 +531,6 @@
   }
 
   // ===== Init =====
-  renderTypeChips();
   generateAndFillTaskName();
   updateFooter();
   renderHistory();
